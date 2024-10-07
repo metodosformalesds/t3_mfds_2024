@@ -8,3 +8,6 @@ https://docs.google.com/document/d/1nVUuc_8MWNzz349bDdjKG3hvhr3eiAgUxxUXaiR7rvk/
 
 **CLICK UP**
 https://app.clickup.com/9011196948/v/li/901104224573
+
+**FIGMA**
+https://www.figma.com/design/SaACevXs83WZqX8SyDD72a/CTM-webpages-Figma-(Community)?node-id=0-1&t=aabcoEe5ME3xw0br-1
