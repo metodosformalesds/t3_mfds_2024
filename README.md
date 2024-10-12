@@ -13,6 +13,7 @@ https://app.clickup.com/9011196948/v/li/901104224573
 https://www.figma.com/design/SaACevXs83WZqX8SyDD72a/CTM-webpages-Figma-(Community)?node-id=0-1&t=aabcoEe5ME3xw0br-1
 
 **Integrantes:**
+
 214466 Carlos Adrian Vasquez Rivera 
 
 192880 Brandon Gustavo Hernandez Ortiz
