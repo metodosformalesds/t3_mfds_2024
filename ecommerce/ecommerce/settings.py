@@ -37,6 +37,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'ecommerce.apps.admnistracion',
+    'ecommerce.apps.api_soporte',
+    'ecommerce.apps.api_ubicacion',
+    'ecommerce.apps.api_whatsapp',
+    'ecommerce.apps.autenticacion_usuarios',
+    'ecommerce.apps.carrito_compra',
+    'ecommerce.apps.gestion_inventarios',
+    'ecommerce.apps.pagos',
+    'ecommerce.apps.pedidos',
+    'ecommerce.apps.resenas',
+    'ecommerce.apps.sistema_suscripcion',
 ]
 
 MIDDLEWARE = [
