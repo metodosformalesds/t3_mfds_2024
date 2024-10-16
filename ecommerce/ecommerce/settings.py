@@ -65,7 +65,7 @@ ROOT_URLCONF = 'ecommerce.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ["C:\Users\BHerna12\OneDrive - JNJ\Documents\ECOMMERCE\t3_mfds_2024\ecommerce\ecommerce\plantillas"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
