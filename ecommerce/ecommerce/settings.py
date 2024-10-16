@@ -37,17 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'ecommerce.apps.admnistracion',
-    'ecommerce.apps.api_soporte',
-    'ecommerce.apps.api_ubicacion',
-    'ecommerce.apps.api_whatsapp',
-    'ecommerce.apps.autenticacion_usuarios',
-    'ecommerce.apps.carrito_compra',
-    'ecommerce.apps.gestion_inventarios',
-    'ecommerce.apps.pagos',
-    'ecommerce.apps.pedidos',
-    'ecommerce.apps.resenas',
-    'ecommerce.apps.sistema_suscripcion',
+    'apps.administracion',
 ]
 
 MIDDLEWARE = [
@@ -65,7 +55,7 @@ ROOT_URLCONF = 'ecommerce.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ["C:\Users\BHerna12\OneDrive - JNJ\Documents\ECOMMERCE\t3_mfds_2024\ecommerce\ecommerce\plantillas"],
+        'DIRS': ["C:/Users/BHerna12/OneDrive - JNJ/Documents/ECOMMERCE/t3_mfds_2024/ecommerce/ecommerce/plantillas"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
