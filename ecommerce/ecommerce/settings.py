@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-cb_m1^vhfv5nd6^q3bz&!=3=%c26*deq83=)r*8r7gq)o6#zy@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['https://yonkesautoparts.pythonanywhere.com/']
 
 
 # Application definition
@@ -55,7 +55,7 @@ ROOT_URLCONF = 'ecommerce.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ["ecommerce/plantillas"],
+        'DIRS': ["ecommerce/ecommerce/plantillas"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
