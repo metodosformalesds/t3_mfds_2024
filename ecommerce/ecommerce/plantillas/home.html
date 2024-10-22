@@ -1,10 +1,65 @@
-<html>
-    <head>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refacciones Relámpago</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <div class="menu-icon">
+                <span>&#9776;</span>
+            </div>
+            <nav>
+                <a href="#" class="icon">Agregar vehículo</a>
+                <a href="#" class="icon">Encuentra refacciones y accesorios</a>
+                <a href="#" class="icon">Selecciona un Yonke</a>
+            </nav>
+            <div class="right-side">
+                <div class="user">
+                    <a href="#">Ingresar</a>
+                </div>
+                <div class="cart">
+                    <a href="#">Carrito</a>
+                </div>
+            </div>
+        </div>
+    </header>
 
-    </head>
-    <body>
-        <h1>Ecommerce de Autopartes de Yonkes e independientes.</h1>
-        <p>Bienvenidos</p>
-    </body>
+    <main>
+        <section class="main-content">
+            <div class="featured">
+                <p>$1500</p>
+                <p>Faros Civic 2008</p>
+                <p>4 Runner</p>
+            </div>
+            <div class="buttons">
+                <div class="button">Ubica tu Yonke</div>
+                <div class="button">Click, compra y recoge</div>
+                <div class="button">¿Quieres ser socio?</div>
+            </div>
+        </section>
 
+        <section class="filters">
+            <h2>Que tenemos el día de hoy?</h2>
+            <p>Agrega tu vehículo para obtener una mejor búsqueda</p>
+            <div class="filter-options">
+                <select name="año" id="año">
+                    <option value="1">1 Año</option>
+                </select>
+                <select name="marca" id="marca">
+                    <option value="2">2 Marca</option>
+                </select>
+                <select name="modelo" id="modelo">
+                    <option value="3">3 Modelo</option>
+                </select>
+                <select name="motor" id="motor">
+                    <option value="4">4 Motor</option>
+                </select>
+            </div>
+        </section>
+    </main>
+</body>
 </html>
