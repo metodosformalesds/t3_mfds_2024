@@ -20,5 +20,10 @@ from ecommerce.views import home
 from . import views
 
 urlpatterns = [
+<<<<<<< HEAD
     path('home/', views.home, name='home'),
+=======
+    path('admin/', admin.site.urls),
+    path('home/', home),
+>>>>>>> d685d631f241659cf66eb7820f2b205190615653
 ]

@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class SistemaSuscripcionConfig(AppConfig):
+class BusquedayfiltrosConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'sistema_suscripcion'
+    name = 'busquedayfiltros'
