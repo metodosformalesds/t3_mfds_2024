@@ -30,17 +30,18 @@
     </header>
 
     <main>
-        <section class="carousel">
+        <div class="carousel">
+            <button class="carousel-prev">&#9664;</button>
             <div class="carousel-item">
-                <img src="/ecommerce/ecommerce/imagenes/productos/bujia.png" alt="Bujía Dodge RAM">
+                <img src="imagen_producto1.png" alt="Producto">
                 <div class="carousel-description">
                     <p>$300 c/u</p>
                     <p>Bujía Estándar Dodge RAM 3500 8v 5.9</p>
                     <p>4 RUNNER</p>
                 </div>
             </div>
-            <!-- demas items del carrusel -->
-        </section>
+            <button class="carousel-next">&#9654;</button>
+        </div>
 
             <section class="buttons">
                 <div class="button">
@@ -148,3 +149,27 @@
     </main>
 </body>
 </html>
+
+<script>
+    // Array de productos para el carrusel
+    const productos = [
+        {
+            img: 'imagen_producto1.png',
+            precio: '$300 c/u',
+            descripcion: 'Bujía Estándar Dodge RAM 3500 8v 5.9',
+            vehiculo: '4 RUNNER'
+        },
+        {
+            img: 'imagen_producto2.png',
+            precio: '$500 c/u',
+            descripcion: 'Filtro de Aceite Honda Civic',
+            vehiculo: 'Civic 2008'
+        },
+        {
+            img: 'imagen_producto3.png',
+            precio: '$1200 c/u',
+            descripcion: 'Amortiguadores Toyota Corolla',
+            vehiculo: 'Corolla 2015'
+        }
+    ];
+</script>
