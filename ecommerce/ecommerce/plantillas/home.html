@@ -33,7 +33,7 @@
         <div class="carousel">
             <button class="carousel-prev">&#9664;</button>
             <div class="carousel-item">
-                <img src="imagen_producto1.png" alt="Producto">
+                <img src="/ecommerce/ecommerce/imagenes/productos/bujia.png" alt="Producto">
                 <div class="carousel-description">
                     <p>$300 c/u</p>
                     <p>Bujía Estándar Dodge RAM 3500 8v 5.9</p>
@@ -48,16 +48,19 @@
                     <img src="/ecommerce/ecommerce/imagenes/iconos/Map_pin.png" alt="Ubica tu Yonke">
                     <p>Ubica tu Yonke</p>
                     <span>Cientos de productos para tu auto</span>
+                    <span class="arrow">&#9654;</span>
                 </div>
                 <div class="button">
                     <img src="/ecommerce/ecommerce/imagenes/iconos/icon_carrito.png" alt="Click, compra y recoge">
                     <p>Click, compra y recoge</p>
                     <span>Haz tu pedido en línea</span>
+                    <span class="arrow">&#9654;</span>
                 </div>
                 <div class="button">
                     <img src="/ecommerce/ecommerce/imagenes/iconos/icon_socio.png" alt="¿Quieres ser socio?">
                     <p>¿Quieres ser socio?</p>
                     <span>¡Únete a nosotros!</span>
+                    <span class="arrow">&#9654;</span>
                 </div>
             </section>
 
@@ -154,22 +157,52 @@
     // Array de productos para el carrusel
     const productos = [
         {
-            img: 'imagen_producto1.png',
+            img: '/ecommerce/ecommerce/imagenes/productos/bujia.png',
             precio: '$300 c/u',
             descripcion: 'Bujía Estándar Dodge RAM 3500 8v 5.9',
             vehiculo: '4 RUNNER'
         },
         {
-            img: 'imagen_producto2.png',
+            img: '/ecommerce/ecommerce/imagenes/productos/faros.png',
             precio: '$500 c/u',
-            descripcion: 'Filtro de Aceite Honda Civic',
+            descripcion: 'Faros Honda',
             vehiculo: 'Civic 2008'
-        },
-        {
-            img: 'imagen_producto3.png',
-            precio: '$1200 c/u',
-            descripcion: 'Amortiguadores Toyota Corolla',
-            vehiculo: 'Corolla 2015'
         }
     ];
+
+    let currentIndex = 0;
+    const carouselItem = document.querySelector('.carousel-item');
+    const imageElement = carouselItem.querySelector('img');
+    const priceElement = carouselItem.querySelector('.carousel-description p:nth-child(1)');
+    const descriptionElement = carouselItem.querySelector('.carousel-description p:nth-child(2)');
+    const vehicleElement = carouselItem.querySelector('.carousel-description p:nth-child(3)');
+
+    function updateCarousel() {
+        const producto = productos[currentIndex];
+        imageElement.src = producto.img;
+        priceElement.textContent = producto.precio;
+        descriptionElement.textContent = producto.descripcion;
+        vehicleElement.textContent = producto.vehiculo;
+    }
+
+    function nextProduct() {
+        currentIndex = (currentIndex + 1) % productos.length;
+        updateCarousel();
+    }
+
+    function previousProduct() {
+        currentIndex = (currentIndex - 1 + productos.length) % productos.length;
+        updateCarousel();
+    }
+
+    // Cambio de foto automatica cada 10 segundos
+    setInterval(nextProduct, 10000);
+
+    // Botones del carrusel
+    document.querySelector('.carousel-next').addEventListener('click', nextProduct);
+    document.querySelector('.carousel-prev').addEventListener('click', previousProduct);
+
+    // Inicializacion
+    updateCarousel();
+
 </script>
