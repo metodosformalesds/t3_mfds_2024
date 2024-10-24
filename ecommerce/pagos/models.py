@@ -23,3 +23,14 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f"Transaction {self.TransactionID} - {self.BuyerID.name} to {self.SellerID.name}"
+
+class Payment(models.Model):
+    PaymentID = models.AutoField(primary_key=True)
+    TransactionID = models.ForeignKey('Transaction', on_delete=models.CASCADE)  # Relación con Transaction
+    Amount = models.DecimalField(max_digits=10, decimal_places=2)  # Monto pagado
+    PaymentMethod = models.CharField(max_length=50)  # Método de pago
+    PaymentStatus = models.CharField(max_length=20)  # Estado del pago (Approved, Rejected, Pending)
+    PaymentDate = models.DateTimeField()  # Fecha de pago
+
+    def __str__(self):
+        return f"Payment {self.PaymentID} - {self.PaymentStatus}"
