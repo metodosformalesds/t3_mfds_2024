@@ -6,6 +6,8 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('tienda.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),  # Rutas de autenticación
+
 ]
 
 # Agregar configuración para archivos media
