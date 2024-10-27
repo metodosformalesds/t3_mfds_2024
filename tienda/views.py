@@ -5,6 +5,12 @@ from django.core.mail import send_mail
 from .forms import ProductoForm
 from django.contrib.auth.models import User
 from tienda.models import PerfilUsuario
+from .models import Categoria  # Asegúrate de tener este modelo definido
+
+def index(request):
+    categorias = Categoria.objects.all()  # Obtener todas las categorías desde la base de datos
+    return render(request, 'index.html', {'categorias': categorias})
+
 
 @login_required
 def publicar_producto(request):
