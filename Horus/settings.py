@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.facebook',
-    'allauth.socialaccount.providers.apple',
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -70,12 +69,12 @@ ROOT_URLCONF = 'Horus.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'tienda/templates'],  # Asegúrate que esta ruta sea válida
+        'DIRS': [BASE_DIR / 'tienda/templates'],  # Ruta donde están tus plantillas personalizadas
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
-                'django.template.context_processors.request',
+                'django.template.context_processors.request',  # Necesario para allauth
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
