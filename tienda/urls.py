@@ -13,6 +13,7 @@ urlpatterns = [
     path('historial/', views.historial_pedidos, name='historial'),
     path('registro/', views.registro, name='registro'),
     path('publicar/', views.publicar_producto, name='publicar_producto'),  # Ruta para publicar productos
-    path('accounts/logout/', auth_views.LogoutView.as_view(next_page='index'), name='logout'),  # Logout
-
+    path('accounts/login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('accounts/logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
 ]
+

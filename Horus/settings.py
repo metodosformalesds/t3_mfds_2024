@@ -55,7 +55,7 @@ ROOT_URLCONF = 'Horus.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'tienda/templates/tienda'],  # Asegúrate de que esta ruta sea correcta
+        'DIRS': [BASE_DIR / 'tienda/templates'],  # Asegúrate que esta ruta sea válida
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -67,6 +67,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'Horus.wsgi.application'
 
@@ -117,8 +118,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+
+# Usa la carpeta 'static' para los archivos estáticos durante el desarrollo
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',  # Corrige aquí si antes tenías 'staticfiles'
+]
+
+# Para producción, esta es la carpeta a la que se recopilarán los archivos
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

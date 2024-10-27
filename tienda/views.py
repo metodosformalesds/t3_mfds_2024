@@ -136,6 +136,6 @@ def registro(request):
             # Mostrar mensaje de error si el usuario ya existe
             return render(request, 'registro.html', {'error': 'El usuario ya existe.'})
 
-    return render(request, 'registro.html')
+    return render(request, 'tienda/registro.html')
 
 
