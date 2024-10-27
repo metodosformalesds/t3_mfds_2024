@@ -42,30 +42,24 @@ def detalle_producto(request, id):
 
 # Función para mostrar el carrito
 def carrito(request):
-    carrito = request.session.get('carrito', {})  # Recuperar el carrito de la sesión
-    productos = []
-    total = 0
+    carrito = request.session.get('carrito', [])  # Obtén los productos del carrito de la sesión
+    carrito_vacio = len(carrito) == 0  # Verifica si está vacío
+    total = sum(item['precio'] * item['cantidad'] for item in carrito)
 
-    for id, cantidad in carrito.items():
-        producto = Producto.objects.get(id=id)
-        subtotal = producto.precio * cantidad
-        total += subtotal
-        productos.append({'producto': producto, 'cantidad': cantidad, 'subtotal': subtotal})
-
-    return render(request, 'tienda/carrito.html', {'productos': productos, 'total': total})
+    context = {
+        'productos': carrito,
+        'carrito_vacio': carrito_vacio,
+        'total': total,
+    }
+    return render(request, 'tienda/carrito.html', context)
 
 # Función para agregar productos al carrito
 def agregar_al_carrito(request, id):
     carrito = request.session.get('carrito', {})
+    carrito[id] = carrito.get(id, 0) + 1  # Aumenta la cantidad o agrega el producto
 
-    # Incrementar la cantidad si ya existe, o agregarlo por primera vez
-    if str(id) in carrito:
-        carrito[str(id)] += 1
-    else:
-        carrito[str(id)] = 1
-
-    request.session['carrito'] = carrito  # Guardar el carrito en la sesión
-    return redirect('catalogo')
+    request.session['carrito'] = carrito  # Guarda el carrito en la sesión
+    return redirect('carrito')
 
 # Función para vaciar el carrito
 def vaciar_carrito(request):

@@ -1,6 +1,8 @@
 # tienda/models.py
 from django.contrib.auth.models import User  
 from django.db import models
+from django.shortcuts import render, redirect
+
 
 class Producto(models.Model):
     vendedor = models.ForeignKey(User, on_delete=models.CASCADE)  # Ahora no permite nulos
@@ -47,3 +49,30 @@ class Categoria(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+def carrito(request):
+    # Suponiendo que tienes un carrito en la sesión
+    carrito = request.session.get('carrito', {})
+
+    productos = []
+    total = 0
+
+    # Cargar productos y calcular el total
+    for id, cantidad in carrito.items():
+        producto = Producto.objects.get(id=id)
+        subtotal = producto.precio * cantidad
+        productos.append({
+            'producto': producto,
+            'cantidad': cantidad,
+            'subtotal': subtotal
+        })
+        total += subtotal
+
+    # Pasamos los productos y el total al contexto
+    context = {
+        'productos': productos,
+        'total': total,
+        'carrito_vacio': len(productos) == 0
+    }
+
+    return render(request, 'tienda/carrito.html', context)

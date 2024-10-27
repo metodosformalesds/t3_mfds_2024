@@ -38,16 +38,31 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles', 
     'tienda',
+
+     # Aplicaciones de Allauth
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.apple',
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',  # Middleware de mensajes
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'allauth.account.middleware.AccountMiddleware',  # Agregar esta línea
+
 ]
 
 ROOT_URLCONF = 'Horus.urls'
@@ -148,3 +163,7 @@ EMAIL_HOST_PASSWORD = 'VARC90279'  # Reemplaza con tu contraseña o token
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 LOGIN_REDIRECT_URL = '/catalogo/'
+
+SITE_ID = 1  # Requerido para Allauth
+LOGIN_REDIRECT_URL = '/catalogo/'  # Redirige al catálogo después del login
+LOGOUT_REDIRECT_URL = '/accounts/login/'  # Redirige al login después del logout
