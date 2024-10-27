@@ -7,6 +7,17 @@
 </head>
 <body class="container mt-5">
     <h1 class="text-center">¡Bienvenido a Horus!</h1>
-    <p class="text-center">Encuentra las mejores piezas en Ciudad Juárez.</p>
+
+    <div class="text-center">
+        {% if request.user.is_authenticated %}
+            {% if request.user.perfilusuario.rol == 'vendedor' %}
+                <p>Eres un vendedor. Publica tus productos <a href="{% url 'publicar_producto' %}">aquí</a>.</p>
+            {% elif request.user.perfilusuario.rol == 'comprador' %}
+                <p>Eres un comprador. Explora el catálogo <a href="{% url 'catalogo' %}">aquí</a>.</p>
+            {% endif %}
+        {% else %}
+            <p><a href="{% url 'login' %}">Inicia sesión</a> para acceder a las funcionalidades.</p>
+        {% endif %}
+    </div>
 </body>
 </html>

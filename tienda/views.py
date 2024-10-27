@@ -1,7 +1,27 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Producto, Orden, DetalleOrden
 from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
+from .forms import ProductoForm
+from django.contrib.auth.models import User
+from tienda.models import PerfilUsuario
 
+@login_required
+def publicar_producto(request):
+    if request.user.perfilusuario.rol != 'vendedor':
+        return redirect('catalogo')  # Redirigir si no es vendedor
+
+    if request.method == 'POST':
+        form = ProductoForm(request.POST, request.FILES)
+        if form.is_valid():
+            producto = form.save(commit=False)
+            producto.vendedor = request.user
+            producto.save()
+            return redirect('catalogo')  # Redirige al catálogo después de agregar
+    else:
+        form = ProductoForm()
+
+    return render(request, 'tienda/publicar_producto.html', {'form': form})
 
 def index(request):
     return render(request, 'tienda/index.html')
@@ -54,7 +74,7 @@ def checkout(request):
     total = 0
     productos = []
 
-    # Crear lista de productos y calcular el total
+    # Calcular el total y crear lista de productos
     for id, cantidad in carrito.items():
         producto = Producto.objects.get(id=id)
         subtotal = producto.precio * cantidad
@@ -62,6 +82,7 @@ def checkout(request):
         productos.append({'producto': producto, 'cantidad': cantidad, 'subtotal': subtotal})
 
     if request.method == 'POST':
+        # Crear la orden
         orden = Orden.objects.create(usuario=request.user, total=total)
         for item in productos:
             DetalleOrden.objects.create(
@@ -70,7 +91,19 @@ def checkout(request):
                 cantidad=item['cantidad'],
                 subtotal=item['subtotal']
             )
-        request.session['carrito'] = {}  # Vaciar el carrito después del checkout
+
+        # Vaciar el carrito
+        request.session['carrito'] = {}
+
+        # Enviar correo de confirmación
+        send_mail(
+            'Confirmación de Compra - Horus',
+            f'Tu orden #{orden.id} ha sido confirmada. Total: ${total}.',
+            'tu-email@gmail.com',
+            [request.user.email],  # Enviar al correo del usuario
+            fail_silently=False,
+        )
+
         return redirect('catalogo')
 
     return render(request, 'tienda/checkout.html', {'productos': productos, 'total': total})
@@ -78,4 +111,25 @@ def checkout(request):
 def historial_pedidos(request):
     pedidos = Orden.objects.filter(usuario=request.user).order_by('-fecha')  # Pedidos del usuario
     return render(request, 'tienda/historial.html', {'pedidos': pedidos})
+
+from .forms import RegistroForm, PerfilForm
+
+def registro(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        rol = request.POST['rol']  # 'comprador' o 'vendedor'
+
+        # Crear un nuevo usuario solo si no existe
+        if not User.objects.filter(username=username).exists():
+            user = User.objects.create_user(username=username, password=password)
+            # Crear el perfil con el rol correspondiente
+            PerfilUsuario.objects.create(usuario=user, rol=rol)
+            return redirect('login')  # Redirigir al login después del registro
+        else:
+            # Mostrar mensaje de error si el usuario ya existe
+            return render(request, 'registro.html', {'error': 'El usuario ya existe.'})
+
+    return render(request, 'registro.html')
+
 
