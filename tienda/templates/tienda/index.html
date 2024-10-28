@@ -71,8 +71,6 @@
             color: white;
         }
 
-
-
         .filters {
             margin-top: 20px;
         }
@@ -137,7 +135,12 @@
                     <li class="nav-item"><a class="nav-link" href="#">Selecciona un Yonke</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'carrito' %}">Carrito</a></li>
                     {% if request.user.is_authenticated %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Cerrar Sesión</a></li>
+                        <li class="nav-item">
+                            <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="nav-link btn btn-link">Cerrar Sesión</button>
+                            </form>
+                        </li>
                     {% else %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Iniciar Sesión</a></li>
                     {% endif %}
@@ -204,13 +207,11 @@
             <div class="col-md-2">
                 <select class="form-select" id="modeloSelect" disabled onchange="updateMotor()">
                     <option value="">Modelo</option>
-                    
                 </select>
             </div>
             <div class="col-md-2">
                 <select class="form-select" id="motorSelect" disabled>
                     <option value="">Motor</option>
-                    
                 </select>
             </div>
         </div>
