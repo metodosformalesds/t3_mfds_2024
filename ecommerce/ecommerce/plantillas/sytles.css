@@ -31,42 +31,105 @@ a:hover {
     text-decoration: underline;
 }
 
-/* Estilos del encabezado */
-header .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* Estilos generales del header */
+header {
+    background-color: #f9f9f9;
     padding: 10px 20px;
-}
-
-.navbar nav {
+    border-bottom: 1px solid #ddd;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.navbar nav a {
-    margin: 0 15px;
+/* Primera fila - Íconos de ingresar y carrito a la derecha */
+.top-bar {
     display: flex;
-    align-items: center;
-}
-
-.navbar nav a img {
-    margin-right: 8px;
-    width: 20px;
-    height: 20px;
+    justify-content: flex-end;
 }
 
 .right-side {
     display: flex;
     align-items: center;
+    gap: 20px;
 }
 
-.right-side .user, .right-side .cart {
-    margin-left: 20px;
+.right-side a {
+    text-decoration: none;
+    color: #000;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
-.menu-icon span {
-    font-size: 24px;
+.right-side a img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Segunda fila - Menú lateral, Agregar Vehículo, Buscar, Selecciona un Yonke */
+.bottom-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px; /* Reduce el espacio entre los elementos */
+}
+
+/* Menú lateral, Agregar vehículo, Buscar juntos */
+.menu-icon, nav, .navbar-search {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Alinea y ajusta el espaciado */
+}
+
+/* Menú lateral */
+.menu-icon img {
+    width: 24px;
+    height: 24px;
+}
+
+/* Navegación izquierda (Agregar vehículo y Buscar) */
+nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #000;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.navbar-search {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.navbar-search input {
+    width: 250px; /* Ajusta el ancho del campo de búsqueda */
+    padding: 8px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+}
+
+/* Navegación derecha - Seleccionar Yonke */
+.additional-options a {
+    text-decoration: none;
+    color: #000;
+    font-size: 14px;
+    display: flex;
+    align-items:center;
+    gap: 5px;
+}
+
+.additional-options a img {
+    width: 20px;
+    height: 20px;
 }
 
 /* Estilos del carrusel */
