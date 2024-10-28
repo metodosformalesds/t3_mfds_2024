@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Producto, Orden, DetalleOrden
+from .models import Producto, Orden, DetalleOrden, Yonke
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from .forms import ProductoForm
@@ -132,4 +132,8 @@ def registro(request):
 
     return render(request, 'tienda/registro.html')
 
+def mapa_ubicacion(request):
+    yonkes = Yonke.objects.all()  # Obtiene todos los Yonkes de la base de datos
+    context = {'yonkes': yonkes}
+    return render(request, 'tienda/mapa.html', context)
 

@@ -17,6 +17,8 @@ urlpatterns = [
     path('accounts/login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('accounts/logout/', auth_views.LogoutView.as_view(next_page='/accounts/login/'), name='logout'),
     path('accounts/', include('allauth.urls')),
+    path('mapa/', views.mapa_ubicacion, name='mapa_ubicacion'),  # Ruta para el mapa
+
 
 ]
 
