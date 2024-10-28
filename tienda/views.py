@@ -6,6 +6,8 @@ from .forms import ProductoForm
 from django.contrib.auth.models import User
 from tienda.models import PerfilUsuario
 from .models import Categoria  # Asegúrate de tener este modelo definido
+from django.http import JsonResponse
+
 
 def index(request):
     categorias = Categoria.objects.all()  # Obtener todas las categorías desde la base de datos
@@ -133,7 +135,10 @@ def registro(request):
     return render(request, 'tienda/registro.html')
 
 def mapa_ubicacion(request):
-    yonkes = Yonke.objects.all()  # Obtiene todos los Yonkes de la base de datos
+    yonkes = list(Yonke.objects.values())  # Convertimos a lista de diccionarios
     context = {'yonkes': yonkes}
     return render(request, 'tienda/mapa.html', context)
 
+def lista_yonkes(request):
+    yonkes = Yonke.objects.all().values('nombre', 'direccion', 'latitud', 'longitud')
+    return JsonResponse(list(yonkes), safe=False)

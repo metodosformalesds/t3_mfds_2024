@@ -5,41 +5,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mapa de Yonkes - Horus</title>
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
 
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
         #map {
-            height: 600px;
+            height: 100vh;  /* Ocupa toda la pantalla */
             width: 100%;
         }
     </style>
 </head>
 <body>
 
-    <div class="container mt-5">
-        <h2 class="text-center">Ubica tu Yonke</h2>
-        <div id="map"></div>
-    </div>
+    <h2 class="text-center">Ubica tu Yonke</h2>
 
-    <script>
-        // Inicializar el mapa centrado en Cd. Juárez
-        var map = L.map('map').setView([31.6904, -106.4245], 13);
+    <!-- Contenedor del mapa -->
+    <div id="map"></div>
 
-        // Cargar el mapa desde OpenStreetMap
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
-        // Agregar marcadores para los Yonkes
-        var yonkes = {{ yonkes|safe }};  // Pasar los datos del contexto al JavaScript
-
-        yonkes.forEach(function(yonke) {
-            L.marker([yonke.latitud, yonke.longitud])
-                .addTo(map)
-                .bindPopup(`<strong>${yonke.nombre}</strong><br>${yonke.direccion}`);
-        });
-    </script>
+    <script src="{% static 'js/mapa.js' %}"></script>
 
 </body>
 </html>
