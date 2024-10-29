@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -88,15 +87,16 @@
         <button class="btn btn-light">
             <i class="fas fa-bars"></i>
         </button>
-        <div class="ms-3">
-        </div>
+        <div class="ms-3"></div>
         <input type="text" class="form-control search-bar ms-3" placeholder="Encuentra refacciones y accesorios">
-        <div class="ms-3">
-        </div>
+        <div class="ms-3"></div>
         <div class="ms-auto d-flex align-items-center">
             {% if user.is_authenticated %}
                 <i class="fas fa-user icon"></i> {{ user.username }}
-                <a href="{% url 'logout' %}" class="ms-2">Cerrar sesión</a>
+                <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="ms-2 btn btn-link">Cerrar sesión</button>
+                </form>
             {% else %}
                 <i class="fas fa-user icon"></i> <a href="{% url 'login' %}">Ingresar</a>
             {% endif %}
@@ -149,7 +149,7 @@
                 <div class="col-md-8">
                     {% for item in productos %}
                         <div class="product-card d-flex">
-                            <img src="{% static 'img/product_image.png' %}" alt="Producto" class="img-fluid" style="width: 150px; height: 150px;">
+                            <img src="{% static 'img/product_image.png' %}" alt="{{ item.producto.nombre }}" class="img-fluid" style="width: 150px; height: 150px;">
                             <div class="ms-3">
                                 <h5>{{ item.producto.nombre }}</h5>
                                 <p class="text-muted">Compra en línea y recoge en tienda</p>
