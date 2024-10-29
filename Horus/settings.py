@@ -57,11 +57,10 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',  # Middleware de mensajes
+    'django.contrib.auth.middleware.AuthenticationMiddleware',  # Mover arriba
+    'allauth.account.middleware.AccountMiddleware',  # Asegúrate de que esté debajo de AuthenticationMiddleware
+    'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'allauth.account.middleware.AccountMiddleware',  # Agregar esta línea
-
 ]
 
 ROOT_URLCONF = 'Horus.urls'
