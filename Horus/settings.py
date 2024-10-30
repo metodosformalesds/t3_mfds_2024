@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['3.23.224.207','3.23.224.207:8000', 'localhost', '127.0.0.1']
 
+# Añadir un print para verificar el valor de ALLOWED_HOSTS
+print("ALLOWED_HOSTS:", ALLOWED_HOSTS)
 
 # Application definition
 
