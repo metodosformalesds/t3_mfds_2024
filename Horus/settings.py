@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-*43*7^lh@x#bd&-lp4ro48r^th7#f!y*ao8^+9u5@e$$vy3k2=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '3.23.224.207']
+ALLOWED_HOSTS = ['horuz.me', 'www.horuz.me', '3.23.224.207']
 
 # Añadir un print para verificar el valor de ALLOWED_HOSTS
 print("ALLOWED_HOSTS:", ALLOWED_HOSTS)
