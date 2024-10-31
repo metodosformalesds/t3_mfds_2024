@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PartEx - Home</title>
+    <style>
+        /* Estilos generales */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #F4F4F4;
+            color: #3A3535;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #F4F4F4;
+            padding: 10px 20px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FF7315;
+        }
+
+        .search-bar {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            margin: 0 20px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link {
+            margin-left: 20px;
+            text-decoration: none;
+            color: #3A3535;
+            font-weight: bold;
+        }
+
+        .nav-link:hover {
+            color: #FF7315;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            color: #232020;
+        }
+
+        .user-info span {
+            margin-right: 15px;
+        }
+
+        .logout-form {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">PartEx</div>
+        <div class="search-bar">
+            <input type="text" placeholder="Encuentra Refacciones y Accesorios">
+        </div>
+        <div class="nav-links">
+            {% if user_name %}
+                <div class="user-info">
+                    <span>Hola, {{ user_name }}</span>
+                    <!-- Formulario para cerrar sesión -->
+                    <form class="logout-form" action="/accounts/logout/" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-link" style="background: none; border: none; color: #3A3535; cursor: pointer; font-weight: bold;">Cerrar sesión</button>
+                    </form>
+                </div>
+            {% else %}
+                <a href="/accounts/login/" class="nav-link">Iniciar sesión</a>
+            {% endif %}
+        </div>
+    </nav>
+</body>
+</html>
