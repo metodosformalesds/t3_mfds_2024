@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,25 +7,94 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro - PartEx</title>
-    <link rel="stylesheet" href="{% static 'css/signup.css' %}"> <!-- Enlace a tu hoja de estilos -->
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+    <!-- Enlace para Font Awesome (opcional) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-        <div class="registration-box" style="display: flex; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
-            <!-- Logo a la Izquierda -->
-            <div class="logo-section" style="background-color: #FF7315; padding: 20px;">
-                <img src="{% static 'images/logo.jpg' %}" alt="Logo" style="width: 150px; height: auto;">
+    <div class="signup-container">
+        <div class="signup-box">
+            <!-- Sección de la imagen del logo -->
+            <div class="image-side">
+                <img src="{% static 'images/logo.jpg' %}" alt="Signup Image">
             </div>
 
-            <!-- Formulario de Registro a la Derecha -->
-            <div class="form-section" style="padding: 40px; background-color: #F4F4F4; width: 400px;">
-                <h2 style="color: #3A3535; text-align: center; margin-bottom: 20px;">Register</h2>
-                <form method="post" action="">
+            <!-- Sección del formulario de registro -->
+            <div class="form-side">
+                <h2>Crear Cuenta</h2>
+                <form method="post">
                     {% csrf_token %}
-                    {{ form.as_p }}
-                    <button type="submit" class="btn btn-primary" style="background-color: #3A3535; border: none; width: 100%; padding: 10px; color: white; font-weight: bold;">
-                        Register
-                    </button>
+                    
+                    <!-- Campo de Username -->
+                    <div class="input-box">
+                        {{ form.username.label_tag }} <br>
+                        {{ form.username }}
+                    </div>
+                
+                    <!-- Campo de Email -->
+                    <div class="input-box">
+                        {{ form.email.label_tag }}<br>
+                        {{ form.email }}
+                    </div>
+                
+                    <!-- Campo de Nombre -->
+                    <div class="input-box">
+                        {{ form.first_name.label_tag }}<br>
+                        {{ form.first_name }}
+                    </div>
+                
+                    <!-- Campo de Apellido -->
+                    <div class="input-box">
+                        {{ form.last_name.label_tag }}<br>
+                        {{ form.last_name }}
+                    </div>
+                
+                    <!-- Campo de Edad -->
+                    <div class="input-box">
+                        {{ form.age.label_tag }}<br>
+                        {{ form.age }}
+                    </div>
+                
+                    <!-- Campo de Dirección -->
+                    <div class="input-box">
+                        {{ form.address.label_tag }}<br>
+                        {{ form.address }}
+                    </div>
+                
+                    <!-- Campo de Número de Teléfono -->
+                    <div class="input-box">
+                        {{ form.phone_number.label_tag }}<br>
+                        {{ form.phone_number }}
+                    </div>
+                
+                    <!-- Campo de Rol -->
+                    <div class="input-box">
+                        {{ form.role.label_tag }}<br>
+                        {{ form.role }}
+                    </div>
+                
+                    <!-- Campo de Contraseña -->
+                    <div class="input-box">
+                        {{ form.password1.label_tag }}<br>
+                        {{ form.password1 }}
+                    </div>
+
+                    <!-- Campo de Confirmación de Contraseña -->
+                    <div class="input-box">
+                        {{ form.password2.label_tag }}<br>
+                        {{ form.password2 }}
+                    </div>
+                
+                    <!-- Botón de Registro -->
+                    <div class="button-box">
+                        <button type="submit" class="signup-btn">Registrar</button>
+                    </div>
+
+                    <!-- Texto y botón para redirigir al login -->
+                    <div class="login-redirect">
+                        <p>¿Ya tienes cuenta?</p>
+                        <a href="{% url 'account_login' %}" class="signup-btn login-btn">Iniciar Sesión</a>
+                    </div>
                 </form>
             </div>
         </div>
