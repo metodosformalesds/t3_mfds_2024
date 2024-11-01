@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-p1dbvzb%vl0mr4n9gdl)_#qo4qjjsx5k1q2+0kniemzz$-1k_o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+
 
 
 # Application definition
@@ -55,12 +56,15 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 SITE_ID = 1
+
 LOGIN_REDIRECT_URL = '/'
 ACCOUNT_SIGNUP_REDIRECT_URL = '/completar-perfil/'
 # Redirigir al usuario al Home después del registro
 ACCOUNT_SIGNUP_REDIRECT_URL = '/'
 
-
+#informacion de omision de la pagina
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_QUERY_EMAIL = True
 
 
 # Configuración de crispy-forms

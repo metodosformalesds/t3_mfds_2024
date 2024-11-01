@@ -180,3 +180,33 @@ button:hover, .register-btn:hover {
         transform: translateY(0);
     }
 }
+.google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #DB4437; /* Rojo oficial de Google */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    width: 100%; /* Ancho completo para igualar el botón de Registrar */
+    max-width: 300px; /* Limita el ancho máximo si es necesario */
+}
+
+.google-btn:hover {
+    background-color: #C53727; /* Rojo más oscuro al pasar el cursor */
+}
+
+.google-icon {
+    font-size: 16px; /* Tamaño de la letra "G" */
+    margin-right: 10px; /* Espacio entre el ícono y el texto */
+}
+
+.google-text {
+    font-size: 14px;
+}
