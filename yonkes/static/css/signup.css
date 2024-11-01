@@ -6,11 +6,12 @@
 }
 
 body {
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     background: linear-gradient(135deg, #FF4500, #000000);
+    padding: 20px;
 }
 
 .signup-container {
@@ -18,12 +19,15 @@ body {
     justify-content: center;
     align-items: center;
     height: 100%;
+    width: 100%;
+    max-width: 1200px;
 }
 
 .signup-box {
     display: flex;
-    width: 650px; /* Un poco más estrecho */
-    height: auto;
+    flex-direction: row;
+    width: 100%;
+    max-width: 900px;
     background-color: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
@@ -38,7 +42,7 @@ body {
 }
 
 .image-side {
-    width: 50%;
+    width: 50%; /* Cambié el ancho a 40% en lugar de 30% */
     background-color: #ddd;
 }
 
@@ -49,57 +53,59 @@ body {
     transition: transform 0.3s ease;
 }
 
-.signup-box:hover .image-side img {
-    transform: scale(1.05);
-}
-
-.form-side {
-    width: 50%;
-    padding: 25px; /* Un poco menos de padding */
+.form-content {
+    width: 60%; /* Ajusté el ancho de la sección del formulario a 60% */
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
 }
 
 h2 {
-    margin-bottom: 10px; /* Menos margen */
     text-align: center;
-    font-size: 18px; /* Tamaño de fuente más pequeño */
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.form-columns {
+    display: flex;
+    gap: 20px; /* Espacio entre las columnas */
+}
+
+.column {
+    flex: 1; /* Las columnas ocupan el mismo ancho */
+    display: flex;
+    flex-direction: column;
 }
 
 .input-box {
-    margin-bottom: 8px; /* Menos margen */
+    margin-bottom: 10px;
 }
 
 .input-box input, .input-box select, .input-box textarea {
     width: 100%;
-    padding: 6px; /* Menos padding */
+    padding: 8px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    font-size: 13px; /* Fuente más pequeña */
+    font-size: 14px;
     transition: border 0.3s ease;
 }
 
-.input-box input:focus, .input-box select:focus, .input-box textarea:focus {
-    border-color: #605678;
-    outline: none;
-}
-
 .button-box {
-    margin-top: 10px; /* Menos margen */
+    margin-top: 15px;
 }
 
 .signup-btn {
     width: 100%;
-    padding: 8px; /* Menos padding */
-    border: none;
-    border-radius: 5px;
-    font-size: 13px; /* Fuente más pequeña */
-    font-weight: bold;
-    cursor: pointer;
+    padding: 10px;
     background-color: #FF7315;
     color: #000000;
-    transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .signup-btn:hover {
@@ -108,79 +114,43 @@ h2 {
     border: 2px solid #000000;
 }
 
-/* Efecto responsive para pantallas pequeñas */
-@media screen and (max-width: 768px) {
-    .signup-box {
-        flex-direction: column;
-    }
-}
-
-/* Animación de entrada */
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 .login-redirect {
     text-align: center;
-    margin-top: 15px; /* Espacio superior */
-}
-
-.login-redirect p {
-    margin-bottom: 8px; /* Espacio entre el texto y el botón */
-    font-size: 13px; /* Tamaño de fuente */
-    color: #555; /* Color del texto */
+    margin-top: 10px;
 }
 
 .login-btn {
-    display: inline-block;
-    padding: 8px 12px;
-    border: none;
+    padding: 8px;
+    background-color: #FF7315;
+    color: #000000;
     border-radius: 5px;
-    background-color: #FF7315; /* Color de fondo */
-    color: black; /* Color del texto */
-    font-size: 13px; /* Tamaño de fuente */
-    text-decoration: none; /* Sin subrayado */
+    text-decoration: none;
+    font-size: 13px;
     transition: background-color 0.3s ease;
 }
 
 .login-btn:hover {
-    background-color: #000000; /* Cambia el fondo al pasar el cursor */
+    background-color: #000000;
+    color: #FF7315;
 }
 
-.login-redirect {
-    text-align: center;
-    margin-top: 15px; /* Espacio superior */
-}
+/* Responsividad */
+@media screen and (max-width: 768px) {
+    .signup-box {
+        flex-direction: column;
+    }
 
-.login-redirect p {
-    margin-bottom: 8px; /* Espacio entre el texto y el botón */
-    font-size: 15px; /* Tamaño de fuente */
-    color: black; /* Color del texto */
-}
+    .image-side {
+        width: 100%;
+        height: 200px;
+    }
 
-.signup-btn {
-    display: inline-block;
-    width: 100%; /* Asegúrate de que el ancho sea completo */
-    padding: 12px; /* Ajuste del padding */
-    border: none;
-    border-radius: 5px;
-    background-color: #FF7315; /* Color de fondo */
-    color: #000000; /* Color del texto */
-    font-size: 13px; /* Tamaño de fuente */
-    font-weight: bold;
-    cursor: pointer;
-    text-decoration: none; /* Sin subrayado para el enlace */
-    transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease;
-}
+    .form-content {
+        width: 100%;
+        padding: 15px;
+    }
 
-.signup-btn:hover {
-    background-color: #000000; /* Cambia el fondo al pasar el cursor */
-    color: #FF7315; /* Cambia el color del texto */
-    border: 2px solid #000000; /* Borde */
+    .form-columns {
+        flex-direction: column; /* Cambia a disposición vertical en pantallas pequeñas */
+    }
 }

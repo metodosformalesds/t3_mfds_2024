@@ -19,83 +19,75 @@
                 <img src="{% static 'images/logo.jpg' %}" alt="Signup Image">
             </div>
 
-            <!-- Sección del formulario de registro -->
-            <div class="form-side">
+            <!-- Sección central del formulario -->
+            <div class="form-content">
                 <h2>Crear Cuenta</h2>
-                <form method="post">
+                <!-- Asegúrate de tener la URL de acción correcta para el formulario -->
+                <form method="post" action="{% url 'account_signup' %}">
                     {% csrf_token %}
+                    <!-- Contenedor de dos columnas -->
+                    <div class="form-columns">
+                        <div class="column">
+                            <div class="input-box">
+                                {{ form.username.label_tag }}<br>
+                                {{ form.username }}
+                            </div>
+                            <div class="input-box">
+                                {{ form.first_name.label_tag }}<br>
+                                {{ form.first_name }}
+                            </div>
+                            <div class="input-box">
+                                {{ form.age.label_tag }}<br>
+                                {{ form.age }}
+                            </div>
+                            <div class="input-box">
+                                {{ form.phone_number.label_tag }}<br>
+                                {{ form.phone_number }}
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="input-box">
+                                {{ form.email.label_tag }}<br>
+                                {{ form.email }}
+                            </div>
+                            <div class="input-box">
+                                {{ form.last_name.label_tag }}<br>
+                                {{ form.last_name }}
+                            </div>
+                            <div class="input-box">
+                                {{ form.address.label_tag }}<br>
+                                {{ form.address }}
+                            </div>
+                            <div class="input-box">
+                                {{ form.role.label_tag }}<br>
+                                {{ form.role }}
+                            </div>
+                        </div>
+                    </div>
                     
-                    <!-- Campo de Username -->
-                    <div class="input-box">
-                        {{ form.username.label_tag }} <br>
-                        {{ form.username }}
-                    </div>
-                
-                    <!-- Campo de Email -->
-                    <div class="input-box">
-                        {{ form.email.label_tag }}<br>
-                        {{ form.email }}
-                    </div>
-                
-                    <!-- Campo de Nombre -->
-                    <div class="input-box">
-                        {{ form.first_name.label_tag }}<br>
-                        {{ form.first_name }}
-                    </div>
-                
-                    <!-- Campo de Apellido -->
-                    <div class="input-box">
-                        {{ form.last_name.label_tag }}<br>
-                        {{ form.last_name }}
-                    </div>
-                
-                    <!-- Campo de Edad -->
-                    <div class="input-box">
-                        {{ form.age.label_tag }}<br>
-                        {{ form.age }}
-                    </div>
-                
-                    <!-- Campo de Dirección -->
-                    <div class="input-box">
-                        {{ form.address.label_tag }}<br>
-                        {{ form.address }}
-                    </div>
-                
-                    <!-- Campo de Número de Teléfono -->
-                    <div class="input-box">
-                        {{ form.phone_number.label_tag }}<br>
-                        {{ form.phone_number }}
-                    </div>
-                
-                    <!-- Campo de Rol -->
-                    <div class="input-box">
-                        {{ form.role.label_tag }}<br>
-                        {{ form.role }}
-                    </div>
-                
-                    <!-- Campo de Contraseña -->
+                    <!-- Campos de Contraseña -->
                     <div class="input-box">
                         {{ form.password1.label_tag }}<br>
                         {{ form.password1 }}
                     </div>
-
-                    <!-- Campo de Confirmación de Contraseña -->
                     <div class="input-box">
                         {{ form.password2.label_tag }}<br>
                         {{ form.password2 }}
                     </div>
-                
-                    <!-- Botón de Registro -->
+
+                    <!-- Botón de registro -->
                     <div class="button-box">
                         <button type="submit" class="signup-btn">Registrar</button>
                     </div>
-
-                    <!-- Texto y botón para redirigir al login -->
-                    <div class="login-redirect">
-                        <p>¿Ya tienes cuenta?</p>
-                        <a href="{% url 'account_login' %}" class="signup-btn login-btn">Iniciar Sesión</a>
-                    </div>
                 </form>
+
+                <!-- Botón de redirección al login -->
+                <div class="login-redirect">
+                    <p>¿Ya tienes cuenta?</p><br>
+                    <form action="{% url 'account_login' %}" method="get">
+                        <button type="submit" class="signup-btn">Iniciar Sesión</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
