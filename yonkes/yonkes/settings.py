@@ -63,9 +63,8 @@ ACCOUNT_SIGNUP_REDIRECT_URL = '/completar-perfil/'
 ACCOUNT_SIGNUP_REDIRECT_URL = '/'
 
 #informacion de omision de la pagina
+SOCIALACCOUNT_LOGIN_ON_GET = True
 SOCIALACCOUNT_AUTO_SIGNUP = True
-SOCIALACCOUNT_QUERY_EMAIL = True
-
 
 # Configuración de crispy-forms
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
