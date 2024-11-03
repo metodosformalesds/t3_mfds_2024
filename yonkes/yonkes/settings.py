@@ -72,7 +72,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # Configuración del modelo de usuario personalizado
 AUTH_USER_MODEL = 'core.CustomUser'
 
-ACCOUNT_FORMS = {'signup': 'core.forms.CustomSignupForm'}
+ACCOUNT_FORMS = {'signup': 'allauth.account.forms.SignupForm'}
 
 LANGUAGE_CODE = 'es-eu'
 

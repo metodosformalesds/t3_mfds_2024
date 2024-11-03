@@ -25,47 +25,16 @@
                 <!-- Asegúrate de tener la URL de acción correcta para el formulario -->
                 <form method="post" action="{% url 'account_signup' %}">
                     {% csrf_token %}
-                    <!-- Contenedor de dos columnas -->
-                    <div class="form-columns">
-                        <div class="column">
-                            <div class="input-box">
-                                {{ form.username.label_tag }}<br>
-                                {{ form.username }}
-                            </div>
-                            <div class="input-box">
-                                {{ form.first_name.label_tag }}<br>
-                                {{ form.first_name }}
-                            </div>
-                            <div class="input-box">
-                                {{ form.age.label_tag }}<br>
-                                {{ form.age }}
-                            </div>
-                            <div class="input-box">
-                                {{ form.phone_number.label_tag }}<br>
-                                {{ form.phone_number }}
-                            </div>
-                        </div>
-                        <div class="column">
-                            <div class="input-box">
-                                {{ form.email.label_tag }}<br>
-                                {{ form.email }}
-                            </div>
-                            <div class="input-box">
-                                {{ form.last_name.label_tag }}<br>
-                                {{ form.last_name }}
-                            </div>
-                            <div class="input-box">
-                                {{ form.address.label_tag }}<br>
-                                {{ form.address }}
-                            </div>
-                            <div class="input-box">
-                                {{ form.role.label_tag }}<br>
-                                {{ form.role }}
-                            </div>
-                        </div>
-                    </div>
                     
-                    <!-- Campos de Contraseña -->
+                    <!-- Campos básicos del formulario -->
+                    <div class="input-box">
+                        {{ form.username.label_tag }}<br>
+                        {{ form.username }}
+                    </div>
+                    <div class="input-box">
+                        {{ form.email.label_tag }}<br>
+                        {{ form.email }}
+                    </div>
                     <div class="input-box">
                         {{ form.password1.label_tag }}<br>
                         {{ form.password1 }}
