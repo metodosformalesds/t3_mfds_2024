@@ -13,24 +13,28 @@ def home(request):
 @login_required
 def complete_profile(request):
     user = request.user
-    if user.street and user.city and user.role:  # Verifica si ya se ha completado el perfil
-        if user.role == 'vendedor':
-            return redirect('vendedor_panel_url')  # Redirige al panel del vendedor
-        elif user.role == 'comprador':
-            return redirect('comprador_panel_url')  # Redirige al panel del comprador
-        else:
-            return redirect('/')  # O redirige a una página por defecto si el rol no está definido
 
+    # Verifica si el perfil del usuario está completo
+    if user.street and user.city and user.role:
+        # Si el perfil está completo, redirige al panel correspondiente
+        if user.role == 'vendedor':
+            return redirect('vendedor_panel_url')
+        elif user.role == 'comprador':
+            return redirect('comprador_panel_url')
+    
+    # Si el perfil no está completo, muestra el formulario para completarlo
     if request.method == 'POST':
         form = CompleteProfileForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
+            # Una vez completado el perfil, redirige al panel correspondiente
             if user.role == 'vendedor':
                 return redirect('vendedor_panel_url')
             elif user.role == 'comprador':
                 return redirect('comprador_panel_url')
     else:
         form = CompleteProfileForm(instance=user)
+
     return render(request, 'core/complete_profile.html', {'form': form})
 
 # Panel de vendedor
@@ -47,9 +51,13 @@ def comprador_panel(request):
 @login_required
 def redirect_after_login(request):
     user = request.user
-    if user.role == 'vendedor':
+    # Si el perfil no está completo, redirige a completar el perfil
+    if not (user.street and user.city and user.role):
+        return redirect('complete_profile_url')
+    elif user.role == 'vendedor':
         return redirect('vendedor_panel_url')
     elif user.role == 'comprador':
         return redirect('comprador_panel_url')
     else:
-        return redirect('/')  # Redirige al Home si el rol no está definido
+        return redirect('/')  # O maneja el caso de redirección por defecto si algo sale mal
+
