@@ -2,17 +2,14 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 class CustomUser(AbstractUser):
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
-    age = models.PositiveIntegerField(null=True, blank=True)  # Permite valores nulos y en blanco
-    address = models.CharField(max_length=255, blank=True, null=True)  # Para OpenStreetMap
-    phone_number = models.CharField(max_length=15)  # Para WhatsApp
-    ROLE_CHOICES = (
-        ('buyer', 'Comprador'),
-        ('seller', 'Vendedor'),
-    )
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='buyer')
-    is_profile_complete = models.BooleanField(default=False)  # Indica si el perfil está completo
+    street = models.CharField(max_length=255)
+    street_number = models.CharField(max_length=10)
+    apartment_number = models.CharField(max_length=10, blank=True, null=True)
+    neighborhood = models.CharField(max_length=100)
+    postal_code = models.CharField(max_length=20)
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    country = models.CharField(max_length=100)
+    phone_number = models.CharField(max_length=20)
+    role = models.CharField(max_length=20, choices=[('vendedor', 'Vendedor'), ('comprador', 'Comprador')])
 
-    def __str__(self):
-        return self.username

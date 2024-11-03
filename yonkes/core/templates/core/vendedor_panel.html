@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel del Vendedor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            font-size: 24px;
+        }
+        .logout-link {
+            text-decoration: none;
+            color: #ff7315;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Panel del Vendedor</h1>
+            <!-- Enlace para cerrar sesión -->
+            <form action="/accounts/logout/" method="POST" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="logout-link" style="background: none; border: none; color: #ff7315; cursor: pointer;">Cerrar sesión</button>
+            </form>
+        </div>
+        <p>Bienvenido al panel del vendedor. Aquí puedes gestionar tus productos y ventas.</p>
+    </div>
+</body>
+</html>

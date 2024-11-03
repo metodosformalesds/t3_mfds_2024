@@ -28,20 +28,6 @@
             color: #FF7315;
         }
 
-        .search-bar {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            margin: 0 20px;
-        }
-
-        .search-bar input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #E0E0E0;
-            border-radius: 4px;
-        }
-
         .nav-links {
             display: flex;
             align-items: center;
@@ -52,20 +38,11 @@
             text-decoration: none;
             color: #3A3535;
             font-weight: bold;
+            cursor: pointer;
         }
 
         .nav-link:hover {
             color: #FF7315;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            color: #232020;
-        }
-
-        .user-info span {
-            margin-right: 15px;
         }
 
         .logout-form {
@@ -76,20 +53,17 @@
 <body>
     <nav class="navbar">
         <div class="logo">PartEx</div>
-        <div class="search-bar">
-            <input type="text" placeholder="Encuentra Refacciones y Accesorios">
-        </div>
         <div class="nav-links">
-            {% if user_name %}
-                <div class="user-info">
-                    <span>Hola, {{ user_name }}</span>
-                    <!-- Formulario para cerrar sesión -->
-                    <form class="logout-form" action="/accounts/logout/" method="POST">
-                        {% csrf_token %}
-                        <button type="submit" class="nav-link" style="background: none; border: none; color: #3A3535; cursor: pointer; font-weight: bold;">Cerrar sesión</button>
-                    </form>
-                </div>
+            {% if user.is_authenticated %}
+                <!-- Botón de cerrar sesión -->
+                <form class="logout-form" action="/accounts/logout/" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="nav-link" style="background: none; border: none; color: #3A3535; cursor: pointer; font-weight: bold;">
+                        Cerrar sesión
+                    </button>
+                </form>
             {% else %}
+                <!-- Botón de iniciar sesión -->
                 <a href="/accounts/login/" class="nav-link">Iniciar sesión</a>
             {% endif %}
         </div>

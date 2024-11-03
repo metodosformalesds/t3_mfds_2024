@@ -1,0 +1,20 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Completa tu Perfil</title>
+    <link rel="stylesheet" href="{% static 'css/complete_profile.css' %}">
+</head>
+<body>
+    <div class="profile-container">
+        <h2>Completa tu Perfil</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn-save">Guardar</button>
+        </form>
+    </div>
+</body>
+</html>
