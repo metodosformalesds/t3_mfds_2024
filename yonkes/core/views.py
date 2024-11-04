@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Producto
+from .models import Producto, ImagenProducto
 from .forms import CompleteProfileForm, ProductoForm
 
 # Vista para la página Home con lógica de autenticación
@@ -69,16 +69,27 @@ def listar_productos(request):
     productos = Producto.objects.filter(vendedor=request.user)
     return render(request, 'core/listar_productos.html', {'productos': productos})
 
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Producto, ImagenProducto
+from .forms import ProductoForm
+
 @login_required
 def agregar_producto(request):
     if request.method == 'POST':
-        form = ProductoForm(request.POST, request.FILES)
+        form = ProductoForm(request.POST)
+        archivos = request.FILES.getlist('imagenes')  # Asegúrate de que se obtengan los archivos
         if form.is_valid():
             producto = form.save(commit=False)
-            producto.vendedor = request.user  # Asigna el usuario actual como vendedor
+            producto.vendedor = request.user
             producto.save()
-            # Redirige al panel de vendedor después de añadir el producto
-            return redirect('vendedor_panel_url')  # Asegúrate de que 'vendedor_panel_url' sea el nombre correcto
+
+            # Guardar cada imagen en el modelo ImagenProducto
+            for archivo in archivos:
+                ImagenProducto.objects.create(producto=producto, imagen=archivo)
+
+            return redirect('vendedor_panel_url')  # Asegúrate de que 'vendedor_panel_url' sea correcto
     else:
         form = ProductoForm()
     return render(request, 'core/agregar_producto.html', {'form': form})
