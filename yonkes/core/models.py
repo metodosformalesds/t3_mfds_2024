@@ -24,6 +24,10 @@ class Producto(models.Model):
     descripcion = models.TextField()
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     categoria = models.CharField(max_length=50)
+    marca = models.CharField(max_length=100, default="Desconocida")  # Valor por defecto
+    modelo = models.CharField(max_length=100, default="Desconocido")  # Valor por defecto
+    año = models.CharField(max_length=4, default="2020")  # Valor por defecto
+    motor = models.CharField(max_length=50, default="N/A")  # Valor por defecto
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     disponible = models.BooleanField(default=True)
 

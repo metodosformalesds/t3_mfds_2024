@@ -7,11 +7,79 @@
     <title>Panel del Vendedor</title>
     <!-- Enlace al archivo CSS dentro de la carpeta static -->
     <link rel="stylesheet" href="{% static 'core/css/vendedor_panel.css' %}">
+    <style>
+        .product-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px;
+        }
+        .image-carousel {
+            flex: 0 0 400px; /* Tamaño fijo más grande para la imagen */
+            height: 300px; /* Altura ajustada */
+            margin-right: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .carousel-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ajusta la imagen para cubrir completamente el espacio */
+            border-radius: 5px;
+        }
+        .carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px 10px;
+            border-radius: 3px;
+        }
+        .arrow-left {
+            left: 10px;
+        }
+        .arrow-right {
+            right: 10px;
+        }
+        .product-details {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 150px auto; /* Columnas alineadas */
+            gap: 5px;
+        }
+        .product-details p {
+            margin: 5px 0;
+        }
+        .product-actions {
+            display: flex;
+            flex-direction: column; /* Botones en columna */
+            gap: 10px; /* Espacio entre los botones */
+            margin-left: 20px;
+        }
+        .edit-button, .delete-button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
+        }
+        .edit-button {
+            background-color: #004085;
+        }
+        .delete-button {
+            background-color: #c82333;
+        }
+    </style>
     <script>
         // Función para mostrar la confirmación antes de eliminar
         function confirmarEliminacion(event) {
             if (!confirm("¿Estás seguro de que deseas eliminar este producto?")) {
-                event.preventDefault(); // Evita que el formulario se envíe si el usuario cancela
+                event.preventDefault();
             }
         }
 
@@ -28,6 +96,10 @@
             const images = document.querySelectorAll(`#producto-${productoId} .carousel-image`);
             const totalImages = images.length;
 
+            // Mostrar la primera imagen por defecto
+            showImage(currentIndex, productoId);
+
+            // Configurar las flechas del carrusel
             document.querySelector(`#producto-${productoId} .arrow-left`).addEventListener('click', () => {
                 currentIndex = (currentIndex - 1 + totalImages) % totalImages;
                 showImage(currentIndex, productoId);
@@ -38,8 +110,11 @@
                 showImage(currentIndex, productoId);
             });
 
-            // Mostrar la primera imagen por defecto
-            showImage(currentIndex, productoId);
+            // Configurar el cambio automático de imágenes cada 2 segundos
+            setInterval(() => {
+                currentIndex = (currentIndex + 1) % totalImages;
+                showImage(currentIndex, productoId);
+            }, 2000);
         }
 
         // Configurar los carruseles cuando la página se cargue
@@ -82,19 +157,23 @@
                         </div>
                         <!-- Detalles del producto -->
                         <div class="product-details">
-                            <h3>{{ producto.nombre }}</h3>
-                            <p>Precio: ${{ producto.precio }}</p>
-                            <p>Categoría: {{ producto.categoria }}</p>
-                            <p>{{ producto.descripcion }}</p>
-                            <div class="product-actions">
-                                <!-- Botón de Editar Producto -->
-                                <a href="{% url 'editar_producto' producto.pk %}" class="edit-button">Editar</a>
-                                <!-- Botón de Eliminar Producto con confirmación -->
-                                <form action="{% url 'eliminar_producto' producto.pk %}" method="post" style="display: inline;" onsubmit="confirmarEliminacion(event)">
-                                    {% csrf_token %}
-                                    <button type="submit" class="delete-button">Eliminar</button>
-                                </form>
-                            </div>
+                            <p><strong>Nombre:</strong></p> <p>{{ producto.nombre }}</p>
+                            <p><strong>Precio:</strong></p> <p>${{ producto.precio }}</p>
+                            <p><strong>Categoría:</strong></p> <p>{{ producto.categoria }}</p>
+                            <p><strong>Marca:</strong></p> <p>{{ producto.marca }}</p>
+                            <p><strong>Modelo:</strong></p> <p>{{ producto.modelo }}</p>
+                            <p><strong>Año:</strong></p> <p>{{ producto.año }}</p>
+                            <p><strong>Motor:</strong></p> <p>{{ producto.motor }}</p>
+                            <p><strong>Descripción:</strong></p> <p>{{ producto.descripcion }}</p>
+                        </div>
+                        <div class="product-actions">
+                            <!-- Botón de Editar Producto -->
+                            <a href="{% url 'editar_producto' producto.pk %}" class="edit-button">Editar</a>
+                            <!-- Botón de Eliminar Producto con confirmación -->
+                            <form action="{% url 'eliminar_producto' producto.pk %}" method="post" style="display: inline;" onsubmit="confirmarEliminacion(event)">
+                                {% csrf_token %}
+                                <button type="submit" class="delete-button">Eliminar</button>
+                            </form>
                         </div>
                     </li>
                 {% endfor %}

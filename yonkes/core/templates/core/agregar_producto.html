@@ -67,7 +67,11 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
-            <input type="file" name="imagenes" multiple>
+            
+            <!-- Campo para cargar múltiples imágenes -->
+            <label for="id_imagenes">Imágenes:</label>
+            <input type="file" name="imagenes" id="id_imagenes" multiple>
+            
             <button type="submit">Guardar Producto</button>
         </form>        
         <div class="back-links">

@@ -70,11 +70,6 @@ def listar_productos(request):
     return render(request, 'core/listar_productos.html', {'productos': productos})
 
 
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from .models import Producto, ImagenProducto
-from .forms import ProductoForm
-
 @login_required
 def agregar_producto(request):
     if request.method == 'POST':

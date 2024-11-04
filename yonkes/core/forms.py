@@ -26,5 +26,15 @@ class CompleteProfileForm(forms.ModelForm):
 class ProductoForm(forms.ModelForm):
     class Meta:
         model = Producto
-        fields = ['nombre', 'descripcion', 'precio', 'categoria', 'disponible']
+        fields = [
+            'nombre',
+            'descripcion',
+            'precio',
+            'categoria',
+            'marca',  # Añade el nuevo campo
+            'modelo',  # Añade el nuevo campo
+            'año',     # Añade el nuevo campo
+            'motor',   # Añade el nuevo campo
+            'disponible'
+        ]
 
