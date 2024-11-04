@@ -1,5 +1,5 @@
 from django import forms
-from .models import CustomUser
+from .models import CustomUser, Producto
 
 class CompleteProfileForm(forms.ModelForm):
     class Meta:
@@ -22,3 +22,9 @@ class CompleteProfileForm(forms.ModelForm):
             'phone_number': forms.TextInput(attrs={'placeholder': 'Número de teléfono'}),
             'role': forms.Select(choices=[('vendedor', 'Vendedor'), ('comprador', 'Comprador')]),
         }
+        
+class ProductoForm(forms.ModelForm):
+    class Meta:
+        model = Producto
+        fields = ['nombre', 'descripcion', 'precio', 'categoria', 'imagen', 'disponible']
+

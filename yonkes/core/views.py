@@ -1,6 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .forms import CompleteProfileForm
+from .models import Producto
+from .forms import CompleteProfileForm, ProductoForm
 
 # Vista para la página Home con lógica de autenticación
 def home(request):
@@ -40,7 +41,8 @@ def complete_profile(request):
 # Panel de vendedor
 @login_required
 def vendedor_panel(request):
-    return render(request, 'core/vendedor_panel.html')
+    productos = Producto.objects.filter(vendedor=request.user)
+    return render(request, 'core/vendedor_panel.html', {'productos': productos})
 
 # Panel de comprador
 @login_required
@@ -61,3 +63,42 @@ def redirect_after_login(request):
     else:
         return redirect('/')  # O maneja el caso de redirección por defecto si algo sale mal
 
+#PRODUCTOS
+@login_required
+def listar_productos(request):
+    productos = Producto.objects.filter(vendedor=request.user)
+    return render(request, 'core/listar_productos.html', {'productos': productos})
+
+@login_required
+def agregar_producto(request):
+    if request.method == 'POST':
+        form = ProductoForm(request.POST, request.FILES)
+        if form.is_valid():
+            producto = form.save(commit=False)
+            producto.vendedor = request.user  # Asigna el usuario actual como vendedor
+            producto.save()
+            # Redirige al panel de vendedor después de añadir el producto
+            return redirect('vendedor_panel_url')  # Asegúrate de que 'vendedor_panel_url' sea el nombre correcto
+    else:
+        form = ProductoForm()
+    return render(request, 'core/agregar_producto.html', {'form': form})
+
+@login_required
+def editar_producto(request, pk):
+    producto = get_object_or_404(Producto, pk=pk, vendedor=request.user)
+    if request.method == 'POST':
+        form = ProductoForm(request.POST, request.FILES, instance=producto)
+        if form.is_valid():
+            form.save()
+            return redirect('listar_productos')
+    else:
+        form = ProductoForm(instance=producto)
+    return render(request, 'core/editar_producto.html', {'form': form})
+
+@login_required
+def eliminar_producto(request, pk):
+    producto = get_object_or_404(Producto, pk=pk, vendedor=request.user)
+    if request.method == 'POST':
+        producto.delete()
+        # Redirige al panel de vendedor después de eliminar
+        return redirect('vendedor_panel_url')  # Asegúrate de que 'vendedor_panel_url' sea el nombre correcto

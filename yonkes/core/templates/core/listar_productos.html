@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Productos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 15px;
+            margin: 10px 0;
+            background-color: #ff7315;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .button:hover {
+            background-color: #e66512;
+        }
+        .product-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .product-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+        .product-actions a {
+            margin-right: 10px;
+        }
+        .product-actions form {
+            display: inline;
+        }
+        .delete-button {
+            background-color: #d9534f;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .delete-button:hover {
+            background-color: #c9302c;
+        }
+        .back-links {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .back-link {
+            text-decoration: none;
+            color: #ff7315;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mis Productos</h1>
+        <a href="{% url 'agregar_producto' %}" class="button">Añadir Producto</a>
+        <ul class="product-list">
+            {% if productos %}
+                {% for producto in productos %}
+                    <li class="product-item">
+                        <h3>{{ producto.nombre }}</h3>
+                        <p>{{ producto.descripcion }}</p>
+                        <p>Precio: ${{ producto.precio }}</p>
+                        <div class="product-actions">
+                            <a href="{% url 'editar_producto' producto.pk %}" class="button">Editar</a>
+                            <form action="{% url 'eliminar_producto' producto.pk %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="delete-button">Eliminar</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <p>No tienes productos en venta.</p>
+            {% endif %}
+        </ul>
+        <div class="back-links">
+            <a href="{% url 'vendedor_panel_url' %}" class="back-link">Volver al panel de vendedor</a>
+        </div>
+    </div>
+</body>
+</html>

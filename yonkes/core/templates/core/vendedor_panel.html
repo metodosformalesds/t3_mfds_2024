@@ -7,10 +7,10 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f8f8f8;
-            color: #333;
             margin: 0;
             padding: 20px;
+            background-color: #ff7315; /* Fondo naranja sólido */
+            color: #333;
         }
         .container {
             max-width: 800px;
@@ -30,10 +30,85 @@
         }
         .logout-link {
             text-decoration: none;
-            color: #ff7315;
+            color: #fff;
             font-weight: bold;
         }
+        .button {
+            display: inline-block;
+            padding: 10px 15px;
+            margin: 10px 0;
+            background-color: #333;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .button:hover {
+            background-color: #222;
+        }
+        .product-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .product-item {
+            display: flex;
+            align-items: flex-start;
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+            margin-bottom: 10px;
+        }
+        .product-image {
+            width: 150px;
+            height: 150px;
+            background-color: #e0e0e0;
+            border: 1px solid #ddd;
+            margin-right: 20px;
+            object-fit: cover;
+        }
+        .product-details {
+            flex-grow: 1;
+        }
+        .product-details h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+        .product-details p {
+            margin: 5px 0;
+        }
+        .product-actions {
+            margin-top: 10px;
+        }
+        .product-actions a, .product-actions button {
+            display: inline-block;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #fff;
+            text-decoration: none;
+            margin-right: 10px; /* Espaciado entre botones */
+            font-size: 14px; /* Tamaño de fuente consistente */
+        }
+        .edit-button {
+            background-color: #004080; /* Azul marino */
+        }
+        .edit-button:hover {
+            background-color: #003366; /* Azul marino oscuro */
+        }
+        .delete-button {
+            background-color: #d9534f; /* Rojo */
+        }
+        .delete-button:hover {
+            background-color: #c9302c; /* Rojo oscuro */
+        }
     </style>
+    <script>
+        // Función para mostrar la confirmación antes de eliminar
+        function confirmarEliminacion(event) {
+            if (!confirm("¿Estás seguro de que deseas eliminar este producto?")) {
+                event.preventDefault(); // Evita que el formulario se envíe si el usuario cancela
+            }
+        }
+    </script>
 </head>
 <body>
     <div class="container">
@@ -42,10 +117,48 @@
             <!-- Enlace para cerrar sesión -->
             <form action="/accounts/logout/" method="POST" style="display: inline;">
                 {% csrf_token %}
-                <button type="submit" class="logout-link" style="background: none; border: none; color: #ff7315; cursor: pointer;">Cerrar sesión</button>
+                <button type="submit" class="logout-link" style="background: none; border: none; color: #fff; cursor: pointer;">Cerrar sesión</button>
             </form>
         </div>
         <p>Bienvenido al panel del vendedor. Aquí puedes gestionar tus productos y ventas.</p>
+
+        <!-- Botón para añadir un nuevo producto -->
+        <a href="{% url 'agregar_producto' %}" class="button">Añadir Producto</a>
+
+        <!-- Lista de productos -->
+        <h2>Mis Productos</h2>
+        <ul class="product-list">
+            {% if productos %}
+                {% for producto in productos %}
+                    <li class="product-item">
+                        <!-- Imagen del producto -->
+                        {% if producto.imagen %}
+                            <img src="{{ producto.imagen.url }}" alt="Imagen del Producto" class="product-image">
+                        {% else %}
+                            <div class="product-image"></div> <!-- Espacio reservado si no hay imagen -->
+                        {% endif %}
+                        <!-- Detalles del producto -->
+                        <div class="product-details">
+                            <h3>{{ producto.nombre }}</h3>
+                            <p>Precio: ${{ producto.precio }}</p>
+                            <p>Categoría: {{ producto.categoria }}</p>
+                            <p>{{ producto.descripcion }}</p>
+                            <div class="product-actions">
+                                <!-- Botón de Editar Producto -->
+                                <a href="{% url 'editar_producto' producto.pk %}" class="edit-button">Editar</a>
+                                <!-- Botón de Eliminar Producto -->
+                                <form action="{% url 'eliminar_producto' producto.pk %}" method="post" style="display: inline;" onsubmit="confirmarEliminacion(event)">
+                                    {% csrf_token %}
+                                    <button type="submit" class="delete-button">Eliminar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <p>No tienes productos en venta.</p>
+            {% endif %}
+        </ul>
     </div>
 </body>
 </html>
