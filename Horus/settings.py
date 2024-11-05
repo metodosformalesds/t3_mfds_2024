@@ -163,5 +163,5 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 LOGIN_REDIRECT_URL = '/catalogo/'
 
 SITE_ID = 1  # Requerido para Allauth
-LOGIN_REDIRECT_URL = '/catalogo/'  # Redirige al catálogo después del login
+LOGIN_REDIRECT_URL = '/accounts/'  # Redirige al catálogo después del login
 LOGOUT_REDIRECT_URL = '/accounts/login/'  # Redirige al login después del logout

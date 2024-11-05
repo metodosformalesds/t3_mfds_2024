@@ -107,9 +107,9 @@
         MenuItems.style.maxHeight = "0px";
         function menutoggle() {
             if (MenuItems.style.maxHeight == "0px") {
-                MenuItems.style.maxHeight = "200px"
+                MenuItems.style.maxHeight = "200px";
             } else {
-                MenuItems.style.maxHeight = "0px"
+                MenuItems.style.maxHeight = "0px";
             }
         }
 
@@ -124,11 +124,17 @@
                 const productContainer = document.getElementById('product-container');
                 productContainer.innerHTML = ''; // Limpia el contenedor antes de cargar los productos
 
+                // Verifica si hay productos
+                if (productos.length === 0) {
+                    productContainer.innerHTML = '<p>No hay productos disponibles en este momento.</p>';
+                    return;
+                }
+
                 // Itera sobre los productos y crea el HTML para cada uno
                 productos.forEach(producto => {
                     const productHTML = `
                         <div class="col-4">
-                            <a href="{% url 'detalle_producto' producto.id %}"><img src="${producto.imagen}" alt="${producto.titulo}"></a>
+                            <a href="/producto/${producto.id}/"><img src="${producto.imagen}" alt="${producto.titulo}"></a>
                             <h4>${producto.titulo}</h4>
                             <div class="rating">
                                 <i class="fa fa-star"></i>
@@ -145,6 +151,8 @@
                 });
             } catch (error) {
                 console.error('Error al cargar los productos:', error);
+                const productContainer = document.getElementById('product-container');
+                productContainer.innerHTML = '<p>Hubo un error al cargar los productos. Intenta nuevamente más tarde.</p>';
             }
         }
 
