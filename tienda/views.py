@@ -1,23 +1,26 @@
+# tienda/views.py
+
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Producto, Orden, DetalleOrden, Yonke
+from .models import Producto, Orden, DetalleOrden, Categoria
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from .forms import ProductoForm
-from django.contrib.auth.models import User
-from tienda.models import PerfilUsuario
-from .models import Categoria  # Asegúrate de tener este modelo definido
 from django.http import JsonResponse
 
-
 def index(request):
-    categorias = Categoria.objects.all()  # Obtener todas las categorías desde la base de datos
+    # Obtener todas las categorías desde la base de datos para mostrarlas en el index
+    categorias = Categoria.objects.all()
     return render(request, 'index.html', {'categorias': categorias})
 
+def account_view(request):
+    # Vista unificada para el inicio de sesión y registro
+    return render(request, 'account.html')
 
 @login_required
 def publicar_producto(request):
+    # Verificar que el usuario sea un vendedor antes de permitir publicar productos
     if request.user.perfilusuario.rol != 'vendedor':
-        return redirect('catalogo')  # Redirigir si no es vendedor
+        return redirect('catalogo')  # Redirigir al catálogo si no es vendedor
 
     if request.method == 'POST':
         form = ProductoForm(request.POST, request.FILES)
@@ -25,27 +28,26 @@ def publicar_producto(request):
             producto = form.save(commit=False)
             producto.vendedor = request.user
             producto.save()
-            return redirect('catalogo')  # Redirige al catálogo después de agregar
+            return redirect('catalogo')  # Redirige al catálogo después de agregar el producto
     else:
         form = ProductoForm()
 
-    return render(request, 'tienda/publicar_producto.html', {'form': form})
-
-def index(request):
-    return render(request, 'tienda/index.html')
+    return render(request, 'publicar_producto.html', {'form': form})
 
 def catalogo(request):
-    productos = Producto.objects.all()  # Asegúrate de obtener todos los productos
-    return render(request, 'tienda/catalogo.html', {'productos': productos})
+    # Obtener todos los productos para mostrarlos en el catálogo
+    productos = Producto.objects.all()
+    return render(request, 'products.html', {'productos': productos})
 
 def detalle_producto(request, id):
-    producto = get_object_or_404(Producto, id=id)  # Obtener un producto específico
-    return render(request, 'tienda/detalle_producto.html', {'producto': producto})
+    # Obtener un producto específico por su ID
+    producto = get_object_or_404(Producto, id=id)
+    return render(request, 'product_details.html', {'producto': producto})
 
 # Función para mostrar el carrito
 def carrito(request):
-    carrito = request.session.get('carrito', [])  # Obtén los productos del carrito de la sesión
-    carrito_vacio = len(carrito) == 0  # Verifica si está vacío
+    carrito = request.session.get('carrito', [])  # Obtener los productos del carrito de la sesión
+    carrito_vacio = len(carrito) == 0  # Verificar si el carrito está vacío
     total = sum(item['precio'] * item['cantidad'] for item in carrito)
 
     context = {
@@ -53,19 +55,19 @@ def carrito(request):
         'carrito_vacio': carrito_vacio,
         'total': total,
     }
-    return render(request, 'tienda/carrito.html', context)
+    return render(request, 'cart.html', context)
 
 # Función para agregar productos al carrito
 def agregar_al_carrito(request, id):
     carrito = request.session.get('carrito', {})
-    carrito[id] = carrito.get(id, 0) + 1  # Aumenta la cantidad o agrega el producto
+    carrito[id] = carrito.get(id, 0) + 1  # Aumentar la cantidad del producto o agregarlo
 
-    request.session['carrito'] = carrito  # Guarda el carrito en la sesión
+    request.session['carrito'] = carrito  # Guardar el carrito actualizado en la sesión
     return redirect('carrito')
 
 # Función para vaciar el carrito
 def vaciar_carrito(request):
-    request.session['carrito'] = {}  # Limpiar la sesión del carrito
+    request.session['carrito'] = {}  # Limpiar el carrito en la sesión
     return redirect('carrito')
 
 def checkout(request):
@@ -94,51 +96,24 @@ def checkout(request):
                 subtotal=item['subtotal']
             )
 
-        # Vaciar el carrito
+        # Vaciar el carrito después de la compra
         request.session['carrito'] = {}
 
-        # Enviar correo de confirmación
+        # Enviar correo de confirmación al usuario
         send_mail(
             'Confirmación de Compra - Horus',
             f'Tu orden #{orden.id} ha sido confirmada. Total: ${total}.',
             'tu-email@gmail.com',
-            [request.user.email],  # Enviar al correo del usuario
+            [request.user.email],
             fail_silently=False,
         )
 
         return redirect('catalogo')
 
-    return render(request, 'tienda/checkout.html', {'productos': productos, 'total': total})
+    return render(request, 'checkout.html', {'productos': productos, 'total': total})
 
+@login_required
 def historial_pedidos(request):
-    pedidos = Orden.objects.filter(usuario=request.user).order_by('-fecha')  # Pedidos del usuario
-    return render(request, 'tienda/historial.html', {'pedidos': pedidos})
-
-from .forms import RegistroForm, PerfilForm
-
-def registro(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        rol = request.POST['rol']  # 'comprador' o 'vendedor'
-
-        # Crear un nuevo usuario solo si no existe
-        if not User.objects.filter(username=username).exists():
-            user = User.objects.create_user(username=username, password=password)
-            # Crear el perfil con el rol correspondiente
-            PerfilUsuario.objects.create(usuario=user, rol=rol)
-            return redirect('login')  # Redirigir al login después del registro
-        else:
-            # Mostrar mensaje de error si el usuario ya existe
-            return render(request, 'registro.html', {'error': 'El usuario ya existe.'})
-
-    return render(request, 'tienda/registro.html')
-
-def mapa_ubicacion(request):
-    yonkes = list(Yonke.objects.values())  # Convertimos a lista de diccionarios
-    context = {'yonkes': yonkes}
-    return render(request, 'tienda/mapa.html', context)
-
-def lista_yonkes(request):
-    yonkes = Yonke.objects.all().values('nombre', 'direccion', 'latitud', 'longitud')
-    return JsonResponse(list(yonkes), safe=False)
+    # Obtener todos los pedidos del usuario actual
+    pedidos = Orden.objects.filter(usuario=request.user).order_by('-fecha')
+    return render(request, 'historial.html', {'pedidos': pedidos})

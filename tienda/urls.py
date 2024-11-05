@@ -1,27 +1,44 @@
+from django.urls import path, include 
 from . import views
 from django.contrib.auth import views as auth_views
-from django.urls import path, include
-
 
 urlpatterns = [
+    # Página de inicio, usando la plantilla actualizada 'index.html'
     path('', views.index, name='index'),
+
+    # Catálogo de productos (usando la plantilla actualizada 'products.html')
     path('catalogo/', views.catalogo, name='catalogo'),
+
+    # Detalles del producto específico por su ID (usando 'product_details.html')
     path('producto/<int:id>/', views.detalle_producto, name='detalle_producto'),
+
+    # Carrito de compras
     path('carrito/', views.carrito, name='carrito'),
+
+    # Añadir producto al carrito de compras por su ID
     path('agregar/<int:id>/', views.agregar_al_carrito, name='agregar_al_carrito'),
+
+    # Vaciar el carrito de compras
     path('vaciar_carrito/', views.vaciar_carrito, name='vaciar_carrito'),
+
+    # Proceso de pago (checkout)
     path('checkout/', views.checkout, name='checkout'),
+
+    # Historial de pedidos del usuario
     path('historial/', views.historial_pedidos, name='historial'),
-    path('registro/', views.registro, name='registro'),
-    path('publicar/', views.publicar_producto, name='publicar_producto'),  
-    path('accounts/login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
-    path('accounts/logout/', auth_views.LogoutView.as_view(next_page='index'), name='logout'),  # Redirigir al índice
+
+    # Registro de usuario nuevo (redirigir a la vista 'account_view' o eliminar si no se usa)
+    path('registro/', views.account_view, name='registro'),
+
+    # Publicar un nuevo producto por el vendedor
+    path('publicar/', views.publicar_producto, name='publicar_producto'),
+
+    # Vista para iniciar sesión (usando la plantilla 'registration/login.html')
+    path('accounts/', auth_views.LoginView.as_view(template_name='account.html'), name='login'),
+
+    # Vista para cerrar sesión y redirigir al índice
+    path('accounts/logout/', auth_views.LogoutView.as_view(next_page='index'), name='logout'),
+
+    # URLs relacionadas con el sistema de autenticación de 'django-allauth'
     path('accounts/', include('allauth.urls')),
-    path('mapa/', views.mapa_ubicacion, name='mapa_ubicacion'),
-    path('api/yonkes/', views.lista_yonkes, name='lista_yonkes'),
-
-
-
 ]
-
-

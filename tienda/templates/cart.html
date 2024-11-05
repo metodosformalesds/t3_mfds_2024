@@ -1,0 +1,193 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras | Horuz Autopartes</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="navbar">
+            <div class="logo">
+                <a href="{% url 'index' %}"><img src="{% static 'images/logo.png' %}" alt="logo" width="125px"></a>
+            </div>
+            <nav>
+                <ul id="MenuItems">
+                    <li><a href="{% url 'index' %}">Inicio</a></li>
+                    <li><a href="{% url 'catalogo' %}">Productos</a></li>
+                    <li><a href="">Sobre Nosotros</a></li>
+                    <li><a href="">Contacto</a></li>
+                    <li><a href="{% url 'login' %}">Cuenta</a></li>
+                </ul>
+            </nav>
+            <a href="{% url 'carrito' %}"><img src="{% static 'images/cart.png' %}" width="30px" height="30px"></a>
+            <img src="{% static 'images/menu.png' %}" class="menu-icon" onclick="menutoggle()">
+        </div>
+    </div>
+
+    <!-- Carrito de Compras -->
+    <div class="small-container cart-page">
+        <table>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+            </tr>
+            <!-- Aquí se generarán los productos del carrito desde el JavaScript -->
+        </table>
+
+        <div class="total-price">
+            <table>
+                <tr>
+                    <td>Subtotal</td>
+                    <td>$0.00</td>
+                </tr>
+                <tr>
+                    <td>Impuesto</td>
+                    <td>$0.00</td>
+                </tr>
+                <tr>
+                    <td>Total</td>
+                    <td>$0.00</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="footer-col-1">
+                    <h3>Descarga Nuestra App</h3>
+                    <p>Descarga la app para Android y iOS.</p>
+                    <div class="app-logo">
+                        <img src="{% static 'images/play-store.png' %}">
+                        <img src="{% static 'images/app-store.png' %}">
+                    </div>
+                </div>
+                <div class="footer-col-2">
+                    <img src="{% static 'images/logo-white.png' %}">
+                    <p>Nuestro propósito es ofrecer autopartes de calidad a todos los amantes de los autos, asegurando
+                        un viaje seguro y confortable.</p>
+                </div>
+                <div class="footer-col-3">
+                    <h3>Enlaces Útiles</h3>
+                    <ul>
+                        <li>Cupones</li>
+                        <li>Blog</li>
+                        <li>Política de Devoluciones</li>
+                        <li>Programa de Afiliados</li>
+                    </ul>
+                </div>
+                <div class="footer-col-4">
+                    <h3>Síguenos</h3>
+                    <ul>
+                        <li>Facebook</li>
+                        <li>Twitter</li>
+                        <li>Instagram</li>
+                        <li>Youtube</li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <p class="copyright">Copyright 2024 - Horuz Autopartes</p>
+        </div>
+    </div>
+
+    <!-- javascript -->
+    <script>
+        // Cargar productos del carrito desde localStorage y mostrarlos en la tabla
+        function loadCart() {
+            const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+            const cartTable = document.querySelector(".cart-page table");
+
+            // Limpiar contenido existente de la tabla, excepto el encabezado
+            cartTable.innerHTML = `
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Subtotal</th>
+                </tr>
+            `;
+
+            let total = 0;
+
+            // Generar HTML para cada producto en el carrito
+            carrito.forEach((producto, index) => {
+                const subtotal = producto.precio * producto.cantidad;
+                total += subtotal;
+
+                const productRow = `
+                    <tr>
+                        <td>
+                            <div class="cart-info">
+                                <img src="${producto.imagen}" alt="${producto.titulo}">
+                                <div>
+                                    <p>${producto.titulo}</p>
+                                    <small>Precio: $${producto.precio.toFixed(2)}</small>
+                                    <br>
+                                    <a href="#" onclick="removeFromCart(${index})">Eliminar</a>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <input type="number" value="${producto.cantidad}" min="1" onchange="updateQuantity(${index}, this.value)">
+                        </td>
+                        <td>$${subtotal.toFixed(2)}</td>
+                    </tr>
+                `;
+
+                cartTable.insertAdjacentHTML('beforeend', productRow);
+            });
+
+            // Mostrar el subtotal y total en la sección de precios
+            const tax = total * 0.1; // Asumimos un impuesto del 10%
+            const grandTotal = total + tax;
+            document.querySelector(".total-price table").innerHTML = `
+                <tr>
+                    <td>Subtotal</td>
+                    <td>$${total.toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td>Impuesto</td>
+                    <td>$${tax.toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td>Total</td>
+                    <td>$${grandTotal.toFixed(2)}</td>
+                </tr>
+            `;
+        }
+
+        // Función para eliminar un producto del carrito
+        function removeFromCart(index) {
+            let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+            carrito.splice(index, 1); // Eliminar producto del carrito por su índice
+            localStorage.setItem("carrito", JSON.stringify(carrito)); // Guardar cambios
+            loadCart(); // Recargar la vista del carrito
+        }
+
+        // Función para actualizar la cantidad de un producto en el carrito
+        function updateQuantity(index, newQuantity) {
+            let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+            carrito[index].cantidad = parseInt(newQuantity); // Actualizar cantidad del producto
+            localStorage.setItem("carrito", JSON.stringify(carrito)); // Guardar cambios
+            loadCart(); // Recargar la vista del carrito
+        }
+
+        // Cargar el carrito al cargar la página
+        loadCart();
+    </script>
+
+</body>
+
+</html>

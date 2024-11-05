@@ -1,0 +1,320 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horuz | Autopartes para Vehículos Usados</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="navbar">
+                <div class="logo">
+                    <a href="{% url 'index' %}"><img src="{% static 'images/logo.png' %}" alt="logo" width="125px"></a>
+                </div>
+                <nav>
+                    <ul id="MenuItems">
+                        <li><a href="{% url 'index' %}">Inicio</a></li>
+                        <li><a href="{% url 'catalogo' %}">Productos</a></li>
+                        <li><a href="about.html">Sobre Nosotros</a></li>
+                        <li><a href="contact.html">Contacto</a></li>
+                        <li><a href="{% url 'login' %}">Cuenta</a></li>
+                    </ul>
+                </nav>
+                <a href="{% url 'carrito' %}"><img src="{% static 'images/cart.png' %}" width="30px" height="30px"></a>
+                <img src="{% static 'images/menu.png' %}" class="menu-icon" onclick="menutoggle()">
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    <h1>Encuentra las Mejores Autopartes<br> para tu Vehículo Usado</h1>
+                    <p>En Horuz, ofrecemos autopartes de calidad para asegurar que tu auto usado esté siempre en las mejores condiciones. Consigue todas las piezas que necesitas con confianza y al mejor precio.</p>
+                    <a href="{% url 'catalogo' %}" class="btn">Ver Catálogo de Autopartes &#8594;</a>
+                </div>
+                <div class="col-2">
+                    <img src="{% static 'images/image1.png' %}">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mapa de yonkes en lugar de Categorías destacadas -->
+    <div class="small-container">
+        <h2 class="title">Yonkes en tu Ciudad Afiliados a Horuz</h2>
+        <div id="map"></div>
+    </div>
+    
+    <!-- Productos Destacados -->
+    <div class="small-container">
+        <h2 class="title">Productos Destacados</h2>
+        <div class="row" id="featured-products">
+            <!-- Los productos destacados se cargarán aquí -->
+        </div>
+
+        <h2 class="title">Últimos Productos</h2>
+        <div class="row" id="latest-products">
+            <!-- Los últimos productos se cargarán aquí -->
+        </div>
+    </div>
+
+    <!-- Oferta Exclusiva -->
+    <div class="offer">
+        <div class="small-container">
+            <div class="row">
+                <div class="col-2">
+                    <img src="{% static 'images/exclusive.png' %}" class="offer-img" id="exclusive-product-image">
+                </div>
+                <div class="col-2">
+                    <p>Disponible Exclusivamente en Horuz</p>
+                    <h1 id="exclusive-product-title">Producto Exclusivo</h1>
+                    <a href="#" class="btn" id="exclusive-product-link">Comprar Ahora &#8594;</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+       <!-- Testimonios -->
+       <div class="testimonial">
+        <div class="small-container">
+            <div class="row">
+                <div class="col-3">
+                    <i class="fa fa-quote-left"></i>
+                    <p>Horuz tiene todo lo que necesito para mantener mi auto en perfecto estado. Excelente calidad y
+                        envíos rápidos.</p>
+                    <div class="rating">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                    </div>
+                    <img src="{% static 'images/user-1.png' %}">
+                    <h3>Carlos Gutiérrez</h3>
+                </div>
+                <div class="col-3">
+                    <i class="fa fa-quote-left"></i>
+                    <p>Muy satisfecho con el servicio de Horuz. Los repuestos llegaron a tiempo y encajaron perfectamente
+                        en mi vehículo.</p>
+                    <div class="rating">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                    </div>
+                    <img src="{% static 'images/user-2.png' %}">
+                    <h3>Juan Pérez</h3>
+                </div>
+                <div class="col-3">
+                    <i class="fa fa-quote-left"></i>
+                    <p>Gran variedad de autopartes y precios competitivos. Horuz se ha convertido en mi sitio de confianza
+                        para cualquier repuesto.</p>
+                    <div class="rating">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                    </div>
+                    <img src="{% static 'images/user-3.png' %}">
+                    <h3>Laura Fernández</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Marcas -->
+    <div class="brands">
+        <div class="small-container">
+            <div class="row">
+                <div class="col-5">
+                    <img src="{% static 'images/logo-paypal.png' %}">
+                </div>
+                <div class="col-5">
+                    <img src="{% static 'images/logo-philips.png' %}">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="footer-col-1">
+                    <h3>Descarga Nuestra App</h3>
+                    <p>Descarga la app para Android y iOS.</p>
+                    <div class="app-logo">
+                        <img src="{% static 'images/play-store.png' %}">
+                        <img src="{% static 'images/app-store.png' %}">
+                    </div>
+                </div>
+                <div class="footer-col-2">
+                    <img src="{% static 'images/logo-white.png' %}">
+                    <p>Nuestro propósito es ofrecer autopartes de calidad a todos los amantes de los autos, asegurando
+                        un viaje seguro y confortable.</p>
+                </div>
+                <div class="footer-col-3">
+                    <h3>Enlaces Útiles</h3>
+                    <ul>
+                        <li>Cupones</li>
+                        <li>Blog</li>
+                        <li>Política de Devoluciones</li>
+                        <li>Programa de Afiliados</li>
+                    </ul>
+                </div>
+                <div class="footer-col-4">
+                    <h3>Síguenos</h3>
+                    <ul>
+                        <li>Facebook</li>
+                        <li>Twitter</li>
+                        <li>Instagram</li>
+                        <li>Youtube</li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <p class="copyright">Copyright 2024 - Horuz Autopartes</p>
+        </div>
+    </div>
+
+    <script>
+        var MenuItems = document.getElementById("MenuItems");
+        MenuItems.style.maxHeight = "0px";
+        function menutoggle() {
+            if (MenuItems.style.maxHeight == "0px") {
+                MenuItems.style.maxHeight = "200px"
+            } else {
+                MenuItems.style.maxHeight = "0px"
+            }
+        }
+
+        // Inicializar el mapa de Leaflet
+        var map = L.map('map').setView([31.687285, -106.424703], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Función para obtener y mostrar yonkes en el mapa
+        async function cargarYonkes() {
+            const query = `
+                [out:json];
+                node
+                  node["name"~"Yonke|Car Parts",i](around:20000,31.687285,-106.424703); // Búsqueda de nombres que contengan "Yonke" o "Car Parts"
+                  node["amenity"="recycling"]["recycling_type"="scrapyard"](around:20000,31.687285,-106.424703);
+                  (around:10000,31.687285, -106.424703);
+                out body;
+            `;
+            const url = 'https://overpass-api.de/api/interpreter';
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: query,
+                    headers: { 'Content-Type': 'text/plain' }
+                });
+                const data = await response.json();
+                const yonkes = data.elements;
+
+                yonkes.forEach(y => {
+                    L.marker([y.lat, y.lon]).addTo(map)
+                        .bindPopup(`<b>${y.tags.name || 'Yonke sin nombre'}</b><br>${y.tags.description || 'No hay descripción disponible.'}`);
+                });
+            } catch (error) {
+                console.error('Error al cargar los yonkes:', error);
+            }
+        }
+
+        // Cargar yonkes en el mapa al cargar la página
+        cargarYonkes();
+
+        // Funciones para cargar y mostrar productos
+        async function cargarProductosAleatorios() {
+            try {
+                const response = await fetch('http://localhost:3000/autopartes');
+                const productos = await response.json();
+                const productosDestacados = obtenerProductosAleatorios(productos, 4);
+                const ultimosProductos = obtenerProductosAleatorios(productos, 4);
+
+                insertarProductosEnSeccion('featured-products', productosDestacados);
+                insertarProductosEnSeccion('latest-products', ultimosProductos);
+
+                const productoExclusivo = obtenerProductoAleatorio(productos);
+                mostrarProductoExclusivo(productoExclusivo);
+            } catch (error) {
+                console.error('Error al cargar los productos:', error);
+            }
+        }
+
+        function obtenerProductosAleatorios(productos, cantidad) {
+            const productosAleatorios = [];
+            const productosUsados = new Set();
+
+            while (productosAleatorios.length < cantidad && productosAleatorios.length < productos.length) {
+                const indiceAleatorio = Math.floor(Math.random() * productos.length);
+                if (!productosUsados.has(indiceAleatorio)) {
+                    productosAleatorios.push(productos[indiceAleatorio]);
+                    productosUsados.add(indiceAleatorio);
+                }
+            }
+            return productosAleatorios;
+        }
+
+        function obtenerProductoAleatorio(productos) {
+            const indiceAleatorio = Math.floor(Math.random() * productos.length);
+            return productos[indiceAleatorio];
+        }
+
+        function insertarProductosEnSeccion(idSeccion, productos) {
+            const contenedor = document.getElementById(idSeccion);
+            contenedor.innerHTML = '';
+            productos.forEach(producto => {
+                const imagen = producto.pictures && producto.pictures.length > 0 ? producto.pictures[0].url : producto.imagen;
+                const productHTML = `
+                    <div class="col-4">
+                        <a href="product_details.html?id=${producto.id}"><img src="${imagen}" alt="${producto.titulo}"></a>
+                        <h4>${producto.titulo}</h4>
+                        <div class="rating">
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star-o"></i>
+                        </div>
+                        <p>$${producto.precio}</p>
+                    </div>
+                `;
+                contenedor.insertAdjacentHTML('beforeend', productHTML);
+            });
+        }
+
+        function mostrarProductoExclusivo(producto) {
+            const imagen = producto.pictures && producto.pictures.length > 0 ? producto.pictures[0].url : producto.imagen;
+            document.getElementById('exclusive-product-image').src = imagen;
+            document.getElementById('exclusive-product-title').innerText = producto.titulo;
+            document.getElementById('exclusive-product-description').innerText = producto.descripcion || "Descripción no disponible";
+            document.getElementById('exclusive-product-link').href = `product_details.html?id=${producto.id}`;
+        }
+
+        // Cargar productos al cargar la página
+        cargarProductosAleatorios();
+    </script>
+</body>
+
+</html>
