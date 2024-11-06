@@ -2,6 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
 const crypto = require('crypto');
+const readline = require('readline');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -79,6 +80,27 @@ async function getInitialAccessToken(authCode) {
     }
 }
 
+// Configura el readline para recibir input del usuario
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+// Pregunta al usuario el auth_code
+console.log("Visita la siguiente URL para autorizar la aplicación:");
+console.log(`https://auth.mercadolibre.com.mx/authorization?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&code_challenge=${codeChallenge}&code_challenge_method=S256`);
+rl.question('Ingresa el auth_code proporcionado por Mercado Libre: ', (authCode) => {
+    getInitialAccessToken(authCode).then(() => {
+        rl.close();
+        app.listen(PORT, () => {
+            console.log(`Servidor escuchando en el puerto ${PORT}`);
+        });
+    }).catch(error => {
+        console.error("Error al obtener el token inicial:", error);
+        rl.close();
+    });
+});
+
 // Función que verifica y renueva el token si es necesario antes de cada solicitud
 async function ensureValidAccessToken() {
     if (isTokenExpired()) {
@@ -120,6 +142,12 @@ async function getAutoParts() {
     }
 }
 
+// Ruta para obtener productos de autopartes
+app.get('/autopartes', async (req, res) => {
+    const productos = await getAutoParts();
+    res.json(productos);
+});
+
 // Nueva ruta para obtener los detalles de un producto específico por ID
 app.get('/productos/:id', async (req, res) => {
     const productId = req.params.id;
@@ -148,22 +176,4 @@ app.get('/productos/:id', async (req, res) => {
         console.error("Error al obtener detalles del producto:", error);
         res.status(500).json({ error: 'Error al obtener los detalles del producto' });
     }
-});
-
-// Ruta para obtener productos de autopartes
-app.get('/autopartes', async (req, res) => {
-    const productos = await getAutoParts();
-    res.json(productos);
-});
-
-// Obtén el token inicial y luego inicia el servidor
-const authCode = "TG-6726ed9a6970d20001d44b4e-755603245"; // Reemplaza esto con el `auth_code` obtenido manualmente
-getInitialAccessToken(authCode).then(() => {
-    app.listen(PORT, () => {
-        console.log(`Servidor escuchando en el puerto ${PORT}`);
-        console.log("Visita esta URL para autorizar la aplicación:");
-        console.log(`https://auth.mercadolibre.com.mx/authorization?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&code_challenge=${codeChallenge}&code_challenge_method=S256`);
-    });
-}).catch(error => {
-    console.error("Error al obtener el token inicial:", error);
 });
