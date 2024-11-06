@@ -45,7 +45,32 @@
             </select>
         </div>
 
-        <!-- Contenedor dinámico para productos -->
+        <!-- Contenedor de productos (Django) -->
+        <div class="row">
+            {% if productos %}
+                {% for producto in productos %}
+                    <div class="col-4">
+                        <!-- Manejar el ID del producto de forma uniforme -->
+                        <a href="{% url 'detalle_producto' producto.id|stringformat:"s" %}">
+                            <img src="{{ producto.imagen }}" alt="{{ producto.titulo }}">
+                        </a>
+                        <h4>{{ producto.titulo }}</h4>
+                        <div class="rating">
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star-o"></i>
+                        </div>
+                        <p>${{ producto.precio }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No hay productos disponibles en este momento.</p>
+            {% endif %}
+        </div>
+
+        <!-- Contenedor dinámico para productos (JavaScript) -->
         <div class="row" id="product-container">
             <!-- Los productos se cargarán aquí mediante JavaScript -->
         </div>

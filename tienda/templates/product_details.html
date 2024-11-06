@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 
@@ -5,9 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalles de Producto | Horuz Autopartes</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         /* Estilo para limitar la altura de la descripción */
@@ -36,19 +36,19 @@
     <div class="container">
         <div class="navbar">
             <div class="logo">
-                <a href="index.html"><img src="images/logo.png" alt="logo" width="125px"></a>
+                <a href="{% url 'index' %}"><img src="{% static 'images/logo.png' %}" alt="logo" width="125px"></a>
             </div>
             <nav>
                 <ul id="MenuItems">
-                    <li><a href="index.html">Inicio</a></li>
-                    <li><a href="products.html">Productos</a></li>
-                    <li><a href="about.html">Sobre Nosotros</a></li>
-                    <li><a href="contact.html">Contacto</a></li>
-                    <li><a href="account.html">Cuenta</a></li>
+                    <li><a href="{% url 'index' %}">Inicio</a></li>
+                    <li><a href="{% url 'catalogo' %}">Productos</a></li>
+                    <li><a href="#">Sobre Nosotros</a></li>
+                    <li><a href="#">Contacto</a></li>
+                    <li><a href="{% url 'login' %}">Cuenta</a></li>
                 </ul>
             </nav>
-            <a href="cart.html"><img src="images/cart.png" width="30px" height="30px"></a>
-            <img src="images/menu.png" class="menu-icon" onclick="menutoggle()">
+            <a href="{% url 'carrito' %}"><img src="{% static 'images/cart.png' %}" width="30px" height="30px"></a>
+            <img src="{% static 'images/menu.png' %}" class="menu-icon" onclick="menutoggle()">
         </div>
     </div>
 
@@ -56,21 +56,27 @@
     <div class="small-container single-product">
         <div class="row">
             <div class="col-2">
-                <img src="images/gallery-1.jpg" width="100%" id="ProductImg">
+                <img src="{{ producto.imagen }}" width="100%" id="ProductImg" alt="{{ producto.titulo }}">
                 <div class="small-img-row" id="ProductThumbnails">
-                    <!-- Las miniaturas se llenarán con JavaScript -->
+                    {% if not producto.producto_local and producto.pictures %}
+                        {% for picture in producto.pictures %}
+                            <div class="small-img-col">
+                                <img src="{{ picture.url }}" width="100%" class="small-img" onclick="changeMainImage('{{ picture.url }}')">
+                            </div>
+                        {% endfor %}
+                    {% endif %}
                 </div>
             </div>
             <div class="col-2">
                 <p>Inicio / Autopartes</p>
-                <h1 id="ProductName">Nombre del Producto</h1>
-                <h4 id="ProductPrice">$0.00</h4>
-                <input type="number" value="1">
-                <a href="cart.html" class="btn">Agregar al Carrito</a>
+                <h1 id="ProductName">{{ producto.titulo }}</h1>
+                <h4 id="ProductPrice">${{ producto.precio }}</h4>
+                <input type="number" value="1" id="productQuantity">
+                <button class="btn" id="addToCartButton" onclick="agregarAlCarrito()">Agregar al Carrito</button>
 
                 <h3>Detalles del Producto <i class="fa fa-indent"></i></h3>
                 <br>
-                <div id="ProductDescription" class="product-description">Descripción del producto.</div>
+                <div id="ProductDescription" class="product-description">{{ producto.descripcion }}</div>
                 <span id="showMoreButton" class="show-more" onclick="toggleDescription()">Leer más</span>
             </div>
         </div>
@@ -82,7 +88,7 @@
             <h2>Productos Relacionados</h2>
         </div>
         <div class="row" id="related-products">
-            <!-- Los productos relacionados se llenarán con JavaScript -->
+            <!-- Los productos relacionados se pueden llenar aquí con lógica adicional si es necesario -->
         </div>
     </div>
 
@@ -94,14 +100,13 @@
                     <h3>Descarga Nuestra App</h3>
                     <p>Descarga la app para Android y iOS.</p>
                     <div class="app-logo">
-                        <img src="images/play-store.png">
-                        <img src="images/app-store.png">
+                        <img src="{% static 'images/play-store.png' %}">
+                        <img src="{% static 'images/app-store.png' %}">
                     </div>
                 </div>
                 <div class="footer-col-2">
-                    <img src="images/logo-white.png">
-                    <p>Nuestro propósito es ofrecer autopartes de calidad a todos los amantes de los autos, asegurando
-                        un viaje seguro y confortable.</p>
+                    <img src="{% static 'images/logo-white.png' %}">
+                    <p>Nuestro propósito es ofrecer autopartes de calidad a todos los amantes de los autos, asegurando un viaje seguro y confortable.</p>
                 </div>
                 <div class="footer-col-3">
                     <h3>Enlaces Útiles</h3>
@@ -127,120 +132,44 @@
         </div>
     </div>
 
-    <!-- JavaScript para cargar los detalles del producto -->
+    <!-- JavaScript para manejar el cambio de imagen y agregar al carrito -->
     <script>
-        // Función para obtener el ID del producto desde la URL
-        function getProductIdFromUrl() {
-            const params = new URLSearchParams(window.location.search);
-            return params.get("id");
-        }
-    
-        // Función para cargar detalles del producto desde la API
-        async function loadProductDetails() {
-            const productId = getProductIdFromUrl();
-            if (!productId) {
-                alert("Producto no encontrado");
-                return;
-            }
-    
-            try {
-                const response = await fetch(`http://localhost:3000/productos/${productId}`);
-                const product = await response.json();
-    
-                // Actualizar el HTML con los detalles del producto
-                document.getElementById("ProductImg").src = product.imagen;
-                document.getElementById("ProductName").innerText = product.titulo;
-                document.getElementById("ProductPrice").innerText = `$${product.precio}`;
-                document.getElementById("ProductDescription").innerText = product.descripcion || "Descripción no disponible";
-    
-                // Añadir miniaturas de imagen
-                const thumbnailsContainer = document.getElementById("ProductThumbnails");
-                thumbnailsContainer.innerHTML = product.pictures.map((picture) => `
-                    <div class="small-img-col">
-                        <img src="${picture.url}" width="100%" class="small-img" onclick="changeMainImage('${picture.url}')">
-                    </div>
-                `).join("");
-    
-                // Cargar productos relacionados
-                loadRelatedProducts();
-    
-                // Configura el botón "Agregar al Carrito" con la información del producto
-                document.querySelector(".btn").addEventListener("click", () => agregarAlCarrito(product));
-            } catch (error) {
-                console.error("Error al cargar detalles del producto:", error);
-            }
-        }
-    
-        // Función para agregar producto al carrito
-        function agregarAlCarrito(product) {
-            const cantidad = parseInt(document.querySelector("input[type='number']").value) || 1;
-    
+        function agregarAlCarrito() {
+            const cantidad = parseInt(document.getElementById('productQuantity').value) || 1;
+            const productId = "{{ producto.id }}";
+            const productTitle = "{{ producto.titulo }}";
+            const productPrice = "{{ producto.precio }}";
+            const productImage = "{{ producto.imagen }}";
+
             // Obtener el carrito actual de localStorage o inicializar uno nuevo
             let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-    
+
             // Verificar si el producto ya está en el carrito
-            const productoExistente = carrito.find(item => item.id === product.id);
+            const productoExistente = carrito.find(item => item.id === productId);
             if (productoExistente) {
-                // Si el producto ya está en el carrito, actualizar la cantidad
                 productoExistente.cantidad += cantidad;
             } else {
-                // Si no está, agregarlo con la cantidad seleccionada
                 carrito.push({
-                    id: product.id,
-                    titulo: product.titulo,
-                    precio: product.precio,
-                    imagen: product.imagen,
+                    id: productId,
+                    titulo: productTitle,
+                    precio: productPrice,
+                    imagen: productImage,
                     cantidad: cantidad
                 });
             }
-    
-            // Guardar el carrito actualizado en localStorage
+
             localStorage.setItem("carrito", JSON.stringify(carrito));
-    
             alert("Producto agregado al carrito");
         }
-    
-        // Función para cargar productos relacionados desde la API
-        async function loadRelatedProducts() {
-            try {
-                const response = await fetch('http://localhost:3000/autopartes'); // Asegúrate de que esta ruta devuelva varios productos
-                const products = await response.json();
-    
-                // Seleccionar un conjunto aleatorio de productos relacionados
-                const relatedProducts = getRandomProducts(products, 4);
-                
-                // Insertar productos relacionados en el HTML
-                const relatedProductsContainer = document.getElementById("related-products");
-                relatedProductsContainer.innerHTML = relatedProducts.map(product => `
-                    <div class="col-4">
-                        <a href="product_details.html?id=${product.id}">
-                            <img src="${product.imagen}" alt="${product.titulo}">
-                        </a>
-                        <h4>${product.titulo}</h4>
-                        <p>$${product.precio}</p>
-                    </div>
-                `).join("");
-            } catch (error) {
-                console.error("Error al cargar productos relacionados:", error);
-            }
-        }
-    
-        // Función para seleccionar productos aleatorios de una lista
-        function getRandomProducts(products, count) {
-            const shuffled = products.sort(() => 0.5 - Math.random());
-            return shuffled.slice(0, count);
-        }
-    
-        // Cambiar imagen principal al hacer clic en una miniatura
+
         function changeMainImage(imageUrl) {
             document.getElementById("ProductImg").src = imageUrl;
         }
-    
-        // Mostrar/ocultar descripción completa
+
         function toggleDescription() {
             const description = document.getElementById("ProductDescription");
             const showMoreButton = document.getElementById("showMoreButton");
-    
+
             if (description.classList.contains("expanded")) {
                 description.classList.remove("expanded");
                 showMoreButton.innerText = "Leer más";
@@ -249,11 +178,8 @@
                 showMoreButton.innerText = "Leer menos";
             }
         }
-    
-        // Cargar detalles del producto cuando se carga la página
-        loadProductDetails();
     </script>    
-    
+
 </body>
 
 </html>

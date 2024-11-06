@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from .forms import ProductoForm
 from django.http import JsonResponse
+import requests
 
 def index(request):
     # Obtener todas las categorías desde la base de datos para mostrarlas en el index
@@ -35,14 +36,55 @@ def publicar_producto(request):
     return render(request, 'publicar_producto.html', {'form': form})
 
 def catalogo(request):
-    # Obtener todos los productos para mostrarlos en el catálogo
-    productos = Producto.objects.all()
+    # URL de la API que está sirviendo los productos (Node.js)
+    api_url = 'http://localhost:3000/autopartes'
+    
+    try:
+        # Realiza la solicitud a la API
+        response = requests.get(api_url)
+        response.raise_for_status()  # Verifica si la respuesta tiene errores
+        
+        # Convierte la respuesta JSON en un objeto de Python
+        productos = response.json()
+    except requests.exceptions.RequestException as e:
+        # En caso de error, loguea y muestra un mensaje de error en la plantilla
+        print(f"Error al obtener productos de la API: {e}")
+        productos = []  # Vacía la lista de productos para manejar el error adecuadamente
+    
+    # Renderiza la plantilla con los productos obtenidos
     return render(request, 'products.html', {'productos': productos})
 
 def detalle_producto(request, id):
-    # Obtener un producto específico por su ID
-    producto = get_object_or_404(Producto, id=id)
-    return render(request, 'product_details.html', {'producto': producto})
+    producto_data = None
+    producto_local = False
+
+    # Verificar si el ID es numérico (producto local) o alfanumérico (producto de la API)
+    if id.isdigit():
+        # Si el ID es numérico, buscar en la base de datos
+        producto = get_object_or_404(Producto, id=id)
+        producto_data = {
+            'id': producto.id,
+            'titulo': producto.titulo,
+            'precio': producto.precio,
+            'imagen': producto.imagen.url if producto.imagen else '',
+            'descripcion': producto.descripcion,
+            'producto_local': True
+        }
+    else:
+        # Si el ID no es numérico, buscar en la API de Node.js
+        api_url = f'http://localhost:3000/productos/{id}'
+        try:
+            response = requests.get(api_url)
+            response.raise_for_status()
+            producto_data = response.json()  # El producto es un diccionario con la información de la API
+            producto_data['producto_local'] = False
+        except requests.exceptions.RequestException as e:
+            # Si hay un error al obtener el producto, mostrar un mensaje en la plantilla
+            print(f"Error al obtener producto de la API: {e}")
+            return render(request, 'product_details.html', {'error': 'No se pudo cargar el producto. Intente más tarde.'})
+
+    # Renderiza la plantilla con los detalles del producto
+    return render(request, 'product_details.html', {'producto': producto_data})
 
 # Función para mostrar el carrito
 def carrito(request):
@@ -59,45 +101,77 @@ def carrito(request):
 
 # Función para agregar productos al carrito
 def agregar_al_carrito(request, id):
-    carrito = request.session.get('carrito', {})
-    carrito[id] = carrito.get(id, 0) + 1  # Aumentar la cantidad del producto o agregarlo
+    # Obtener la información del producto y agregarla al carrito
+    carrito = request.session.get('carrito', [])
+    producto_info = None
+
+    # Verificar si el producto es local o de la API
+    if id.isdigit():
+        # Producto local
+        producto = get_object_or_404(Producto, id=id)
+        producto_info = {
+            'id': producto.id,
+            'titulo': producto.titulo,
+            'precio': producto.precio,
+            'imagen': producto.imagen.url if producto.imagen else '',
+            'cantidad': 1
+        }
+    else:
+        # Producto de la API
+        api_url = f'http://localhost:3000/productos/{id}'
+        try:
+            response = requests.get(api_url)
+            response.raise_for_status()
+            producto = response.json()
+            producto_info = {
+                'id': producto['id'],
+                'titulo': producto['titulo'],
+                'precio': producto['precio'],
+                'imagen': producto['imagen'],
+                'cantidad': 1
+            }
+        except requests.exceptions.RequestException as e:
+            print(f"Error al obtener producto de la API para agregar al carrito: {e}")
+            return redirect('catalogo')
+
+    # Verificar si el producto ya está en el carrito
+    for item in carrito:
+        if item['id'] == producto_info['id']:
+            item['cantidad'] += 1
+            break
+    else:
+        # Si no está, agregarlo al carrito
+        carrito.append(producto_info)
 
     request.session['carrito'] = carrito  # Guardar el carrito actualizado en la sesión
     return redirect('carrito')
 
 # Función para vaciar el carrito
 def vaciar_carrito(request):
-    request.session['carrito'] = {}  # Limpiar el carrito en la sesión
+    request.session['carrito'] = []  # Limpiar el carrito en la sesión
     return redirect('carrito')
 
 def checkout(request):
-    carrito = request.session.get('carrito', {})
+    carrito = request.session.get('carrito', [])
     if not carrito:
         return redirect('catalogo')
 
-    total = 0
-    productos = []
-
-    # Calcular el total y crear lista de productos
-    for id, cantidad in carrito.items():
-        producto = Producto.objects.get(id=id)
-        subtotal = producto.precio * cantidad
-        total += subtotal
-        productos.append({'producto': producto, 'cantidad': cantidad, 'subtotal': subtotal})
+    total = sum(item['precio'] * item['cantidad'] for item in carrito)
 
     if request.method == 'POST':
         # Crear la orden
         orden = Orden.objects.create(usuario=request.user, total=total)
-        for item in productos:
+        for item in carrito:
+            producto = Producto.objects.filter(id=item['id']).first()
             DetalleOrden.objects.create(
                 orden=orden,
-                producto=item['producto'],
+                producto=producto if producto else None,
                 cantidad=item['cantidad'],
-                subtotal=item['subtotal']
+                subtotal=item['precio'] * item['cantidad']
             )
 
         # Vaciar el carrito después de la compra
-        request.session['carrito'] = {}
+        request.session['carrito'] = []
 
         # Enviar correo de confirmación al usuario
         send_mail(
@@ -110,7 +184,7 @@ def checkout(request):
 
         return redirect('catalogo')
 
-    return render(request, 'checkout.html', {'productos': productos, 'total': total})
+    return render(request, 'checkout.html', {'productos': carrito, 'total': total})
 
 @login_required
 def historial_pedidos(request):
