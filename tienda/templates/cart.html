@@ -36,16 +36,20 @@
     <!-- Carrito de Compras -->
     <div class="small-container cart-page">
         <table>
-            <tr>
-                <th>Producto</th>
-                <th>Cantidad</th>
-                <th>Subtotal</th>
-            </tr>
-            <!-- Aquí se generarán los productos del carrito desde el JavaScript -->
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody id="cart-table-body">
+                <!-- Aquí se generarán los productos del carrito desde el JavaScript -->
+            </tbody>
         </table>
 
         <div class="total-price">
-            <table>
+            <table id="price-table">
                 <tr>
                     <td>Subtotal</td>
                     <td>$0.00</td>
@@ -103,27 +107,24 @@
         </div>
     </div>
 
-    <!-- javascript -->
+    <!-- JavaScript para cargar productos desde localStorage -->
     <script>
         // Cargar productos del carrito desde localStorage y mostrarlos en la tabla
         function loadCart() {
+            console.log("Cargando el carrito...");
             const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-            const cartTable = document.querySelector(".cart-page table");
+            const cartTableBody = document.getElementById("cart-table-body");
 
-            // Limpiar contenido existente de la tabla, excepto el encabezado
-            cartTable.innerHTML = `
-                <tr>
-                    <th>Producto</th>
-                    <th>Cantidad</th>
-                    <th>Subtotal</th>
-                </tr>
-            `;
+            // Limpiar contenido existente de la tabla
+            cartTableBody.innerHTML = '';
 
             let total = 0;
 
             // Generar HTML para cada producto en el carrito
             carrito.forEach((producto, index) => {
-                const subtotal = producto.precio * producto.cantidad;
+                // Convertir precio a número para evitar errores al usar toFixed
+                const precio = parseFloat(producto.precio);
+                const subtotal = precio * producto.cantidad;
                 total += subtotal;
 
                 const productRow = `
@@ -133,7 +134,7 @@
                                 <img src="${producto.imagen}" alt="${producto.titulo}">
                                 <div>
                                     <p>${producto.titulo}</p>
-                                    <small>Precio: $${producto.precio.toFixed(2)}</small>
+                                    <small>Precio: $${precio.toFixed(2)}</small>
                                     <br>
                                     <a href="#" onclick="removeFromCart(${index})">Eliminar</a>
                                 </div>
@@ -146,13 +147,13 @@
                     </tr>
                 `;
 
-                cartTable.insertAdjacentHTML('beforeend', productRow);
+                cartTableBody.insertAdjacentHTML('beforeend', productRow);
             });
 
             // Mostrar el subtotal y total en la sección de precios
             const tax = total * 0.1; // Asumimos un impuesto del 10%
             const grandTotal = total + tax;
-            document.querySelector(".total-price table").innerHTML = `
+            document.getElementById("price-table").innerHTML = `
                 <tr>
                     <td>Subtotal</td>
                     <td>$${total.toFixed(2)}</td>
@@ -185,7 +186,7 @@
         }
 
         // Cargar el carrito al cargar la página
-        loadCart();
+        document.addEventListener('DOMContentLoaded', loadCart);
     </script>
 
 </body>

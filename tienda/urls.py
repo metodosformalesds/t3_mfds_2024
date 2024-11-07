@@ -30,10 +30,7 @@ urlpatterns = [
     # Registro de usuario nuevo (redirigir a la vista 'account_view')
     path('registro/', views.account_view, name='registro'),
 
-    # Publicar un nuevo producto por el vendedor
-    path('publicar/', views.publicar_producto, name='publicar_producto'),
-
-    # Vista para iniciar sesión (usando la plantilla 'registration/login.html')
+    # Vista para iniciar sesión (usando la plantilla 'account.html')
     path('login/', auth_views.LoginView.as_view(template_name='account.html'), name='login'),
 
     # Vista para cerrar sesión y redirigir al índice

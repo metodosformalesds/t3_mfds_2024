@@ -7,8 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Todos los Productos | Horuz Autopartes</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
@@ -45,31 +44,6 @@
             </select>
         </div>
 
-        <!-- Contenedor de productos (Django) -->
-        <div class="row">
-            {% if productos %}
-                {% for producto in productos %}
-                    <div class="col-4">
-                        <!-- Manejar el ID del producto de forma uniforme -->
-                        <a href="{% url 'detalle_producto' producto.id|stringformat:"s" %}">
-                            <img src="{{ producto.imagen }}" alt="{{ producto.titulo }}">
-                        </a>
-                        <h4>{{ producto.titulo }}</h4>
-                        <div class="rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star-o"></i>
-                        </div>
-                        <p>${{ producto.precio }}</p>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <p>No hay productos disponibles en este momento.</p>
-            {% endif %}
-        </div>
-
         <!-- Contenedor dinámico para productos (JavaScript) -->
         <div class="row" id="product-container">
             <!-- Los productos se cargarán aquí mediante JavaScript -->
@@ -98,8 +72,7 @@
                 </div>
                 <div class="footer-col-2">
                     <img src="{% static 'images/logo-white.png' %}">
-                    <p>Nuestro propósito es ofrecer autopartes de calidad a todos los amantes de los autos, asegurando
-                        un viaje seguro y confortable.</p>
+                    <p>Nuestro propósito es ofrecer autopartes de calidad a todos los amantes de los autos, asegurando un viaje seguro y confortable.</p>
                 </div>
                 <div class="footer-col-3">
                     <h3>Enlaces Útiles</h3>

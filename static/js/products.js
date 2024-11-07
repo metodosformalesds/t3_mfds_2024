@@ -1,25 +1,20 @@
 async function cargarProductos() {
+    const productContainer = document.getElementById('product-container');
+
     try {
         // Cambia la URL a la correcta para obtener productos de la API
         const responseApi = await fetch('http://localhost:3000/autopartes');
+        
+        // Verifica si la respuesta fue exitosa
         if (!responseApi.ok) {
             throw new Error(`Error al obtener los productos de la API: ${responseApi.status}`);
         }
-        const productosApi = await responseApi.json();
 
-        // Además, cargar los productos locales (desde el servidor de Django)
-        const responseLocal = await fetch('/api/productos-locales/'); // Suponiendo que tienes una API para productos locales
-        if (!responseLocal.ok) {
-            throw new Error(`Error al obtener los productos locales: ${responseLocal.status}`);
-        }
-        const productosLocales = await responseLocal.json();
+        // Obtiene la lista de productos
+        const productos = await responseApi.json();
 
-        // Combinar ambos productos
-        const productos = [...productosApi, ...productosLocales];
-
-        // Selecciona el contenedor de productos
-        const productContainer = document.getElementById('product-container');
-        productContainer.innerHTML = ''; // Limpia el contenedor antes de cargar los productos
+        // Limpia el contenedor antes de cargar los productos
+        productContainer.innerHTML = '';
 
         // Verifica si hay productos
         if (productos.length === 0) {
@@ -46,10 +41,14 @@ async function cargarProductos() {
             // Inserta el producto en el contenedor
             productContainer.insertAdjacentHTML('beforeend', productHTML);
         });
+
     } catch (error) {
         console.error('Error al cargar los productos:', error);
-        const productContainer = document.getElementById('product-container');
-        productContainer.innerHTML = '<p>Hubo un error al cargar los productos. Intenta nuevamente más tarde.</p>';
+
+        // Solo muestra el mensaje de error si no hay productos en el contenedor
+        if (productContainer.innerHTML.trim() === '') {
+            productContainer.innerHTML = '<p style="color: red;">Hubo un error al cargar los productos. Intenta nuevamente más tarde.</p>';
+        }
     }
 }
 

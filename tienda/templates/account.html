@@ -23,9 +23,9 @@
                 <ul id="MenuItems">
                     <li><a href="{% url 'index' %}">Inicio</a></li>
                     <li><a href="{% url 'catalogo' %}">Productos</a></li>
-                    <li><a href="">Sobre Nosotros</a></li>
-                    <li><a href="">Contacto</a></li>
-                    <li><a href="">Cuenta</a></li>
+                    <li><a href="#">Sobre Nosotros</a></li>
+                    <li><a href="#">Contacto</a></li>
+                    <li><a href="{% url 'login' %}">Cuenta</a></li>
                 </ul>
             </nav>
             <a href="{% url 'carrito' %}"><img src="{% static 'images/cart.png' %}" width="30px" height="30px"></a>
@@ -44,6 +44,7 @@
                             <span onclick="register()">Registrarse</span>
                             <hr id="Indicator">
                         </div>
+                        <!-- Formulario de Login -->
                         <form id="LoginForm" method="post" action="{% url 'login' %}">
                             {% csrf_token %}
                             <input type="text" name="username" placeholder="Correo Electrónico" required>
@@ -52,6 +53,7 @@
                             <a href="{% url 'password_reset' %}">¿Olvidaste tu Contraseña?</a>
                         </form>
 
+                        <!-- Formulario de Registro -->
                         <form id="RegForm" method="post" action="{% url 'registro' %}">
                             {% csrf_token %}
                             <input type="text" name="full_name" placeholder="Nombre Completo" required>
@@ -109,19 +111,20 @@
         </div>
     </div>
 
-    <!-- javascript -->
+    <!-- JavaScript -->
     <script>
         var MenuItems = document.getElementById("MenuItems");
         MenuItems.style.maxHeight = "0px";
+
         function menutoggle() {
             if (MenuItems.style.maxHeight == "0px") {
                 MenuItems.style.maxHeight = "200px";
-            }
-            else {
+            } else {
                 MenuItems.style.maxHeight = "0px";
             }
         }
 
+        // Formulario de login y registro
         var LoginForm = document.getElementById("LoginForm");
         var RegForm = document.getElementById("RegForm");
         var Indicator = document.getElementById("Indicator");
@@ -137,6 +140,11 @@
             LoginForm.style.transform = "translateX(300px)";
             Indicator.style.transform = "translateX(0px)";
         }
+
+        // Ajuste para que el formulario de login sea el predeterminado al cargar la página
+        document.addEventListener("DOMContentLoaded", function () {
+            login();  // Mostrar el formulario de login de manera predeterminada
+        });
     </script>
 </body>
 
