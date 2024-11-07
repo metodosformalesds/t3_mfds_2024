@@ -1,0 +1,35 @@
+/* Importar las fuentes Raleway y Nunito desde Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+/* Aplicar Raleway a los títulos */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 700; /* Puedes ajustar el peso según el estilo que prefieras para los títulos */
+}
+
+/* Aplicar Nunito a los párrafos y texto general */
+body, p, span, a, li, blockquote, button, input, textarea {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 400;
+}
+
+/* Opcionales: Clases para variantes de Nunito y Raleway */
+.nunito-light {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 300;
+}
+
+.nunito-bold {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+}
+
+.raleway-light {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 300;
+}
+
+.raleway-bold {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 900;
+}

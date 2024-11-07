@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Producto</title>
+    <link rel="stylesheet" href="{% static 'core/css/detalle_producto.css' %}">
+    <style>
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .edit-button, .delete-button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .edit-button {
+            background-color: #007bff;
+        }
+        .delete-button {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="product-details">
+        <h1>{{ producto.nombre }}</h1>
+        <div class="product-images">
+            {% for imagen in producto.imagenes.all %}
+                <img src="{{ imagen.imagen.url }}" alt="Imagen del Producto">
+            {% endfor %}
+        </div>
+        <p><strong>Precio:</strong> ${{ producto.precio }}</p>
+        <p><strong>Categoría:</strong> {{ producto.categoria }}</p>
+        <p><strong>Marca:</strong> {{ producto.marca }}</p>
+        <p><strong>Modelo:</strong> {{ producto.modelo }}</p>
+        <p><strong>Año:</strong> {{ producto.año }}</p>
+        <p><strong>Motor:</strong> {{ producto.motor }}</p>
+        <p><strong>Descripción:</strong> {{ producto.descripcion }}</p>
+        <p><strong>Fecha de creación:</strong> {{ producto.created_at }}</p>
+
+        <!-- Botones de acción: Editar y Eliminar -->
+        <div class="action-buttons">
+            <a href="{% url 'editar_producto' producto.pk %}" class="edit-button">Editar</a>
+            <form action="{% url 'eliminar_producto' producto.pk %}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este producto?');">
+                {% csrf_token %}
+                <button type="submit" class="delete-button">Eliminar</button>
+            </form>
+        </div>
+
+        <a href="{% url 'vendedor_panel_url' %}">Volver al Panel</a>
+    </div>
+</body>
+</html>

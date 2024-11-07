@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Verificación de Orden</title>
+</head>
+<body>
+    <h1>Verificación de Orden de Productos</h1>
+    <ul>
+        {% for producto in productos %}
+            <li>
+                <strong>Nombre:</strong> {{ producto.nombre }}<br>
+                <strong>Fecha de creación:</strong> {{ producto.created_at }}<br>
+                <hr>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

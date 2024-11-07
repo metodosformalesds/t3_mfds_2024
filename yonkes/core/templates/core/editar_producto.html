@@ -5,74 +5,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Producto</title>
     <style>
+        /* Estilos generales */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f8f8f8;
-            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
             margin: 0;
-            padding: 20px;
+            background-color: #f4f4f9;
         }
+
         .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
+            width: 100%;
+            max-width: 500px;
             background-color: #fff;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
+            text-align: center;
             font-size: 24px;
+            color: #333;
             margin-bottom: 20px;
         }
+
+        /* Estilo para el formulario */
         form {
             display: flex;
             flex-direction: column;
         }
-        label {
-            margin-top: 10px;
+
+        form p {
+            margin-bottom: 15px;
+        }
+
+        .btn-save, .btn-back {
+            padding: 10px 20px;
+            font-size: 16px;
             font-weight: bold;
-        }
-        input, textarea, select {
-            margin-top: 5px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        button {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #ff7315;
-            color: #fff;
+            text-align: center;
             border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #e66512;
-        }
-        .back-links {
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .back-link {
+            color: #fff;
+            background-color: #4CAF50;
             text-decoration: none;
-            color: #ff7315;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* Diferenciar el botón Volver al Panel */
+        .btn-back {
+            background-color: #555;
+        }
+
+        /* Efecto hover para ambos botones */
+        .btn-save:hover, .btn-back:hover {
+            background-color: #333;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Editar Producto</h1>
-        <form method="post" enctype="multipart/form-data">
+        <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit">Guardar Cambios</button>
+            
+            <!-- Campo para cargar imágenes adicionales -->
+            <label for="imagenes">Agregar Imágenes:</label>
+            <input type="file" name="imagenes" id="imagenes" multiple>
+
+            <button type="submit" class="btn-save">Guardar Producto</button>
+            <a href="{% url 'vendedor_panel_url' %}" class="btn-back">Volver al Panel</a>
         </form>
-        <div class="back-links">
-            <a href="{% url 'listar_productos' %}" class="back-link">Volver a la lista de productos</a>
-            <a href="{% url 'vendedor_panel_url' %}" class="back-link">Volver al panel de vendedor</a>
-        </div>
     </div>
 </body>
 </html>

@@ -35,6 +35,6 @@ class ProductoForm(forms.ModelForm):
             'modelo',  # Añade el nuevo campo
             'año',     # Añade el nuevo campo
             'motor',   # Añade el nuevo campo
-            'disponible'
+           'estatus',  # Reemplaza 'disponible' por 'estatus'
         ]
 

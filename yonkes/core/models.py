@@ -19,19 +19,31 @@ class CustomUser(AbstractUser):
 
 User = get_user_model()
 
-class Producto(models.Model):
+class Producto(models.Model):     
+    ESTATUS_CHOICES = [
+        ('disponible', 'Disponible'),
+        ('en_trato', 'En Trato'),
+        ('vendido', 'Vendido'),
+    ]
+    
     vendedor = models.ForeignKey(User, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField()
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     categoria = models.CharField(max_length=50)
-    marca = models.CharField(max_length=100, default="Desconocida")  # Valor por defecto
-    modelo = models.CharField(max_length=100, default="Desconocido")  # Valor por defecto
-    año = models.CharField(max_length=4, default="2020")  # Valor por defecto
-    motor = models.CharField(max_length=50, default="N/A")  # Valor por defecto
+    marca = models.CharField(max_length=100, default="Desconocida")
+    modelo = models.CharField(max_length=100, default="Desconocido")
+    año = models.CharField(max_length=4, default="2020")
+    motor = models.CharField(max_length=50, default="N/A")
     fecha_creacion = models.DateTimeField(auto_now_add=True)
-    disponible = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    # Nuevo campo de estatus
+    estatus = models.CharField(
+        max_length=10,
+        choices=ESTATUS_CHOICES,
+        default='disponible',
+    )
 
     def days_since_created(self):
         return (now() - self.created_at).days

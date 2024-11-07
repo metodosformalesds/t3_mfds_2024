@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Producto, ImagenProducto
 from .forms import CompleteProfileForm, ProductoForm
+from django.db.models import ExpressionWrapper, F, DurationField
 from django.utils.timezone import now
 
 # Vista para la página Home con lógica de autenticación
@@ -68,11 +69,20 @@ from datetime import timedelta
 #PRODUCTOS
 @login_required
 def listar_productos(request):
-    # Filtramos los productos del vendedor y pasamos la lista completa a la plantilla
-    productos = Producto.objects.filter(vendedor=request.user)
-    
-    
-    return render(request, 'core/listar_productos.html', {'productos': productos})
+    # Utilizamos la misma lógica de verificación de orden
+    productos = Producto.objects.filter(vendedor=request.user).order_by('-created_at')
+    return render(request, 'core/verificar_orden.html', {'productos': productos})
+
+#pendienteeeee
+@login_required
+def verificar_orden_productos(request):
+    productos = Producto.objects.filter(vendedor=request.user).order_by('-created_at')
+    return render(request, 'core/verificar_orden.html', {'productos': productos})
+
+@login_required
+def detalle_producto(request, pk):
+    producto = get_object_or_404(Producto, pk=pk)
+    return render(request, 'core/detalle_producto.html', {'producto': producto})
 
 
 @login_required
@@ -101,9 +111,11 @@ def editar_producto(request, pk):
         form = ProductoForm(request.POST, request.FILES, instance=producto)
         if form.is_valid():
             form.save()
-            return redirect('listar_productos')
+            # Redirige al Panel del Vendedor después de guardar en lugar de la lista de productos
+            return redirect('vendedor_panel_url')  # Asegúrate de que 'vendedor_panel_url' es el nombre correcto de la URL del panel
     else:
         form = ProductoForm(instance=producto)
+
     return render(request, 'core/editar_producto.html', {'form': form})
 
 @login_required

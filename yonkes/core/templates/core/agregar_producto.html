@@ -5,59 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Añadir Producto</title>
     <style>
+        /* Estilos generales */
         body {
             font-family: Arial, sans-serif;
             background-color: #f8f8f8;
             color: #333;
             margin: 0;
             padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
+        
         .container {
             max-width: 600px;
-            margin: 0 auto;
+            width: 100%;
             padding: 20px;
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             font-size: 24px;
             margin-bottom: 20px;
+            text-align: center;
         }
+
         form {
             display: flex;
             flex-direction: column;
         }
+
         label {
             margin-top: 10px;
             font-weight: bold;
         }
+
         input, textarea, select {
             margin-top: 5px;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
         }
-        button {
-            margin-top: 20px;
+
+        button, .btn-back {
             padding: 10px;
             background-color: #ff7315;
             color: #fff;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            margin-top: 20px;
+            display: block;
+            width: 100%;
+            text-decoration: none;
         }
-        button:hover {
+
+        button:hover, .btn-back:hover {
             background-color: #e66512;
         }
+
+        /* Separación entre enlaces de regreso */
         .back-links {
             margin-top: 20px;
             display: flex;
-            justify-content: space-between;
-        }
-        .back-link {
-            text-decoration: none;
-            color: #ff7315;
+            flex-direction: column;
+            gap: 10px;
         }
     </style>
 </head>
@@ -75,8 +92,7 @@
             <button type="submit">Guardar Producto</button>
         </form>        
         <div class="back-links">
-            <a href="{% url 'listar_productos' %}" class="back-link">Volver a la lista de productos</a>
-            <a href="{% url 'vendedor_panel_url' %}" class="back-link">Volver al panel de vendedor</a>
+            <a href="{% url 'vendedor_panel_url' %}" class="btn-back">Volver al panel de vendedor</a>
         </div>
     </div>
 </body>
