@@ -25,7 +25,7 @@
                     <li><a href="{% url 'catalogo' %}">Productos</a></li>
                     <li><a href="#">Sobre Nosotros</a></li>
                     <li><a href="#">Contacto</a></li>
-                    <li><a href="{% url 'login' %}">Cuenta</a></li>
+                    <li><a href="{% url 'account_login' %}">Cuenta</a></li>
                 </ul>
             </nav>
             <a href="{% url 'carrito' %}"><img src="{% static 'images/cart.png' %}" width="30px" height="30px"></a>
@@ -45,20 +45,17 @@
                             <hr id="Indicator">
                         </div>
                         <!-- Formulario de Login -->
-                        <form id="LoginForm" method="post" action="{% url 'login' %}">
+                        <form id="LoginForm" method="post" action="{% url 'account_login' %}">
                             {% csrf_token %}
-                            <input type="text" name="username" placeholder="Correo Electrónico" required>
-                            <input type="password" name="password" placeholder="Contraseña" required>
+                            {{ login_form.as_p }}
                             <button type="submit" class="btn">Iniciar Sesión</button>
-                            <a href="{% url 'password_reset' %}">¿Olvidaste tu Contraseña?</a>
+                            <a href="{% url 'account_reset_password' %}">¿Olvidaste tu Contraseña?</a>
                         </form>
 
                         <!-- Formulario de Registro -->
-                        <form id="RegForm" method="post" action="{% url 'registro' %}">
+                        <form id="RegForm" method="post" action="{% url 'account_signup' %}">
                             {% csrf_token %}
-                            <input type="text" name="full_name" placeholder="Nombre Completo" required>
-                            <input type="email" name="email" placeholder="Correo Electrónico" required>
-                            <input type="password" name="password" placeholder="Contraseña" required>
+                            {{ signup_form.as_p }}
                             <button type="submit" class="btn">Registrarse</button>
                         </form>
                     </div>

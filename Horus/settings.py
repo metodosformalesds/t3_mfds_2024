@@ -11,10 +11,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'horuz.me', 'www.horuz.me']
 
-# Añadir un print para verificar el valor de ALLOWED_HOSTS
 print("ALLOWED_HOSTS:", ALLOWED_HOSTS)
 
 # Application definition
@@ -38,10 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles', 
+    'django.contrib.staticfiles',
     'tienda',
 
-     # Aplicaciones de Allauth
+    # Aplicaciones de Allauth
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -59,8 +58,8 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',  # Mover arriba
-    'allauth.account.middleware.AccountMiddleware',  # Asegúrate de que esté debajo de AuthenticationMiddleware
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -83,7 +82,6 @@ TEMPLATES = [
     },
 ]
 
-
 WSGI_APPLICATION = 'Horus.wsgi.application'
 
 
@@ -96,7 +94,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -116,18 +113,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es'
 
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
@@ -136,16 +131,14 @@ STATIC_URL = '/static/'
 
 # Usa la carpeta 'static' para los archivos estáticos durante el desarrollo
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',  # Corrige aquí si antes tenías 'staticfiles'
+    BASE_DIR / 'static',
 ]
 
 # Para producción, esta es la carpeta a la que se recopilarán los archivos
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -156,12 +149,26 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'al214466@alumnos.uacj.mx'  # Reemplaza con tu correo
-EMAIL_HOST_PASSWORD = 'VARC90279'  # Reemplaza con tu contraseña o token
+EMAIL_HOST_USER = 'al214466@alumnos.uacj.mx'
+EMAIL_HOST_PASSWORD = 'VARC90279'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-LOGIN_REDIRECT_URL = '/catalogo/'
-
 SITE_ID = 1  # Requerido para Allauth
-LOGIN_REDIRECT_URL = '/accounts/'  # Redirige al catálogo después del login
-LOGOUT_REDIRECT_URL = '/accounts/login/'  # Redirige al login después del logout
+
+# Configuraciones de Login y Logout con Allauth
+LOGIN_REDIRECT_URL = '/catalogo/'
+LOGOUT_REDIRECT_URL = '/accounts/login/'
+
+# Configuración de Django Allauth para usar la plantilla 'account.html'
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
+ACCOUNT_LOGOUT_ON_GET = True
+
+# Configurar la plantilla a utilizar
+ACCOUNT_FORMS = {
+    'login': 'tienda.forms.CustomLoginForm',
+    'signup': 'tienda.forms.CustomSignupForm',
+}
