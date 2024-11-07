@@ -3,7 +3,7 @@ async function cargarProductos() {
 
     try {
         // Cambia la URL a la correcta para obtener productos de la API
-        const responseApi = await fetch('http://localhost:3000/autopartes');
+        const responseApi = await fetch('http://horuz.me/autopartes');
         
         // Verifica si la respuesta fue exitosa
         if (!responseApi.ok) {
