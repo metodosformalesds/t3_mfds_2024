@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel del Vendedor</title>
-    <!-- Enlace al archivo CSS dentro de la carpeta static -->
     <link rel="stylesheet" href="{% static 'core/css/vendedor_panel.css' %}">
     <style>
         .product-item {
@@ -16,8 +15,8 @@
             padding-bottom: 20px;
         }
         .image-carousel {
-            flex: 0 0 400px; /* Tamaño fijo más grande para la imagen */
-            height: 300px; /* Altura ajustada */
+            flex: 0 0 400px;
+            height: 300px;
             margin-right: 20px;
             position: relative;
             overflow: hidden;
@@ -25,7 +24,7 @@
         .carousel-image {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Ajusta la imagen para cubrir completamente el espacio */
+            object-fit: cover;
             border-radius: 5px;
         }
         .carousel-arrow {
@@ -49,7 +48,7 @@
         .product-details {
             flex: 1;
             display: grid;
-            grid-template-columns: 150px auto; /* Columnas alineadas */
+            grid-template-columns: 150px auto;
             gap: 5px;
         }
         .product-details p {
@@ -57,8 +56,8 @@
         }
         .product-actions {
             display: flex;
-            flex-direction: column; /* Botones en columna */
-            gap: 10px; /* Espacio entre los botones */
+            flex-direction: column;
+            gap: 10px;
             margin-left: 20px;
         }
         .edit-button, .delete-button {
@@ -76,14 +75,12 @@
         }
     </style>
     <script>
-        // Función para mostrar la confirmación antes de eliminar
         function confirmarEliminacion(event) {
             if (!confirm("¿Estás seguro de que deseas eliminar este producto?")) {
                 event.preventDefault();
             }
         }
 
-        // Función para manejar el carrusel de imágenes
         function showImage(index, productoId) {
             const images = document.querySelectorAll(`#producto-${productoId} .carousel-image`);
             images.forEach((img, i) => {
@@ -95,11 +92,8 @@
             let currentIndex = 0;
             const images = document.querySelectorAll(`#producto-${productoId} .carousel-image`);
             const totalImages = images.length;
-
-            // Mostrar la primera imagen por defecto
             showImage(currentIndex, productoId);
 
-            // Configurar las flechas del carrusel
             document.querySelector(`#producto-${productoId} .arrow-left`).addEventListener('click', () => {
                 currentIndex = (currentIndex - 1 + totalImages) % totalImages;
                 showImage(currentIndex, productoId);
@@ -110,14 +104,12 @@
                 showImage(currentIndex, productoId);
             });
 
-            // Configurar el cambio automático de imágenes cada 2 segundos
             setInterval(() => {
                 currentIndex = (currentIndex + 1) % totalImages;
                 showImage(currentIndex, productoId);
             }, 2000);
         }
 
-        // Configurar los carruseles cuando la página se cargue
         window.onload = function() {
             const productos = document.querySelectorAll('.product-item');
             productos.forEach(producto => {
@@ -131,7 +123,6 @@
     <div class="container">
         <div class="header">
             <h1>Panel del Vendedor</h1>
-            <!-- Botón para cerrar sesión con el estilo de inicio/registro -->
             <form action="/accounts/logout/" method="POST" style="display: inline;">
                 {% csrf_token %}
                 <button type="submit" class="session-button">Cerrar sesión</button>
@@ -139,10 +130,8 @@
         </div>
         <p>Bienvenido al panel del vendedor. Aquí puedes gestionar tus productos y ventas.</p>
 
-        <!-- Botón para añadir un nuevo producto -->
         <a href="{% url 'agregar_producto' %}" class="button">Añadir Producto</a>
 
-        <!-- Lista de productos -->
         <h2>Mis Productos</h2>
         <ul class="product-list">
             {% if productos %}
@@ -155,7 +144,6 @@
                             <button class="carousel-arrow arrow-left">&lt;</button>
                             <button class="carousel-arrow arrow-right">&gt;</button>
                         </div>
-                        <!-- Detalles del producto -->
                         <div class="product-details">
                             <p><strong>Nombre:</strong></p> <p>{{ producto.nombre }}</p>
                             <p><strong>Precio:</strong></p> <p>${{ producto.precio }}</p>
@@ -165,11 +153,10 @@
                             <p><strong>Año:</strong></p> <p>{{ producto.año }}</p>
                             <p><strong>Motor:</strong></p> <p>{{ producto.motor }}</p>
                             <p><strong>Descripción:</strong></p> <p>{{ producto.descripcion }}</p>
+                            <p><strong>Fecha de publicación:</strong></p> <p>{{ producto.time_since_created }}</p>
                         </div>
                         <div class="product-actions">
-                            <!-- Botón de Editar Producto -->
                             <a href="{% url 'editar_producto' producto.pk %}" class="edit-button">Editar</a>
-                            <!-- Botón de Eliminar Producto con confirmación -->
                             <form action="{% url 'eliminar_producto' producto.pk %}" method="post" style="display: inline;" onsubmit="confirmarEliminacion(event)">
                                 {% csrf_token %}
                                 <button type="submit" class="delete-button">Eliminar</button>

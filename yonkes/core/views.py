@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Producto, ImagenProducto
 from .forms import CompleteProfileForm, ProductoForm
+from django.utils.timezone import now
 
 # Vista para la página Home con lógica de autenticación
 def home(request):
@@ -63,10 +64,14 @@ def redirect_after_login(request):
     else:
         return redirect('/')  # O maneja el caso de redirección por defecto si algo sale mal
 
+from datetime import timedelta
 #PRODUCTOS
 @login_required
 def listar_productos(request):
+    # Filtramos los productos del vendedor y pasamos la lista completa a la plantilla
     productos = Producto.objects.filter(vendedor=request.user)
+    
+    
     return render(request, 'core/listar_productos.html', {'productos': productos})
 
 

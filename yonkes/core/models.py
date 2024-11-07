@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.utils.timezone import now
 
 class CustomUser(AbstractUser):
     street = models.CharField(max_length=255)
@@ -30,6 +31,25 @@ class Producto(models.Model):
     motor = models.CharField(max_length=50, default="N/A")  # Valor por defecto
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     disponible = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def days_since_created(self):
+        return (now() - self.created_at).days
+    
+    @property
+    def time_since_created(self):
+        time_difference = now() - self.created_at
+
+        if time_difference.days >= 1:
+            return f"Publicado hace {time_difference.days} día(s)"
+        elif time_difference.seconds >= 3600:
+            hours = time_difference.seconds // 3600
+            return f"Publicado hace {hours} hora(s)"
+        elif time_difference.seconds >= 60:
+            minutes = time_difference.seconds // 60
+            return f"Publicado hace {minutes} minuto(s)"
+        else:
+            return "Publicado hace unos segundos"
 
     def __str__(self):
         return self.nombre
