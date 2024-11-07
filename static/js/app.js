@@ -92,7 +92,7 @@ console.log(`https://auth.mercadolibre.com.mx/authorization?response_type=code&c
 rl.question('Ingresa el auth_code proporcionado por Mercado Libre: ', (authCode) => {
     getInitialAccessToken(authCode).then(() => {
         rl.close();
-        app.listen(PORT, '0.0.0.0', () => {
+        app.listen(PORT, '3.23.224.207', () => {
             console.log(`Servidor escuchando en el puerto ${PORT}`);
         });
     }).catch(error => {
