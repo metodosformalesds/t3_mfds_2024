@@ -31,18 +31,20 @@
         </div>
     </div>
 
-    <!-- Todos los Productos -->
-    <div class="small-container">
-        <div class="row row-2">
-            <h2>Todos los Productos</h2>
-            <select>
-                <option>Orden Predeterminado</option>
-                <option>Ordenar por Precio</option>
-                <option>Ordenar por Popularidad</option>
-                <option>Ordenar por Calificación</option>
-                <option>Ordenar por Venta</option>
-            </select>
-        </div>
+        <!-- Todos los Productos -->
+        <div class="small-container">
+            <div class="row row-2">
+                <h2>Todos los Productos</h2>
+                <select id="ordenarPrecio">
+                    <option value="default">Orden Predeterminado</option>
+                    <option value="precio-asc">Ordenar por Precio: Menor a Mayor</option>
+                    <option value="precio-desc">Ordenar por Precio: Mayor a Menor</option>
+                </select>
+            </div>
+            <!-- Contenedor dinámico para productos (JavaScript) -->
+            <div class="row" id="product-container">
+                <!-- Los productos se cargarán aquí mediante JavaScript -->
+            </div>
 
         <!-- Contenedor dinámico para productos (JavaScript) -->
         <div class="row" id="product-container">
@@ -50,11 +52,11 @@
         </div>
 
         <div class="page-btn">
-            <span>1</span>
-            <span>2</span>
-            <span>3</span>
-            <span>4</span>
-            <span>&#8594;</span>
+            <span onclick="cambiarPagina(1)">1</span>
+            <span onclick="cambiarPagina(2)">2</span>
+            <span onclick="cambiarPagina(3)">3</span>
+            <span onclick="cambiarPagina(4)">4</span>
+            <span onclick="cambiarPagina(5)">&#8594;</span>
         </div>
     </div>
 

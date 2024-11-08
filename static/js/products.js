@@ -1,5 +1,6 @@
 let currentPage = 1;
 const itemsPerPage = 8;
+let productos = []; // Variable para almacenar todos los productos cargados
 
 async function cargarProductos() {
     const productContainer = document.getElementById('product-container');
@@ -12,13 +13,16 @@ async function cargarProductos() {
             throw new Error('No se pudo cargar el archivo productos.json');
         }
 
-        const productos = await response.json();
+        productos = await response.json();
 
-        // Mostrar los productos por página
+        // Mostrar los productos por página (todos los productos por defecto)
         mostrarProductosPorPagina(productos, currentPage);
 
         // Configurar paginación
         configurarPaginacion(productos);
+
+        // Configurar el evento de ordenamiento por precio
+        configurarOrdenarPorPrecio();
 
     } catch (error) {
         console.error('Error al cargar los productos desde productos.json:', error);
@@ -26,37 +30,41 @@ async function cargarProductos() {
     }
 }
 
-function mostrarProductosPorPagina(productos, page) {
+function mostrarProductosPorPagina(productosFiltrados, page) {
     const productContainer = document.getElementById('product-container');
     productContainer.innerHTML = '';
 
     const startIndex = (page - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const productosPagina = productos.slice(startIndex, endIndex);
+    const productosPagina = productosFiltrados.slice(startIndex, endIndex);
 
-    productosPagina.forEach(producto => {
-        const productHTML = `
-            <div class="col-4">
-                <a href="/producto/${producto.id}/">
-                    <img src="${producto.imagen}" alt="${producto.titulo}">
-                </a>
-                <h4>${producto.titulo}</h4>
-                <div class="rating">
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-star-o"></i>
+    if (productosPagina.length === 0) {
+        productContainer.innerHTML = '<p>No hay productos disponibles.</p>';
+    } else {
+        productosPagina.forEach(producto => {
+            const productHTML = `
+                <div class="col-4">
+                    <a href="/producto/${producto.id}/">
+                        <img src="${producto.imagen}" alt="${producto.titulo}">
+                    </a>
+                    <h4>${producto.titulo}</h4>
+                    <div class="rating">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star-o"></i>
+                    </div>
+                    <p>$${producto.precio}</p>
                 </div>
-                <p>$${producto.precio}</p>
-            </div>
-        `;
-        productContainer.insertAdjacentHTML('beforeend', productHTML);
-    });
+            `;
+            productContainer.insertAdjacentHTML('beforeend', productHTML);
+        });
+    }
 }
 
-function configurarPaginacion(productos) {
-    const totalPages = Math.ceil(productos.length / itemsPerPage);
+function configurarPaginacion(productosFiltrados) {
+    const totalPages = Math.ceil(productosFiltrados.length / itemsPerPage);
     const pageContainer = document.querySelector('.page-btn');
     pageContainer.innerHTML = ''; // Limpiar botones de paginación previos
 
@@ -69,9 +77,7 @@ function configurarPaginacion(productos) {
         }
 
         pageButton.addEventListener('click', () => {
-            currentPage = i;
-            mostrarProductosPorPagina(productos, currentPage);
-            configurarPaginacion(productos);
+            cambiarPagina(i, productosFiltrados);
         });
 
         pageContainer.appendChild(pageButton);
@@ -85,14 +91,44 @@ function configurarPaginacion(productos) {
 
         nextButton.addEventListener('click', () => {
             if (currentPage < totalPages) {
-                currentPage++;
-                mostrarProductosPorPagina(productos, currentPage);
-                configurarPaginacion(productos);
+                cambiarPagina(currentPage + 1, productosFiltrados);
             }
         });
 
         pageContainer.appendChild(nextButton);
     }
+}
+
+function cambiarPagina(nuevaPagina, productosFiltrados) {
+    currentPage = nuevaPagina;
+    mostrarProductosPorPagina(productosFiltrados, currentPage);
+    configurarPaginacion(productosFiltrados);
+}
+
+function configurarOrdenarPorPrecio() {
+    const ordenarPrecioSelect = document.getElementById('ordenarPrecio');
+
+    ordenarPrecioSelect.addEventListener('change', () => {
+        const ordenSeleccionado = ordenarPrecioSelect.value;
+
+        let productosOrdenados = [...productos];
+
+        switch (ordenSeleccionado) {
+            case 'precio-asc':
+                productosOrdenados.sort((a, b) => a.precio - b.precio);
+                break;
+            case 'precio-desc':
+                productosOrdenados.sort((a, b) => b.precio - a.precio);
+                break;
+            default:
+                productosOrdenados = [...productos];
+                break;
+        }
+
+        currentPage = 1; // Reinicia a la primera página al ordenar
+        mostrarProductosPorPagina(productosOrdenados, currentPage);
+        configurarPaginacion(productosOrdenados);
+    });
 }
 
 // Llamada para cargar productos cuando la página esté lista
