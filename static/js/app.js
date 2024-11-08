@@ -3,6 +3,7 @@ const axios = require('axios');
 const cors = require('cors');
 const crypto = require('crypto');
 const readline = require('readline');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -94,6 +95,13 @@ rl.question('Ingresa el auth_code proporcionado por Mercado Libre: ', (authCode)
         rl.close();
         app.listen(PORT, '0.0.0.0', () => {
             console.log(`Servidor escuchando en el puerto ${PORT}`);
+            // Descarga y guarda los productos después de iniciar el servidor
+            if (!fs.existsSync('productos.json')) {
+                getAndSaveProducts();
+            } else {
+                console.log('Archivo productos.json ya existe, cargando productos...');
+                cargarProductosDesdeArchivo();
+            }
         });
     }).catch(error => {
         console.error("Error al obtener el token inicial:", error);
@@ -111,69 +119,98 @@ async function ensureValidAccessToken() {
     }
 }
 
-// Función para obtener productos de autopartes con imágenes en alta resolución
-async function getAutoParts() {
+// Función para obtener productos de autopartes con imágenes en alta resolución y guardarlos localmente
+async function getAndSaveProducts() {
     await ensureValidAccessToken();
     try {
-        const response = await axios.get('https://api.mercadolibre.com/sites/MLM/search', {
-            params: { category: 'MLM1747', limit: 10 },
-            headers: { Authorization: `Bearer ${accessToken}` }
-        });
+        const productos = [];
 
-        const productos = await Promise.all(response.data.results.map(async producto => {
-            const detalleProducto = await axios.get(`https://api.mercadolibre.com/items/${producto.id}`, {
+        // Realizamos dos solicitudes con un límite de 50 cada una para obtener 100 productos
+        for (let offset = 0; offset < 100; offset += 50) {
+            const response = await axios.get('https://api.mercadolibre.com/sites/MLM/search', {
+                params: { category: 'MLM1747', limit: 50, offset: offset },
                 headers: { Authorization: `Bearer ${accessToken}` }
             });
-            const imagenAltaResolucion = detalleProducto.data.pictures.length > 0 ? detalleProducto.data.pictures[0].url : producto.thumbnail;
 
-            return {
-                id: producto.id,
-                titulo: producto.title,
-                precio: producto.price,
-                imagen: imagenAltaResolucion,
-                link: producto.permalink
-            };
-        }));
+            const productosParciales = await Promise.all(response.data.results.map(async producto => {
+                try {
+                    // Intentar obtener los detalles del producto, incluyendo la descripción
+                    const detalleProducto = await axios.get(`https://api.mercadolibre.com/items/${producto.id}`, {
+                        headers: { Authorization: `Bearer ${accessToken}` }
+                    });
 
-        return productos;
+                    const descripcionResponse = await axios.get(`https://api.mercadolibre.com/items/${producto.id}/description`, {
+                        headers: { Authorization: `Bearer ${accessToken}` }
+                    });
+
+                    const imagenAltaResolucion = detalleProducto.data.pictures.length > 0 ? detalleProducto.data.pictures[0].url : producto.thumbnail;
+
+                    return {
+                        id: producto.id,
+                        titulo: producto.title,
+                        precio: producto.price,
+                        imagen: imagenAltaResolucion,
+                        descripcion: descripcionResponse.data.plain_text || "Descripción no disponible",
+                        link: producto.permalink,
+                        pictures: detalleProducto.data.pictures // Guardar todas las imágenes adicionales también
+                    };
+                } catch (error) {
+                    console.error(`Error al obtener detalles del producto ${producto.id}:`, error.message);
+                    return {
+                        id: producto.id,
+                        titulo: producto.title,
+                        precio: producto.price,
+                        imagen: producto.thumbnail,
+                        descripcion: "Descripción no disponible",
+                        link: producto.permalink,
+                        pictures: [] // Si hay un error, no añadimos imágenes adicionales
+                    };
+                }
+            }));
+
+            productos.push(...productosParciales);
+        }
+
+        // Guardar los productos en un archivo JSON solo si hay productos
+        if (productos.length > 0) {
+            fs.writeFileSync('productos.json', JSON.stringify(productos, null, 2));
+            console.log("Productos guardados exitosamente en productos.json");
+        } else {
+            console.error("No se encontraron productos para guardar.");
+        }
     } catch (error) {
         console.error("Error al obtener productos:", error.response ? error.response.data : error.message);
-        return [];
     }
 }
 
-// Ruta para obtener productos de autopartes
-app.get('/autopartes', async (req, res) => {
-    const productos = await getAutoParts();
+// Función para cargar productos desde el archivo JSON local
+let productos = [];
+function cargarProductosDesdeArchivo() {
+    try {
+        const data = fs.readFileSync('productos.json');
+        if (data.length === 0) {
+            throw new Error("El archivo productos.json está vacío");
+        }
+        productos = JSON.parse(data);
+        console.log('Productos cargados correctamente desde productos.json');
+    } catch (error) {
+        console.error('Error al cargar productos desde productos.json:', error.message);
+    }
+}
+
+// Ruta para obtener productos de autopartes desde el archivo local
+app.get('/autopartes', (req, res) => {
     res.json(productos);
 });
 
 // Nueva ruta para obtener los detalles de un producto específico por ID
-app.get('/productos/:id', async (req, res) => {
+app.get('/productos/:id', (req, res) => {
     const productId = req.params.id;
-    await ensureValidAccessToken();
+    const producto = productos.find(p => p.id === productId);
 
-    try {
-        const response = await axios.get(`https://api.mercadolibre.com/items/${productId}`, {
-            headers: { Authorization: `Bearer ${accessToken}` }
-        });
-
-        // Obtener descripción detallada
-        const descripcionResponse = await axios.get(`https://api.mercadolibre.com/items/${productId}/description`, {
-            headers: { Authorization: `Bearer ${accessToken}` }
-        });
-
-        // Enviar los datos detallados del producto
-        res.json({
-            id: response.data.id,
-            titulo: response.data.title,
-            precio: response.data.price,
-            descripcion: descripcionResponse.data.plain_text || "Descripción no disponible",
-            imagen: response.data.pictures[0]?.url || "", // Imagen principal
-            pictures: response.data.pictures // Array de imágenes adicionales
-        });
-    } catch (error) {
-        console.error("Error al obtener detalles del producto:", error);
-        res.status(500).json({ error: 'Error al obtener los detalles del producto' });
+    if (producto) {
+        res.json(producto);
+    } else {
+        res.status(404).json({ error: 'Producto no encontrado' });
     }
 });

@@ -56,27 +56,21 @@
     <div class="small-container single-product">
         <div class="row">
             <div class="col-2">
-                <img src="{{ producto.imagen }}" width="100%" id="ProductImg" alt="{{ producto.titulo }}">
+                <img src="" width="100%" id="ProductImg" alt="">
                 <div class="small-img-row" id="ProductThumbnails">
-                    {% if not producto.producto_local and producto.pictures %}
-                        {% for picture in producto.pictures %}
-                            <div class="small-img-col">
-                                <img src="{{ picture.url }}" width="100%" class="small-img" onclick="changeMainImage('{{ picture.url }}')">
-                            </div>
-                        {% endfor %}
-                    {% endif %}
+                    <!-- Miniaturas del producto se cargarán aquí dinámicamente -->
                 </div>
             </div>
             <div class="col-2">
                 <p>Inicio / Autopartes</p>
-                <h1 id="ProductName">{{ producto.titulo }}</h1>
-                <h4 id="ProductPrice">${{ producto.precio }}</h4>
-                <input type="number" value="1" id="productQuantity">
+                <h1 id="ProductName"></h1>
+                <h4 id="ProductPrice"></h4>
+                <input type="number" value="1" id="productQuantity" min="1">
                 <button class="btn" id="addToCartButton" onclick="agregarAlCarrito()">Agregar al Carrito</button>
 
                 <h3>Detalles del Producto <i class="fa fa-indent"></i></h3>
                 <br>
-                <div id="ProductDescription" class="product-description">{{ producto.descripcion }}</div>
+                <div id="ProductDescription" class="product-description"></div>
                 <span id="showMoreButton" class="show-more" onclick="toggleDescription()">Leer más</span>
             </div>
         </div>
@@ -134,34 +128,72 @@
 
     <!-- JavaScript para manejar el cambio de imagen y agregar al carrito -->
     <script>
-        function agregarAlCarrito() {
-            const cantidad = parseInt(document.getElementById('productQuantity').value) || 1;
-            const productId = "{{ producto.id }}";
-            const productTitle = "{{ producto.titulo }}";
-            const productPrice = "{{ producto.precio }}";
-            const productImage = "{{ producto.imagen }}";
-
-            // Obtener el carrito actual de localStorage o inicializar uno nuevo
-            let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-
-            // Verificar si el producto ya está en el carrito
-            const productoExistente = carrito.find(item => item.id === productId);
-            if (productoExistente) {
-                productoExistente.cantidad += cantidad;
-            } else {
-                carrito.push({
-                    id: productId,
-                    titulo: productTitle,
-                    precio: productPrice,
-                    imagen: productImage,
-                    cantidad: cantidad
-                });
-            }
-
-            localStorage.setItem("carrito", JSON.stringify(carrito));
-            alert("Producto agregado al carrito");
+        // Función para obtener el ID del producto desde la URL
+        function obtenerIdProductoDesdeUrl() {
+            const path = window.location.pathname;
+            const partes = path.split('/');
+            return partes[2] || null; // Se asume que la URL tiene el formato /producto/{id}/
         }
 
+        // Función para cargar el producto desde el archivo productos.json
+        async function cargarDetallesProducto() {
+            const productId = obtenerIdProductoDesdeUrl(); // Obtiene el `id` del producto de la URL
+
+            if (!productId) {
+                alert('Producto no encontrado');
+                return;
+            }
+
+            try {
+                // Carga el archivo productos.json
+                const response = await fetch('/static/js/productos.json');
+                if (!response.ok) {
+                    throw new Error(`Error al cargar productos.json: ${response.status}`);
+                }
+
+                // Convierte la respuesta a JSON
+                const productos = await response.json();
+
+                // Encuentra el producto con el `id` especificado
+                const producto = productos.find(p => p.id === productId);
+
+                if (!producto) {
+                    alert('Producto no encontrado');
+                    return;
+                }
+
+                // Actualiza la página con la información del producto
+                document.getElementById('ProductImg').src = producto.imagen;
+                document.getElementById('ProductImg').alt = producto.titulo;
+                document.getElementById('ProductName').innerText = producto.titulo;
+                document.getElementById('ProductPrice').innerText = `$${producto.precio}`;
+                document.getElementById('ProductDescription').innerText = producto.descripcion || 'Descripción no disponible';
+
+                // Si el producto tiene múltiples imágenes, las agrega como miniaturas
+                const thumbnailsContainer = document.getElementById('ProductThumbnails');
+                thumbnailsContainer.innerHTML = '';
+
+                if (producto.pictures && producto.pictures.length > 0) {
+                    producto.pictures.forEach(picture => {
+                        const thumbnailHTML = `
+                            <div class="small-img-col">
+                                <img src="${picture.url}" width="100%" class="small-img" onclick="changeMainImage('${picture.url}')">
+                            </div>
+                        `;
+                        thumbnailsContainer.insertAdjacentHTML('beforeend', thumbnailHTML);
+                    });
+                }
+
+                // Guardar los datos del producto en el botón de "Agregar al Carrito"
+                document.getElementById('addToCartButton').dataset.product = JSON.stringify(producto);
+
+            } catch (error) {
+                console.error('Error al cargar el producto:', error);
+                alert('Hubo un error al cargar la información del producto.');
+            }
+        }
+
+        // Función para cambiar la imagen principal al hacer clic en una miniatura
         function changeMainImage(imageUrl) {
             document.getElementById("ProductImg").src = imageUrl;
         }
@@ -178,6 +210,34 @@
                 showMoreButton.innerText = "Leer menos";
             }
         }
+
+        // Función para agregar el producto al carrito
+        function agregarAlCarrito() {
+            const producto = JSON.parse(document.getElementById('addToCartButton').dataset.product);
+            const cantidad = parseInt(document.getElementById('productQuantity').value) || 1;
+
+            let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
+            // Verificar si el producto ya está en el carrito
+            const productoExistente = carrito.find(item => item.id === producto.id);
+            if (productoExistente) {
+                productoExistente.cantidad += cantidad;
+            } else {
+                carrito.push({
+                    id: producto.id,
+                    titulo: producto.titulo,
+                    precio: producto.precio,
+                    imagen: producto.imagen,
+                    cantidad: cantidad
+                });
+            }
+
+            localStorage.setItem("carrito", JSON.stringify(carrito));
+            alert("Producto agregado al carrito");
+        }
+
+        // Ejecutar la función para cargar el producto cuando la página esté lista
+        document.addEventListener("DOMContentLoaded", cargarDetallesProducto);
     </script>    
 
 </body>

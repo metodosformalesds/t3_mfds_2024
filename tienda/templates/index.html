@@ -245,23 +245,29 @@
         // Cargar yonkes en el mapa al cargar la página
         cargarYonkes();
     
-        // Funciones para cargar y mostrar productos
-        async function cargarProductosAleatorios() {
-            try {
-                const response = await fetch('http://localhost:3000/autopartes');
-                const productos = await response.json();
-                const productosDestacados = obtenerProductosAleatorios(productos, 4);
-                const ultimosProductos = obtenerProductosAleatorios(productos, 4);
-    
-                insertarProductosEnSeccion('featured-products', productosDestacados);
-                insertarProductosEnSeccion('latest-products', ultimosProductos);
-    
-                const productoExclusivo = obtenerProductoAleatorio(productos);
-                mostrarProductoExclusivo(productoExclusivo);
-            } catch (error) {
-                console.error('Error al cargar los productos:', error);
+        // Funciones para cargar y mostrar productos desde productos.json
+        async function cargarProductosDesdeArchivo() {
+        try {
+            // Cambia la ruta a donde realmente está disponible el archivo productos.json
+            const response = await fetch('/static/js/productos.json'); // Asegúrate de que la ruta sea correcta.
+            if (!response.ok) {
+                throw new Error('No se pudo cargar el archivo productos.json');
             }
+            const productos = await response.json();
+
+            const productosDestacados = obtenerProductosAleatorios(productos, 4);
+            const ultimosProductos = obtenerProductosAleatorios(productos, 4);
+
+            insertarProductosEnSeccion('featured-products', productosDestacados);
+            insertarProductosEnSeccion('latest-products', ultimosProductos);
+
+            const productoExclusivo = obtenerProductoAleatorio(productos);
+            mostrarProductoExclusivo(productoExclusivo);
+        } catch (error) {
+            console.error('Error al cargar los productos desde productos.json:', error);
         }
+    }
+
     
         function obtenerProductosAleatorios(productos, cantidad) {
             const productosAleatorios = [];
@@ -316,8 +322,9 @@
         }
     
         // Cargar productos al cargar la página
-        cargarProductosAleatorios();
+        cargarProductosDesdeArchivo();
     </script>
+    
           
 </body>
 
