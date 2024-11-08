@@ -88,6 +88,7 @@
             </div>
         </div>
     </div>
+
        <!-- Testimonios -->
        <div class="testimonial">
         <div class="small-container">
@@ -246,32 +247,31 @@
     
         // Funciones para cargar y mostrar productos desde productos.json
         async function cargarProductosDesdeArchivo() {
-        try {
-            // Cambia la ruta a donde realmente está disponible el archivo productos.json
-            const response = await fetch('/static/js/productos.json'); // Asegúrate de que la ruta sea correcta.
-            if (!response.ok) {
-                throw new Error('No se pudo cargar el archivo productos.json');
+            try {
+                // Cambia la ruta a donde realmente está disponible el archivo productos.json
+                const response = await fetch('/static/js/productos.json'); 
+                if (!response.ok) {
+                    throw new Error('No se pudo cargar el archivo productos.json');
+                }
+                const productos = await response.json();
+
+                const productosDestacados = obtenerProductosAleatorios(productos, 4);
+                const ultimosProductos = obtenerProductosAleatorios(productos, 4);
+
+                insertarProductosEnSeccion('featured-products', productosDestacados);
+                insertarProductosEnSeccion('latest-products', ultimosProductos);
+
+                const productoExclusivo = obtenerProductoAleatorio(productos);
+                mostrarProductoExclusivo(productoExclusivo);
+            } catch (error) {
+                console.error('Error al cargar los productos desde productos.json:', error);
             }
-            const productos = await response.json();
-
-            const productosDestacados = obtenerProductosAleatorios(productos, 4);
-            const ultimosProductos = obtenerProductosAleatorios(productos, 4);
-
-            insertarProductosEnSeccion('featured-products', productosDestacados);
-            insertarProductosEnSeccion('latest-products', ultimosProductos);
-
-            const productoExclusivo = obtenerProductoAleatorio(productos);
-            mostrarProductoExclusivo(productoExclusivo);
-        } catch (error) {
-            console.error('Error al cargar los productos desde productos.json:', error);
         }
-    }
 
-    
         function obtenerProductosAleatorios(productos, cantidad) {
             const productosAleatorios = [];
             const productosUsados = new Set();
-    
+
             while (productosAleatorios.length < cantidad && productosAleatorios.length < productos.length) {
                 const indiceAleatorio = Math.floor(Math.random() * productos.length);
                 if (!productosUsados.has(indiceAleatorio)) {
@@ -281,18 +281,17 @@
             }
             return productosAleatorios;
         }
-    
+
         function obtenerProductoAleatorio(productos) {
             const indiceAleatorio = Math.floor(Math.random() * productos.length);
             return productos[indiceAleatorio];
         }
-    
+
         function insertarProductosEnSeccion(idSeccion, productos) {
             const contenedor = document.getElementById(idSeccion);
             contenedor.innerHTML = '';
             productos.forEach(producto => {
                 const imagen = producto.pictures && producto.pictures.length > 0 ? producto.pictures[0].url : producto.imagen;
-                // Cambio para redirigir correctamente al detalle del producto usando la vista de Django
                 const productHTML = `
                     <div class="col-4">
                         <a href="/producto/${producto.id}/"><img src="${imagen}" alt="${producto.titulo}"></a>
@@ -310,21 +309,17 @@
                 contenedor.insertAdjacentHTML('beforeend', productHTML);
             });
         }
-    
+
         function mostrarProductoExclusivo(producto) {
             const imagen = producto.pictures && producto.pictures.length > 0 ? producto.pictures[0].url : producto.imagen;
             document.getElementById('exclusive-product-image').src = imagen;
             document.getElementById('exclusive-product-title').innerText = producto.titulo;
-            document.getElementById('exclusive-product-description').innerText = producto.descripcion || "Descripción no disponible";
-            // Actualización para redirigir a la vista del detalle del producto
-            document.getElementById('exclusive-product-link').href = `/producto/${producto.id}/`;
+            document.getElementById('exclusive-product-link').href = `/producto/${producto.id}/`; // Actualización para redirigir al detalle del producto
         }
-    
+
         // Cargar productos al cargar la página
         cargarProductosDesdeArchivo();
     </script>
-    
-          
 </body>
 
 </html>

@@ -5,7 +5,9 @@ from .models import Orden, DetalleOrden, Categoria
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.http import JsonResponse
-import requests
+import json
+import os
+from django.conf import settings
 
 def index(request):
     # Obtener todas las categorías desde la base de datos para mostrarlas en el index
@@ -23,40 +25,41 @@ def publicar_producto(request):
     return redirect('catalogo')
 
 def catalogo(request):
-    # URL de la API que está sirviendo los productos (Node.js)
-    api_url = 'http://localhost:3000/autopartes'
+    # Cargar productos desde productos.json
+    productos_path = os.path.join(settings.BASE_DIR, 'static/js/productos.json')
 
     try:
-        # Realiza la solicitud a la API
-        response = requests.get(api_url)
-        response.raise_for_status()  # Verifica si la respuesta tiene errores
-        
-        # Convierte la respuesta JSON en un objeto de Python
-        productos = response.json()
-    except requests.exceptions.RequestException as e:
+        with open(productos_path, 'r', encoding='utf-8') as file:
+            productos = json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError) as e:
         # En caso de error, loguea y muestra un mensaje de error en la plantilla
-        print(f"Error al obtener productos de la API: {e}")
+        print(f"Error al cargar productos desde productos.json: {e}")
         productos = []  # Vacía la lista de productos para manejar el error adecuadamente
-    
+
     # Renderiza la plantilla con los productos obtenidos
     return render(request, 'products.html', {'productos': productos})
 
 def detalle_producto(request, id):
-    # Obtener detalles del producto desde la API de Node.js
-    api_url = f'http://localhost:3000/productos/{id}'
+    # Obtener detalles del producto desde productos.json
+    productos_path = os.path.join(settings.BASE_DIR, 'static/js/productos.json')
 
     try:
-        response = requests.get(api_url)
-        response.raise_for_status()
-        producto_data = response.json()  # El producto es un diccionario con la información de la API
-        producto_data['producto_local'] = False
-    except requests.exceptions.RequestException as e:
+        with open(productos_path, 'r', encoding='utf-8') as file:
+            productos = json.load(file)
+            producto = next((p for p in productos if p['id'] == id), None)
+
+        if not producto:
+            return render(request, 'product_details.html', {'error': 'Producto no encontrado.'})
+
+        producto['producto_local'] = True
+
+    except (FileNotFoundError, json.JSONDecodeError) as e:
         # Si hay un error al obtener el producto, mostrar un mensaje en la plantilla
-        print(f"Error al obtener producto de la API: {e}")
+        print(f"Error al cargar productos desde productos.json: {e}")
         return render(request, 'product_details.html', {'error': 'No se pudo cargar el producto. Intente más tarde.'})
 
     # Renderiza la plantilla con los detalles del producto
-    return render(request, 'product_details.html', {'producto': producto_data})
+    return render(request, 'product_details.html', {'producto': producto})
 
 # Función para mostrar el carrito
 def carrito(request):
@@ -73,14 +76,18 @@ def carrito(request):
 
 # Función para agregar productos al carrito
 def agregar_al_carrito(request, id):
-    # Obtener la información del producto y agregarla al carrito
+    # Obtener la información del producto desde productos.json y agregarla al carrito
     carrito = request.session.get('carrito', [])
-    api_url = f'http://localhost:3000/productos/{id}'
+    productos_path = os.path.join(settings.BASE_DIR, 'static/js/productos.json')
 
     try:
-        response = requests.get(api_url)
-        response.raise_for_status()
-        producto = response.json()
+        with open(productos_path, 'r', encoding='utf-8') as file:
+            productos = json.load(file)
+            producto = next((p for p in productos if p['id'] == id), None)
+
+        if not producto:
+            return redirect('catalogo')
+
         producto_info = {
             'id': producto['id'],
             'titulo': producto['titulo'],
@@ -100,8 +107,8 @@ def agregar_al_carrito(request, id):
 
         request.session['carrito'] = carrito  # Guardar el carrito actualizado en la sesión
 
-    except requests.exceptions.RequestException as e:
-        print(f"Error al obtener producto de la API para agregar al carrito: {e}")
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        print(f"Error al cargar productos desde productos.json para agregar al carrito: {e}")
 
     return redirect('carrito')
 
