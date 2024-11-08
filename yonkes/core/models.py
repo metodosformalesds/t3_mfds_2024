@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.timezone import now
+from django.utils.timesince import timesince
 
 class CustomUser(AbstractUser):
     street = models.CharField(max_length=255)
@@ -62,6 +63,11 @@ class Producto(models.Model):
             return f"Publicado hace {minutes} minuto(s)"
         else:
             return "Publicado hace unos segundos"
+        
+    @property
+    def time_since_created(self):
+        return timesince(self.fecha_creacion)
+
 
     def __str__(self):
         return self.nombre
