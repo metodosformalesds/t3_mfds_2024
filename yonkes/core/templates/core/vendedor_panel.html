@@ -6,10 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel del Vendedor</title>
     <link rel="stylesheet" href="{% static 'core/css/fuentes.css' %}">
-    <link rel="stylesheet" href="{% static 'core/css/vendedor_panel.css' %}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
+    <link rel="stylesheet" href="{% static 'core/css/vendedor_panel.css' %}">    
 </head>
 <body>
     <div class="product-panel">
@@ -21,11 +18,10 @@
                 <button type="submit" class="session-button">Cerrar sesión</button>
             </form>
         </div>
-
         <div class="product-grid">
             {% if productos %}
                 {% for producto in productos %}
-                    <div class="product-card" data-id="{{ producto.id }}" onclick="redirigirADetalles({{ producto.id }})">
+                <div class="product-card" data-id="{{ producto.id }}" onclick="redirigirADetalles('{{ producto.id }}')">
                         <div class="image-carousel" id="producto-{{ producto.id }}">
                             {% for imagen in producto.imagenes.all %}
                                 <img src="{{ imagen.imagen.url }}" alt="Imagen del Producto" class="carousel-image">

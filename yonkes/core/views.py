@@ -61,7 +61,7 @@ def redirect_after_login(request):
     elif user.role == 'vendedor':
         return redirect('vendedor_panel_url')
     elif user.role == 'comprador':
-        return redirect('comprador_panel_url')
+        return redirect('comprador_panel')
     else:
         return redirect('/')  # O maneja el caso de redirección por defecto si algo sale mal
 
@@ -83,6 +83,14 @@ def verificar_orden_productos(request):
 def detalle_producto(request, pk):
     producto = get_object_or_404(Producto, pk=pk)
     return render(request, 'core/detalle_producto.html', {'producto': producto})
+
+@login_required
+def producto_detalle_comprador(request, id):
+    # Obtener el producto específico, solo si su estatus es 'disponible'
+    producto = get_object_or_404(Producto, id=id, estatus='disponible')
+    return render(request, 'core/producto_detalle_comprador.html', {'producto': producto})
+
+
 
 
 @login_required
@@ -125,3 +133,25 @@ def eliminar_producto(request, pk):
         producto.delete()
         # Redirige al panel de vendedor después de eliminar
         return redirect('vendedor_panel_url')  # Asegúrate de que 'vendedor_panel_url' sea el nombre correcto
+    
+# panel de comprador
+def comprador_panel(request):
+    # Obtener la categoría seleccionada del formulario
+    categoria_seleccionada = request.GET.get('category', 'Todas')
+
+    # Filtrar los productos disponibles según la categoría seleccionada
+    if categoria_seleccionada and categoria_seleccionada != 'Todas':
+        productos = Producto.objects.filter(categoria=categoria_seleccionada, estatus='disponible')
+    else:
+        productos = Producto.objects.filter(estatus='disponible')
+
+    # Obtener todas las categorías para mostrar en el formulario de filtro
+    categorias = Producto.objects.filter(estatus='disponible').values_list('categoria', flat=True).distinct()
+
+    return render(request, 'core/comprador_panel.html', {
+        'productos': productos,
+        'categorias': categorias,
+        'selected_category': categoria_seleccionada
+    })
+
+

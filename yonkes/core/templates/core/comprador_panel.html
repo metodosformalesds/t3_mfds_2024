@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -5,47 +6,197 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel del Comprador</title>
     <style>
+        /* Estilos generales */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f8f8f8;
+            background-color: #f4f4f9;
             color: #333;
             margin: 0;
             padding: 20px;
         }
-        .container {
-            max-width: 800px;
+
+        .product-panel {
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         .header {
             display: flex;
+            align-items: center;
             justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        /* Botón de cerrar sesión */
+        .logout-button {
+            padding: 8px 16px;
+            font-size: 16px;
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .logout-button:hover {
+            background-color: #c82333;
+        }
+
+        form {
+            display: flex;
             align-items: center;
         }
-        .header h1 {
-            font-size: 24px;
-        }
-        .logout-link {
-            text-decoration: none;
-            color: #ff7315;
+
+        label {
             font-weight: bold;
+            margin-right: 10px;
+        }
+
+        select, button {
+            padding: 8px;
+            font-size: 16px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            border: none;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Estilos para las tarjetas de producto */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        /* Efecto de animación */
+        .product-card:hover {
+            transform: scale(1.05); /* Aumenta ligeramente el tamaño */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Agrega una sombra más pronunciada */
+        }
+
+        .image-carousel {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .carousel-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 15px;
+        }
+
+        .product-info h2 {
+            font-size: 20px;
+            margin: 0 0 10px;
+        }
+
+        .product-info p {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+
+        .details-button {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #007bff;
+            border-radius: 4px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .details-button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="product-panel">
         <div class="header">
             <h1>Panel del Comprador</h1>
-            <!-- Enlace para cerrar sesión -->
+            <!-- Botón de Cerrar Sesión -->
             <form action="/accounts/logout/" method="POST" style="display: inline;">
                 {% csrf_token %}
-                <button type="submit" class="logout-link" style="background: none; border: none; color: #ff7315; cursor: pointer;">Cerrar sesión</button>
+                <button type="submit" class="session-button">Cerrar sesión</button>
             </form>
         </div>
-        <p>Bienvenido al panel del comprador. Aquí puedes explorar y comprar productos.</p>
+        <form method="GET" action="{% url 'comprador_panel' %}">
+            <label for="category">Filtrar por Categoría:</label>
+            <select name="category" id="category">
+                <option value="Todas">Todas</option>
+                {% for cat in categorias %}
+                    <option value="{{ cat }}" {% if cat == selected_category %}selected{% endif %}>{{ cat }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Filtrar</button><br>
+        </form>
+        <br>
+        <div class="product-grid">
+            {% if productos %}
+                {% for producto in productos %}
+                    <div class="product-card" data-id="{{ producto.id }}">
+                        <div class="image-carousel" id="producto-{{ producto.id }}">
+                            {% for imagen in producto.imagenes.all %}
+                                <img src="{{ imagen.imagen.url }}" alt="Imagen del Producto" class="carousel-image">
+                            {% endfor %}
+                        </div>
+                        <div class="product-info">
+                            <h2>{{ producto.nombre }}</h2>
+                            <p><strong>Precio:</strong> ${{ producto.precio }}</p>
+                            <p><strong>Categoría:</strong> {{ producto.categoria }}</p>
+                            <p><strong>Publicado:</strong> {{ producto.time_since_created }} atrás</p>
+                            <p><strong>Publicado por:</strong> {{ producto.vendedor.username }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No hay productos en esta categoría.</p>
+            {% endif %}
+        </div>
     </div>
+
+    <script>
+        // Selecciona todas las tarjetas de producto y les agrega un evento de clic
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const productId = card.getAttribute('data-id');
+                const url = "{% url 'producto_detalle_comprador' 0 %}".replace('/0/', '/' + productId + '/');
+                window.location.href = url;
+            });
+        });
+    </script>
 </body>
 </html>

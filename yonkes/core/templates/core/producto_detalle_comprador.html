@@ -1,0 +1,166 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Producto</title>
+    <link rel="stylesheet" href="{% static 'core/css/detalle_producto.css' %}">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .product-details-container {
+            display: flex;
+            background-color: #fff;
+            width: 90%;
+            max-width: 1000px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        /* Estilos para el carrusel de imágenes */
+        .carousel {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+            max-width: 50%;
+            background-color: #f0f0f0;
+        }
+        .carousel-images {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+        .carousel-images img {
+            width: 100%; /* Asegura que las imágenes ocupen todo el ancho del carrusel */
+            object-fit: cover;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+        .carousel-controls {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+        }
+        .carousel-control {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            border-radius: 5px;
+        }
+        .product-details {
+            flex: 1;
+            padding: 20px;
+            text-align: left;
+        }
+        .product-details h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .product-details p {
+            font-size: 16px;
+            color: #555;
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+        .product-details p strong {
+            color: #333;
+        }
+        .product-price {
+            font-size: 22px;
+            color: #FF6F61;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #333;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .back-button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="product-details-container">
+        <!-- Carrusel de imágenes -->
+        <div class="carousel">
+            <div class="carousel-images" id="carouselImages">
+                {% for imagen in producto.imagenes.all %}
+                    <img src="{{ imagen.imagen.url }}" alt="Imagen del Producto">
+                {% endfor %}
+            </div>
+            <div class="carousel-controls">
+                <button class="carousel-control" onclick="prevSlide()">&#10094;</button>
+                <button class="carousel-control" onclick="nextSlide()">&#10095;</button>
+            </div>
+        </div>
+
+        <!-- Detalles del producto -->
+        <div class="product-details">
+            <h1>{{ producto.nombre }}</h1>
+            <p class="product-price">Precio: ${{ producto.precio }}</p>
+            <p><strong>Categoría:</strong> {{ producto.categoria }}</p>
+            <p><strong>Marca:</strong> {{ producto.marca }}</p>
+            <p><strong>Modelo:</strong> {{ producto.modelo }}</p>
+            <p><strong>Año:</strong> {{ producto.año }}</p>
+            <p><strong>Motor:</strong> {{ producto.motor }}</p>
+            <p><strong>Descripción:</strong> {{ producto.descripcion }}</p>
+            <p><strong>Publicado hace:</strong> {{ producto.time_since_created }}</p>
+
+            <a href="{% url 'comprador_panel' %}" class="back-button">Volver al Panel</a>
+        </div>
+    </div>
+
+    <script>
+        // Carrusel simple con JavaScript
+        let currentIndex = 0;
+
+        function showSlide(index) {
+            const slides = document.querySelectorAll('.carousel-images img');
+            const totalSlides = slides.length;
+
+            if (index >= totalSlides) {
+                currentIndex = 0;
+            } else if (index < 0) {
+                currentIndex = totalSlides - 1;
+            } else {
+                currentIndex = index;
+            }
+
+            document.getElementById('carouselImages').style.transform = `translateX(-${currentIndex * 100}%)`;
+        }
+
+        function nextSlide() {
+            showSlide(currentIndex + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentIndex - 1);
+        }
+    </script>
+</body>
+</html>
