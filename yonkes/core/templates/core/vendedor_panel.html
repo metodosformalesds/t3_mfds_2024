@@ -1,12 +1,115 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel del Vendedor</title>
-    <link rel="stylesheet" href="{% static 'core/css/fuentes.css' %}">
-    <link rel="stylesheet" href="{% static 'core/css/vendedor_panel.css' %}">    
+    <style>
+        /* Estilos generales del panel */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .product-panel {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        /* Botón de cerrar sesión */
+        .session-button, .add-product-button {
+            padding: 8px 16px;
+            font-size: 16px;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .session-button {
+            background-color: #dc3545;
+        }
+
+        .add-product-button {
+            background-color: #28a745;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+
+        .session-button:hover {
+            background-color: #c82333;
+        }
+
+        .add-product-button:hover {
+            background-color: #218838;
+        }
+
+        /* Estilos para las tarjetas de producto */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        /* Efecto de animación */
+        .product-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .image-carousel {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .carousel-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 15px;
+        }
+
+        .product-info h2 {
+            font-size: 20px;
+            margin: 0 0 10px;
+        }
+
+        .product-info p {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
     <div class="product-panel">
@@ -21,18 +124,18 @@
         <div class="product-grid">
             {% if productos %}
                 {% for producto in productos %}
-                <div class="product-card" data-id="{{ producto.id }}" onclick="redirigirADetalles('{{ producto.id }}')">
+                    <div class="product-card" data-id="{{ producto.id }}" onclick="redirigirADetalles('{{ producto.id }}')">
                         <div class="image-carousel" id="producto-{{ producto.id }}">
                             {% for imagen in producto.imagenes.all %}
                                 <img src="{{ imagen.imagen.url }}" alt="Imagen del Producto" class="carousel-image">
                             {% endfor %}
                         </div>
                         <div class="product-info">
-                            <p class="time-published">{{ producto.time_since_created }}</p>
-                            <p><strong>Nombre:</strong> {{ producto.nombre }}</p>
+                            <h2>{{ producto.nombre }}</h2>
                             <p><strong>Precio:</strong> ${{ producto.precio }}</p>
                             <p><strong>Categoría:</strong> {{ producto.categoria }}</p>
                             <p><strong>Estatus:</strong> {{ producto.get_estatus_display }}</p>
+                            <p><strong>Publicado hace:</strong><p class="time-published">{{ producto.time_since_created }}</p>
                         </div>
                     </div>
                 {% endfor %}
@@ -42,9 +145,9 @@
         </div>
     </div>
 </body>
-</html>
 <script>
     function redirigirADetalles(id) {
         window.location.href = `/productos/detalle/${id}/`;
     }
 </script>
+</html>

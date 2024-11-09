@@ -23,7 +23,7 @@ def complete_profile(request):
         if user.role == 'vendedor':
             return redirect('vendedor_panel_url')
         elif user.role == 'comprador':
-            return redirect('comprador_panel_url')
+            return redirect('comprador_panel')
     
     # Si el perfil no está completo, muestra el formulario para completarlo
     if request.method == 'POST':
@@ -34,7 +34,7 @@ def complete_profile(request):
             if user.role == 'vendedor':
                 return redirect('vendedor_panel_url')
             elif user.role == 'comprador':
-                return redirect('comprador_panel_url')
+                return redirect('comprador_panel')
     else:
         form = CompleteProfileForm(instance=user)
 
