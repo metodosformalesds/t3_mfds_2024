@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Producto, ImagenProducto
+from .models import Producto, ImagenProducto, CartItem
 from .forms import CompleteProfileForm, ProductoForm
 from django.db.models import ExpressionWrapper, F, DurationField
 from django.utils.timezone import now
+from django.http import JsonResponse
+import json
 
 # Vista para la página Home con lógica de autenticación
 def home(request):
@@ -154,4 +156,36 @@ def comprador_panel(request):
         'selected_category': categoria_seleccionada
     })
 
+#carrito
+def ver_carrito(request):
+    cart_items = CartItem.objects.filter(user=request.user)
+    total = sum(item.subtotal() for item in cart_items)
+    
+    context = {
+        'cart_items': cart_items,
+        'total': total,
+    }
+    return render(request, 'core/carrito.html', context)
 
+def actualizar_carrito(request, item_id):
+    if request.method == 'POST':
+        cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
+        nueva_cantidad = int(request.POST.get('quantity', 1))
+        cart_item.quantity = nueva_cantidad
+        cart_item.save()
+    return redirect('ver_carrito')
+
+def eliminar_del_carrito(request, item_id):
+    cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
+    cart_item.delete()
+    return redirect('ver_carrito')
+
+def agregar_al_carrito(request, producto_id):
+    producto = get_object_or_404(Producto, id=producto_id)
+    cart_item, created = CartItem.objects.get_or_create(user=request.user, producto=producto)
+    
+    if not created:
+        cart_item.quantity += 1
+        cart_item.save()
+
+    return redirect('ver_carrito')

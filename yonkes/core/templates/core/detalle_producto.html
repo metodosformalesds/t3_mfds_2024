@@ -27,6 +27,20 @@
         .delete-button {
             background-color: #dc3545;
         }
+        .add-to-cart-button {
+            display: inline-block;
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #28a745;
+            border-radius: 4px;
+            text-decoration: none;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        .add-to-cart-button:hover {
+            background-color: #218838;
+        }
     </style>
 </head>
 <body>
@@ -45,6 +59,13 @@
         <p><strong>Motor:</strong> {{ producto.motor }}</p>
         <p><strong>Descripción:</strong> {{ producto.descripcion }}</p>
         <p><strong>Fecha de creación:</strong> {{ producto.created_at }}</p>
+        <p><strong>Dirección:</strong> 
+            {{ producto.vendedor.street }} {{ producto.vendedor.street_number }},
+            {% if producto.vendedor.apartment_number %}Apt. {{ producto.vendedor.apartment_number }}, {% endif %}
+            {{ producto.vendedor.neighborhood }},
+            {{ producto.vendedor.city }}, {{ producto.vendedor.state }},
+            {{ producto.vendedor.country }} - CP: {{ producto.vendedor.postal_code }}   
+        </p>
 
         <!-- Botones de acción: Editar y Eliminar -->
         <div class="action-buttons">
@@ -53,6 +74,7 @@
                 {% csrf_token %}
                 <button type="submit" class="delete-button">Eliminar</button>
             </form>
+            <a href="{% url 'agregar_al_carrito' producto.id %}" class="add-to-cart-button">Agregar al carrito</a>
         </div>
 
         <a href="{% url 'vendedor_panel_url' %}">Volver al Panel</a>

@@ -1,4 +1,3 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -30,6 +29,23 @@
         h1 {
             font-size: 24px;
             margin: 0;
+        }
+
+        /* Botón de carrito */
+        .cart-button {
+            padding: 8px 16px;
+            font-size: 16px;
+            background-color: #ffc107;
+            color: #333;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+
+        .cart-button:hover {
+            background-color: #e0a800;
         }
 
         /* Botón de cerrar sesión */
@@ -147,11 +163,14 @@
     <div class="product-panel">
         <div class="header">
             <h1>Panel del Comprador</h1>
-            <!-- Botón de Cerrar Sesión -->
-            <form action="/accounts/logout/" method="POST" style="display: inline;">
-                {% csrf_token %}
-                <button type="submit" class="session-button">Cerrar sesión</button>
-            </form>
+            <!-- Botón de Carrito y Cerrar Sesión -->
+            <div>
+                <a href="{% url 'ver_carrito' %}" class="cart-button">Ver Carrito</a>
+                <form action="/accounts/logout/" method="POST" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-button">Cerrar sesión</button>
+                </form>
+            </div>
         </div>
         <form method="GET" action="{% url 'comprador_panel' %}">
             <label for="category">Filtrar por Categoría:</label>
@@ -179,6 +198,13 @@
                             <p><strong>Categoría:</strong> {{ producto.categoria }}</p>
                             <p><strong>Publicado:</strong> {{ producto.time_since_created }} atrás</p>
                             <p><strong>Publicado por:</strong> {{ producto.vendedor.username }}</p>
+                            <p><strong>Dirección:</strong> 
+                                {{ producto.vendedor.street }} {{ producto.vendedor.street_number }},
+                                {% if producto.vendedor.apartment_number %}Apt. {{ producto.vendedor.apartment_number }}, {% endif %}
+                                {{ producto.vendedor.neighborhood }},
+                                {{ producto.vendedor.city }}, {{ producto.vendedor.state }},
+                                {{ producto.vendedor.country }} - CP: {{ producto.vendedor.postal_code }}
+                            </p>
                         </div>
                     </div>
                 {% endfor %}

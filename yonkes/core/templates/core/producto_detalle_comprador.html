@@ -102,6 +102,20 @@
         .back-button:hover {
             background-color: #555;
         }
+        .add-to-cart-button {
+            display: inline-block;
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #28a745;
+            border-radius: 4px;
+            text-decoration: none;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        .add-to-cart-button:hover {
+            background-color: #218838;
+        }
     </style>
 </head>
 <body>
@@ -130,7 +144,14 @@
             <p><strong>Motor:</strong> {{ producto.motor }}</p>
             <p><strong>Descripción:</strong> {{ producto.descripcion }}</p>
             <p><strong>Publicado hace:</strong> {{ producto.time_since_created }}</p>
-
+            <p><strong>Dirección:</strong> 
+                {{ producto.vendedor.street }} {{ producto.vendedor.street_number }},
+                {% if producto.vendedor.apartment_number %}Apt. {{ producto.vendedor.apartment_number }}, {% endif %}
+                {{ producto.vendedor.neighborhood }},
+                {{ producto.vendedor.city }}, {{ producto.vendedor.state }},
+                {{ producto.vendedor.country }} - CP: {{ producto.vendedor.postal_code }}   
+            </p>
+            <a href="{% url 'agregar_al_carrito' producto.id %}" class="add-to-cart-button">Agregar al carrito</a>
             <a href="{% url 'comprador_panel' %}" class="back-button">Volver al Panel</a>
         </div>
     </div>

@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.timezone import now
 from django.utils.timesince import timesince
+from django.conf import settings
 
 class CustomUser(AbstractUser):
     street = models.CharField(max_length=255)
@@ -78,3 +79,16 @@ class ImagenProducto(models.Model):
 
     def __str__(self):
         return f"Imagen de {self.producto.nombre}"
+    
+    
+class CartItem(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    def subtotal(self):
+        return self.producto.precio * self.quantity
+
+    def __str__(self):
+        return f"{self.producto.nombre} (x{self.quantity}) - {self.user.username}"
