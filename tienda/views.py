@@ -4,10 +4,10 @@ from django.shortcuts import render, redirect
 from .models import Orden, DetalleOrden, Categoria
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
-from django.http import JsonResponse
+from django.conf import settings
+from allauth.account.forms import LoginForm, SignupForm
 import json
 import os
-from django.conf import settings
 
 def index(request):
     # Obtener todas las categorías desde la base de datos para mostrarlas en el index
@@ -15,8 +15,19 @@ def index(request):
     return render(request, 'index.html', {'categorias': categorias})
 
 def account_view(request):
-    # Vista unificada para el inicio de sesión y registro
-    return render(request, 'account.html')
+    """
+    Vista unificada para el inicio de sesión y registro usando Django Allauth.
+    Renderiza el formulario de login y el formulario de registro en una sola vista.
+    """
+    login_form = LoginForm()  # Formulario de login de Allauth
+    signup_form = SignupForm()  # Formulario de registro de Allauth
+    
+    context = {
+        'login_form': login_form,
+        'signup_form': signup_form
+    }
+    
+    return render(request, 'account.html', context)
 
 @login_required
 def publicar_producto(request):

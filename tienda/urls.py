@@ -31,7 +31,7 @@ urlpatterns = [
     path('registro/', views.account_view, name='registro'),
 
     # Vista para iniciar sesión (usando la plantilla 'account.html')
-    path('login/', auth_views.LoginView.as_view(template_name='account.html'), name='login'),
+    path('login/', views.account_view, name='login'),
 
     # Vista para cerrar sesión y redirigir al índice
     path('logout/', auth_views.LogoutView.as_view(next_page='index'), name='logout'),

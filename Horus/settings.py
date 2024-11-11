@@ -27,8 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'horuz.me', 'www.horuz.me']
 
-print("ALLOWED_HOSTS:", ALLOWED_HOSTS)
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -40,18 +38,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'tienda',
 
-    # Aplicaciones de Allauth
+    # Aplicaciones de Allauth para autenticación extendida
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.facebook',
 ]
-
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
-)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -149,26 +142,40 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'al214466@alumnos.uacj.mx'
-EMAIL_HOST_PASSWORD = 'VARC90279'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'default-email@example.com')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')  # Usa variable de entorno para mayor seguridad
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 SITE_ID = 1  # Requerido para Allauth
 
 # Configuraciones de Login y Logout con Allauth
-LOGIN_REDIRECT_URL = '/catalogo/'
-LOGOUT_REDIRECT_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/catalogo/'  # Redirigir al catálogo después de iniciar sesión
+LOGOUT_REDIRECT_URL = '/'  # Redirigir a la página de inicio después de cerrar sesión
 
-# Configuración de Django Allauth para usar la plantilla 'account.html'
+# Configuración de Django Allauth
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # Requerir verificación de correo electrónico
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
-ACCOUNT_LOGOUT_ON_GET = True
+ACCOUNT_LOGOUT_ON_GET = True  # Cierre de sesión solo con la solicitud GET
 
-# Configurar la plantilla a utilizar
+# Plantillas de formularios personalizadas con 'django-allauth'
 ACCOUNT_FORMS = {
-    'login': 'tienda.forms.CustomLoginForm',
-    'signup': 'tienda.forms.CustomSignupForm',
+    'login': 'tienda.forms.CustomLoginForm',  # Formulario de inicio de sesión personalizado
+    'signup': 'tienda.forms.CustomSignupForm',  # Formulario de registro personalizado
+    'reset_password': 'tienda.forms.CustomResetPasswordForm',  # Formulario de restablecimiento de contraseña personalizado
 }
+
+# Configuración adicional para limitar intentos de login (seguridad)
+ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5  # Limitar intentos de login a 5
+ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 300  # Tiempo de espera para nuevos intentos (en segundos)
+
+# Configuración del backend de autenticación para usar tanto username como email
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+# Redirigir a nuestra propia vista personalizada para iniciar sesión y registro
+LOGIN_URL = '/login/'  # URL personalizada para el inicio de sesión

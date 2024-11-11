@@ -8,8 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cuenta | Horuz Autopartes</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
@@ -25,7 +24,7 @@
                     <li><a href="{% url 'catalogo' %}">Productos</a></li>
                     <li><a href="#">Sobre Nosotros</a></li>
                     <li><a href="#">Contacto</a></li>
-                    <li><a href="{% url 'account_login' %}">Cuenta</a></li>
+                    <li><a href="{% url 'login' %}">Cuenta</a></li>
                 </ul>
             </nav>
             <a href="{% url 'carrito' %}"><img src="{% static 'images/cart.png' %}" width="30px" height="30px"></a>
@@ -40,10 +39,11 @@
                 <div class="col-2">
                     <div class="form-container">
                         <div class="form-btn">
-                            <span onclick="login()">Iniciar Sesión</span>
-                            <span onclick="register()">Registrarse</span>
+                            <span id="login-btn" onclick="showLogin()">Iniciar Sesión</span>
+                            <span id="register-btn" onclick="showRegister()">Registrarse</span>
                             <hr id="Indicator">
                         </div>
+
                         <!-- Formulario de Login -->
                         <form id="LoginForm" method="post" action="{% url 'account_login' %}">
                             {% csrf_token %}
@@ -81,8 +81,7 @@
                 </div>
                 <div class="footer-col-2">
                     <img src="{% static 'images/logo-white.png' %}">
-                    <p>Nuestro propósito es ofrecer autopartes de calidad a todos los amantes de los autos, asegurando
-                        un viaje seguro y confortable.</p>
+                    <p>Nuestro propósito es ofrecer autopartes de calidad a todos los amantes de los autos, asegurando un viaje seguro y confortable.</p>
                 </div>
                 <div class="footer-col-3">
                     <h3>Enlaces Útiles</h3>
@@ -121,26 +120,22 @@
             }
         }
 
-        // Formulario de login y registro
-        var LoginForm = document.getElementById("LoginForm");
-        var RegForm = document.getElementById("RegForm");
-        var Indicator = document.getElementById("Indicator");
-
-        function register() {
-            RegForm.style.transform = "translateX(0px)";
-            LoginForm.style.transform = "translateX(0px)";
-            Indicator.style.transform = "translateX(100px)";
+        // Mostrar y ocultar formularios
+        function showLogin() {
+            document.getElementById("LoginForm").style.display = "block";
+            document.getElementById("RegForm").style.display = "none";
+            document.getElementById("Indicator").style.transform = "translateX(0px)";
         }
 
-        function login() {
-            RegForm.style.transform = "translateX(300px)";
-            LoginForm.style.transform = "translateX(300px)";
-            Indicator.style.transform = "translateX(0px)";
+        function showRegister() {
+            document.getElementById("LoginForm").style.display = "none";
+            document.getElementById("RegForm").style.display = "block";
+            document.getElementById("Indicator").style.transform = "translateX(100px)";
         }
 
-        // Ajuste para que el formulario de login sea el predeterminado al cargar la página
+        // Mostrar el formulario de inicio de sesión de manera predeterminada
         document.addEventListener("DOMContentLoaded", function () {
-            login();  // Mostrar el formulario de login de manera predeterminada
+            showLogin();  // Mostrar el formulario de login por defecto
         });
     </script>
 </body>
