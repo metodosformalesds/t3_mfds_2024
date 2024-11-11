@@ -1,19 +1,39 @@
 {% load static %}
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/complete_profile.css' %}">
-    <link rel="stylesheet" href="{% static 'core/css/fuentes.css' %}">
-    <title>Completa tu Perfil</title>
+    <title>Completa tu Perfil - Horus</title>
+    <link rel="stylesheet" href="{% static 'core/css/complete_profile.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
+    <!-- Header -->
+    <div class="header">
+        <div class="container">
+            <div class="navbar">
+                <div class="logo">
+                    <img src="{% static 'images/horuz.png' %}" alt="Horus Logo">
+                    <span class="logo-text">HorUser, completa tu perfil</span>
+                </div>
+                <nav style="margin-left: auto;">
+                    <ul id="MenuItems">
+                        <li><a href="{% url 'home' %}">Inicio</a></li>
+                        <li><a href="{% url 'listar_productos' %}">Productos</a></li>
+                        <li><a href="{% url 'account_login' %}">Iniciar Sesión</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Form -->
     <div class="profile-container">
         <div class="profile-box">
-            <div class="image-side">
-                <img src="{% static 'images/logo.jpg' %}" alt="Profile Image">
-            </div>
             <div class="form-side">
                 <h2>Completa tu Perfil</h2>
                 <form method="post">
@@ -26,5 +46,36 @@
             </div>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Sobre Horus</h3>
+                    <p>Ofrecemos autopartes de calidad para asegurar que tu vehículo esté en las mejores condiciones.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Enlaces Útiles</h3>
+                    <ul>
+                        <li><a href="{% url 'listar_productos' %}">Productos</a></li>
+                        <li><a href="#">Sobre Nosotros</a></li>
+                        <li><a href="#">Contacto</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Síguenos</h3>
+                    <div class="social-icons">
+                        <a href="https://www.facebook.com" target="_blank"><i class="fa fa-facebook"></i></a>
+                        <a href="https://www.twitter.com" target="_blank"><i class="fa fa-twitter"></i></a>
+                        <a href="https://www.instagram.com" target="_blank"><i class="fa fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Horus Autopartes. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

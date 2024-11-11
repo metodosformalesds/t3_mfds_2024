@@ -10,6 +10,20 @@ class CompleteProfileForm(forms.ModelForm):
             'neighborhood', 'postal_code', 'city', 'state', 'country',
             'phone_number', 'role'
         ]
+        labels = {
+            'first_name': 'Nombre',
+            'last_name': 'Apellido',
+            'street': 'Calle',
+            'street_number': 'Número exterior',
+            'apartment_number': 'Número interior (opcional)',
+            'neighborhood': 'Colonia o barrio',
+            'postal_code': 'Código postal',
+            'city': 'Ciudad',
+            'state': 'Estado/Provincia',
+            'country': 'País',
+            'phone_number': 'Número de teléfono',
+            'role': 'Rol',
+        }
         widgets = {
             'street': forms.TextInput(attrs={'placeholder': 'Calle'}),
             'street_number': forms.TextInput(attrs={'placeholder': 'Número exterior'}),

@@ -1,66 +1,100 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro - PartEx</title>
+    <title>Registro - Horus</title>
     <link rel="stylesheet" href="{% static 'css/signup.css' %}">
-    <link rel="stylesheet" href="{% static 'core/css/fuentes.css' %}">
-    <!-- Enlace para Font Awesome (opcional) -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
+    <!-- Header -->
+    <div class="header">
+        <div class="container">
+            <div class="navbar">
+                <div class="logo">
+                    <img src="{% static 'images/horuz.png' %}" alt="Horus Logo">
+                    <span class="logo-text">Horus</span>
+                </div>
+                <nav style="margin-left: auto;">
+                    <ul id="MenuItems">
+                        <li><a href="{% url 'home' %}">Inicio</a></li>
+                        <li><a href="{% url 'listar_productos' %}">Productos</a></li>
+                        <li><a href="{% url 'account_login' %}">Iniciar Sesión</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Form -->
     <div class="signup-container">
         <div class="signup-box">
-            <!-- Sección de la imagen del logo -->
-            <div class="image-side">
-                <img src="{% static 'images/logo.jpg' %}" alt="Signup Image">
-            </div>
-
-            <!-- Sección central del formulario -->
             <div class="form-content">
                 <h2>Crear Cuenta</h2>
-                <!-- Asegúrate de tener la URL de acción correcta para el formulario -->
                 <form method="post" action="{% url 'account_signup' %}">
                     {% csrf_token %}
-                    
-                    <!-- Campos básicos del formulario -->
+                    <!-- Campos de entrada sin etiquetas -->
                     <div class="input-box">
-                        {{ form.username.label_tag }}<br>
                         {{ form.username }}
                     </div>
                     <div class="input-box">
-                        {{ form.email.label_tag }}<br>
                         {{ form.email }}
                     </div>
                     <div class="input-box">
-                        {{ form.password1.label_tag }}<br>
                         {{ form.password1 }}
                     </div>
                     <div class="input-box">
-                        {{ form.password2.label_tag }}<br>
                         {{ form.password2 }}
                     </div>
-
-                    <!-- Botón de registro -->
                     <div class="button-box">
                         <button type="submit" class="signup-btn">Registrar</button>
                     </div>
                 </form>
-
-                <!-- Botón de redirección al login -->
                 <div class="login-redirect">
-                    <p>¿Ya tienes cuenta?</p><br>
+                    <p>¿Ya tienes cuenta?</p>
                     <form action="{% url 'account_login' %}" method="get">
-                        <button type="submit" class="signup-btn">Iniciar Sesión</button>
+                        <button type="submit" class="login-btn">Iniciar Sesión</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Sobre Horus</h3>
+                    <p>Ofrecemos autopartes de calidad para asegurar que tu vehículo esté en las mejores condiciones.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Enlaces Útiles</h3>
+                    <ul>
+                        <li><a href="{% url 'listar_productos' %}">Productos</a></li>
+                        <li><a href="#">Sobre Nosotros</a></li>
+                        <li><a href="#">Contacto</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Síguenos</h3>
+                    <div class="social-icons">
+                        <a href="https://www.facebook.com" target="_blank"><i class="fa fa-facebook"></i></a>
+                        <a href="https://www.twitter.com" target="_blank"><i class="fa fa-twitter"></i></a>
+                        <a href="https://www.instagram.com" target="_blank"><i class="fa fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Horus Autopartes. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
 </body>
 </html>
