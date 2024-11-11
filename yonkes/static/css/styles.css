@@ -114,11 +114,10 @@ a img {
 }
 
 /* Footer */
-/* Footer */
 .footer {
     background-color: #333333;
     color: #FFFFFF;
-    padding: 20px 0; /* Reducir el padding para un footer más compacto */
+    padding: 5px 0; /* Reducir el padding vertical */
     width: 100%;
     margin-top: auto;
 }
@@ -128,33 +127,34 @@ a img {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    padding: 0 10px; /* Reducir el padding horizontal */
 }
 
 .footer-content {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between; /* Minimizar espacio entre secciones */
     width: 100%;
-    max-width: 1200px;
+    max-width: 1000px; /* Limitar ancho máximo */
     flex-wrap: wrap;
-    gap: 15px; /* Espaciado entre secciones */
+    gap: 5px;
 }
 
 .footer-section {
     flex: 1;
-    margin: 5px; /* Reducir el margen para un diseño más compacto */
-    min-width: 150px;
+    margin: 5px 0; /* Reducir margen para compacidad */
+    min-width: 100px; /* Ajustar el ancho mínimo para minimizar el ancho */
 }
 
 .footer-section h3 {
-    font-size: 1em; /* Reducir el tamaño de fuente de los títulos */
-    margin-bottom: 10px; /* Reducir el margen inferior */
+    font-size: 0.9em; /* Reducir el tamaño de fuente de los títulos */
+    margin-bottom: 3px; /* Reducir margen inferior */
     color: #FFFFFF;
 }
 
 .footer-section p,
 .footer-section ul {
     color: #CCCCCC;
-    font-size: 0.9em; /* Reducir el tamaño de fuente para un diseño más compacto */
+    font-size: 0.75em; /* Reducir tamaño de fuente para mayor compacidad */
 }
 
 .footer-section ul {
@@ -163,7 +163,7 @@ a img {
 }
 
 .footer-section ul li {
-    margin-bottom: 8px; /* Reducir el margen entre los enlaces */
+    margin-bottom: 3px; /* Reducir margen entre enlaces */
 }
 
 .footer-section ul li a {
@@ -177,8 +177,8 @@ a img {
 
 .social-icons a {
     color: #FFFFFF;
-    margin: 0 8px; /* Reducir el margen entre íconos */
-    font-size: 1.2em; /* Reducir el tamaño de los íconos */
+    margin: 0 3px; /* Reducir espacio entre íconos */
+    font-size: 1em; /* Ajustar tamaño de los íconos */
     text-decoration: none;
 }
 
@@ -187,12 +187,14 @@ a img {
 }
 
 .footer-bottom {
-    margin-top: 15px;
-    font-size: 0.8em; /* Reducir el tamaño de la fuente en la parte inferior */
+    margin-top: 3px; /* Reducir el margen superior en la parte inferior */
+    font-size: 0.75em; /* Reducir tamaño de fuente en la parte inferior */
     color: #AAAAAA;
     text-align: center;
     width: 100%;
 }
+
+
 
 
 /* Responsive Design */

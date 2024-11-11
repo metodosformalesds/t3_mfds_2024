@@ -167,7 +167,7 @@ input:focus, select:focus, textarea:focus {
 .footer {
     background-color: #333333;
     color: #FFFFFF;
-    padding: 10px 0;
+    padding: 5px 0; /* Reducir el padding vertical */
     width: 100%;
     margin-top: auto;
 }
@@ -177,33 +177,34 @@ input:focus, select:focus, textarea:focus {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    padding: 0 10px; /* Reducir el padding horizontal */
 }
 
 .footer-content {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between; /* Minimizar espacio entre secciones */
     width: 100%;
-    max-width: 1200px;
+    max-width: 1000px; /* Limitar ancho máximo */
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 5px;
 }
 
 .footer-section {
     flex: 1;
-    margin: 5px;
-    min-width: 150px;
+    margin: 5px 0; /* Reducir margen para compacidad */
+    min-width: 100px; /* Ajustar el ancho mínimo para minimizar el ancho */
 }
 
 .footer-section h3 {
-    font-size: 1em;
-    margin-bottom: 8px;
+    font-size: 0.9em; /* Reducir el tamaño de fuente de los títulos */
+    margin-bottom: 3px; /* Reducir margen inferior */
     color: #FFFFFF;
 }
 
 .footer-section p,
 .footer-section ul {
     color: #CCCCCC;
-    font-size: 0.85em;
+    font-size: 0.75em; /* Reducir tamaño de fuente para mayor compacidad */
 }
 
 .footer-section ul {
@@ -212,7 +213,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .footer-section ul li {
-    margin-bottom: 5px;
+    margin-bottom: 3px; /* Reducir margen entre enlaces */
 }
 
 .footer-section ul li a {
@@ -226,8 +227,8 @@ input:focus, select:focus, textarea:focus {
 
 .social-icons a {
     color: #FFFFFF;
-    margin: 0 5px;
-    font-size: 1.2em;
+    margin: 0 3px; /* Reducir espacio entre íconos */
+    font-size: 1em; /* Ajustar tamaño de los íconos */
     text-decoration: none;
 }
 
@@ -236,8 +237,8 @@ input:focus, select:focus, textarea:focus {
 }
 
 .footer-bottom {
-    margin-top: 10px;
-    font-size: 0.8em;
+    margin-top: 3px; /* Reducir el margen superior en la parte inferior */
+    font-size: 0.75em; /* Reducir tamaño de fuente en la parte inferior */
     color: #AAAAAA;
     text-align: center;
     width: 100%;
