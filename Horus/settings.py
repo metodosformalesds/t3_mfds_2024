@@ -178,4 +178,4 @@ AUTHENTICATION_BACKENDS = (
 )
 
 # Redirigir a nuestra propia vista personalizada para iniciar sesión y registro
-LOGIN_URL = '/login/'  # URL personalizada para el inicio de sesión
+# LOGIN_URL = '/login/'  # URL personalizada para el inicio de sesión
