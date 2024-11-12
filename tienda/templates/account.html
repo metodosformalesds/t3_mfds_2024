@@ -39,8 +39,8 @@
                 <div class="col-2">
                     <div class="form-container">
                         <div class="form-btn">
-                            <span id="login-btn" onclick="showLogin()">Iniciar Sesión</span>
-                            <span id="register-btn" onclick="showRegister()">Registrarse</span>
+                            <span onclick="showLoginForm()">Iniciar Sesión</span>
+                            <span onclick="showRegisterForm()">Registrarse</span>
                             <hr id="Indicator">
                         </div>
 
@@ -53,7 +53,7 @@
                         </form>
 
                         <!-- Formulario de Registro -->
-                        <form id="RegForm" method="post" action="{% url 'account_signup' %}">
+                        <form id="RegForm" method="post" action="{% url 'account_signup' %}" style="display:none;">
                             {% csrf_token %}
                             {{ signup_form.as_p }}
                             <button type="submit" class="btn">Registrarse</button>
@@ -81,7 +81,8 @@
                 </div>
                 <div class="footer-col-2">
                     <img src="{% static 'images/logo-white.png' %}">
-                    <p>Nuestro propósito es ofrecer autopartes de calidad a todos los amantes de los autos, asegurando un viaje seguro y confortable.</p>
+                    <p>Nuestro propósito es ofrecer autopartes de calidad a todos los amantes de los autos, asegurando
+                        un viaje seguro y confortable.</p>
                 </div>
                 <div class="footer-col-3">
                     <h3>Enlaces Útiles</h3>
@@ -120,22 +121,22 @@
             }
         }
 
-        // Mostrar y ocultar formularios
-        function showLogin() {
+        // Mostrar los formularios de inicio de sesión y registro
+        function showLoginForm() {
             document.getElementById("LoginForm").style.display = "block";
             document.getElementById("RegForm").style.display = "none";
             document.getElementById("Indicator").style.transform = "translateX(0px)";
         }
 
-        function showRegister() {
+        function showRegisterForm() {
             document.getElementById("LoginForm").style.display = "none";
             document.getElementById("RegForm").style.display = "block";
             document.getElementById("Indicator").style.transform = "translateX(100px)";
         }
 
-        // Mostrar el formulario de inicio de sesión de manera predeterminada
+        // Ajuste para que el formulario de login sea el predeterminado al cargar la página
         document.addEventListener("DOMContentLoaded", function () {
-            showLogin();  // Mostrar el formulario de login por defecto
+            showLoginForm();  // Mostrar el formulario de login de manera predeterminada
         });
     </script>
 </body>
