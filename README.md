@@ -31,8 +31,4 @@ https://horuz.me
 **Integrantes:**
 | Matricula  | Nombre |
 | ------------- | ------------- |
-| 214466 | Carlos Adrian Vasquez Rivera |
-| 192880 | Brandon Gustavo Hernandez Ortiz |
-| 215943 | Jaziel Castorena Quiroz |
 | 180276 | Javier Abner Rodriguez Frias|
-| 219349 | Brandon Chao Diaz |
