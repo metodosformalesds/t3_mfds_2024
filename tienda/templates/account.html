@@ -1,0 +1,174 @@
+<!-- account.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuenta | Horuz Autopartes</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="navbar">
+            <div class="logo">
+                <a href="{% url 'index' %}"><img src="{% static 'images/logo.png' %}" alt="logo" width="125px"></a>
+            </div>
+            <nav>
+                <ul id="MenuItems">
+                    <li><a href="{% url 'index' %}">Inicio</a></li>
+                    <li><a href="{% url 'catalogo' %}">Productos</a></li>
+                    <li>
+                        {% if user.is_authenticated %}
+                            <div class="dropdown">
+                                <a class="dropdown-toggle" href="#">
+                                    Hola, {{ user.username }}
+                                </a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="{% url 'account_logout' %}">Cerrar sesión</a>
+                                </div>
+                            </div>
+                        {% else %}
+                            <a href="#account-section">Cuenta</a>
+                        {% endif %}
+                    </li>
+                </ul>
+            </nav>
+            <a href="{% url 'carrito' %}"><img src="{% static 'images/cart.png' %}" width="30px" height="30px"></a>
+            <img src="{% static 'images/menu.png' %}" class="menu-icon" onclick="menutoggle()">
+        </div>
+    </div>
+
+    <!-- Página de Cuenta -->
+    <div id="account-section" class="account-page">
+        <div class="container">
+            <div class="row">
+                <div class="col-2">
+                    <div class="form-container">
+                        <div class="form-btn">
+                            <span onclick="showLoginForm()" {% if active_form == 'login' %}class="active"{% endif %}>Iniciar Sesión</span>
+                            <span onclick="showRegisterForm()" {% if active_form == 'signup' %}class="active"{% endif %}>Registrarse</span>
+                            <hr id="Indicator">
+                        </div>
+
+                        <!-- Mensajes de error y éxito -->
+                        <div class="messages">
+                            {% for message in messages %}
+                                <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                            <!-- Formulario de Login -->
+                            <form id="LoginForm" method="post" action="" {% if active_form != 'login' %}style="display:none;"{% endif %}>
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="id_login">Correo electrónico o nombre de usuario:</label>
+                                    <input type="text" name="login" id="id_login" placeholder="Correo electrónico o nombre de usuario" value="{{ login_form.login.value }}" class="form-control">
+                                </div>
+                                {{ login_form.password }}
+                                <input type="hidden" name="login" value="true">
+                                <button type="submit" name="login" class="btn">Iniciar Sesión</button>
+                                <a href="{% url 'account_reset_password' %}">¿Olvidaste tu Contraseña?</a>
+                            </form>
+                        <!-- Formulario de Registro -->
+                        <form id="RegForm" method="post" action="" {% if active_form != 'signup' %}style="display:none;"{% endif %}>
+                            {% csrf_token %}
+                            {{ signup_form.as_p }}
+                            <input type="hidden" name="signup" value="true">
+                            <button type="submit" name="signup" class="btn">Registrarse</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <img src="{% static 'images/image1.png' %}" width="100%">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="footer-col-1">
+                    <h3>Descarga Nuestra App</h3>
+                    <p>Descarga la app para Android y iOS.</p>
+                    <div class="app-logo">
+                        <img src="{% static 'images/play-store.png' %}">
+                        <img src="{% static 'images/app-store.png' %}">
+                    </div>
+                </div>
+                <div class="footer-col-2">
+                    <img src="{% static 'images/logo-white.png' %}">
+                    <p>Nuestro propósito es ofrecer autopartes de calidad a todos los amantes de los autos, asegurando
+                        un viaje seguro y confortable.</p>
+                </div>
+                <div class="footer-col-3">
+                    <h3>Enlaces Útiles</h3>
+                    <ul>
+                        <li>Cupones</li>
+                        <li>Blog</li>
+                        <li>Política de Devoluciones</li>
+                        <li>Programa de Afiliados</li>
+                    </ul>
+                </div>
+                <div class="footer-col-4">
+                    <h3>Síguenos</h3>
+                    <ul>
+                        <li>Facebook</li>
+                        <li>Twitter</li>
+                        <li>Instagram</li>
+                        <li>Youtube</li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <p class="copyright">Copyright 2024 - Horuz Autopartes</p>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        var MenuItems = document.getElementById("MenuItems");
+        MenuItems.style.maxHeight = "0px";
+            // Definir variable en JavaScript con el valor de `active_form` de Django
+        var activeForm = "{{ active_form }}";
+
+        function menutoggle() {
+            if (MenuItems.style.maxHeight == "0px") {
+                MenuItems.style.maxHeight = "200px";
+            } else {
+                MenuItems.style.maxHeight = "0px";
+            }
+        }
+
+        // Mostrar los formularios de inicio de sesión y registro
+        function showLoginForm() {
+            document.getElementById("LoginForm").style.display = "block";
+            document.getElementById("RegForm").style.display = "none";
+            document.getElementById("Indicator").style.transform = "translateX(0px)";
+        }
+
+        function showRegisterForm() {
+            document.getElementById("LoginForm").style.display = "none";
+            document.getElementById("RegForm").style.display = "block";
+            document.getElementById("Indicator").style.transform = "translateX(100px)";
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+        // Usar el valor de `activeForm` para determinar qué formulario mostrar
+        if (activeForm === 'signup') {
+            showRegisterForm();
+        } else {
+            showLoginForm();
+        }
+        });
+    </script>
+</body>
+</html>

@@ -6,11 +6,13 @@ from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.conf import settings
 from allauth.account.forms import LoginForm, SignupForm
+from django.contrib.auth import login as auth_login, authenticate
+from django.contrib import messages
+from django.contrib.auth.models import User
 import json
 import os
 
 def index(request):
-    # Obtener todas las categorías desde la base de datos para mostrarlas en el index
     categorias = Categoria.objects.all()
     return render(request, 'index.html', {'categorias': categorias})
 
@@ -18,40 +20,93 @@ def account_view(request):
     """
     Vista unificada para el inicio de sesión y registro usando Django Allauth.
     Renderiza el formulario de login y el formulario de registro en una sola vista.
+    Procesa los formularios de login y registro si se hace una solicitud POST.
     """
-    login_form = LoginForm()  # Formulario de login de Allauth
-    signup_form = SignupForm()  # Formulario de registro de Allauth
-    
+    login_form = LoginForm()
+    signup_form = SignupForm()
+
+    if request.method == 'POST':
+        if 'login' in request.POST:
+            # Procesar el inicio de sesión
+            login_form = LoginForm(request.POST)
+            if login_form.is_valid():
+                login_value = login_form.cleaned_data.get('login')  # El valor que puede ser correo o username
+                password = login_form.cleaned_data.get('password')
+
+                # Intentar autenticación usando 'username' o 'email'
+                user = authenticate(request, username=login_value, password=password)
+                if user is None:
+                    # Si no se encuentra, buscar por email
+                    try:
+                        user_obj = User.objects.get(email=login_value)
+                        user = authenticate(request, username=user_obj.username, password=password)
+                    except User.DoesNotExist:
+                        user = None
+
+                if user is not None:
+                    auth_login(request, user)
+                    messages.success(request, 'Has iniciado sesión exitosamente.')
+                    return redirect('catalogo')
+                else:
+                    messages.error(request, 'Credenciales incorrectas. Verifique su correo/nombre de usuario y contraseña.')
+            else:
+                messages.error(request, 'Por favor corrige los errores en el formulario de inicio de sesión.')
+
+            # Retornar el formulario con errores para que el usuario pueda corregirlos
+            context = {
+                'login_form': login_form,
+                'signup_form': signup_form,
+                'active_form': 'login'
+            }
+            return render(request, 'account.html', context)
+
+        elif 'signup' in request.POST:
+            # Procesar el registro
+            signup_form = SignupForm(request.POST)
+            if signup_form.is_valid():
+                try:
+                    user = signup_form.save(request)
+                    auth_login(request, user)
+                    messages.success(request, 'Tu cuenta ha sido creada exitosamente.')
+                    return redirect('catalogo')
+                except ValueError as e:
+                    messages.error(request, 'Este correo electrónico ya está registrado. Por favor, usa otro o inicia sesión.')
+            else:
+                messages.error(request, 'Por favor corrige los errores en el formulario de registro.')
+
+            # Mostrar formulario de registro al fallar
+            context = {
+                'login_form': login_form,
+                'signup_form': signup_form,
+                'active_form': 'signup'
+            }
+            return render(request, 'account.html', context)
+
+    # Render por defecto al cargar la página
     context = {
         'login_form': login_form,
-        'signup_form': signup_form
+        'signup_form': signup_form,
+        'active_form': 'login'
     }
-    
     return render(request, 'account.html', context)
 
 @login_required
 def publicar_producto(request):
-    # Eliminar la lógica de productos locales y la publicación de productos,
-    # ya que ahora solo se trabaja con la API de Mercado Libre.
     return redirect('catalogo')
 
 def catalogo(request):
-    # Cargar productos desde productos.json
     productos_path = os.path.join(settings.BASE_DIR, 'static/js/productos.json')
 
     try:
         with open(productos_path, 'r', encoding='utf-8') as file:
             productos = json.load(file)
     except (FileNotFoundError, json.JSONDecodeError) as e:
-        # En caso de error, loguea y muestra un mensaje de error en la plantilla
         print(f"Error al cargar productos desde productos.json: {e}")
-        productos = []  # Vacía la lista de productos para manejar el error adecuadamente
+        productos = []
 
-    # Renderiza la plantilla con los productos obtenidos
     return render(request, 'products.html', {'productos': productos})
 
 def detalle_producto(request, id):
-    # Obtener detalles del producto desde productos.json
     productos_path = os.path.join(settings.BASE_DIR, 'static/js/productos.json')
 
     try:
@@ -62,20 +117,15 @@ def detalle_producto(request, id):
         if not producto:
             return render(request, 'product_details.html', {'error': 'Producto no encontrado.'})
 
-        producto['producto_local'] = True
-
     except (FileNotFoundError, json.JSONDecodeError) as e:
-        # Si hay un error al obtener el producto, mostrar un mensaje en la plantilla
         print(f"Error al cargar productos desde productos.json: {e}")
         return render(request, 'product_details.html', {'error': 'No se pudo cargar el producto. Intente más tarde.'})
 
-    # Renderiza la plantilla con los detalles del producto
     return render(request, 'product_details.html', {'producto': producto})
 
-# Función para mostrar el carrito
 def carrito(request):
-    carrito = request.session.get('carrito', [])  # Obtener los productos del carrito de la sesión
-    carrito_vacio = len(carrito) == 0  # Verificar si el carrito está vacío
+    carrito = request.session.get('carrito', [])
+    carrito_vacio = len(carrito) == 0
     total = sum(item['precio'] * item['cantidad'] for item in carrito)
 
     context = {
@@ -85,9 +135,7 @@ def carrito(request):
     }
     return render(request, 'cart.html', context)
 
-# Función para agregar productos al carrito
 def agregar_al_carrito(request, id):
-    # Obtener la información del producto desde productos.json y agregarla al carrito
     carrito = request.session.get('carrito', [])
     productos_path = os.path.join(settings.BASE_DIR, 'static/js/productos.json')
 
@@ -107,25 +155,22 @@ def agregar_al_carrito(request, id):
             'cantidad': 1
         }
 
-        # Verificar si el producto ya está en el carrito
         for item in carrito:
             if item['id'] == producto_info['id']:
                 item['cantidad'] += 1
                 break
         else:
-            # Si no está, agregarlo al carrito
             carrito.append(producto_info)
 
-        request.session['carrito'] = carrito  # Guardar el carrito actualizado en la sesión
+        request.session['carrito'] = carrito
 
     except (FileNotFoundError, json.JSONDecodeError) as e:
         print(f"Error al cargar productos desde productos.json para agregar al carrito: {e}")
 
     return redirect('carrito')
 
-# Función para vaciar el carrito
 def vaciar_carrito(request):
-    request.session['carrito'] = []  # Limpiar el carrito en la sesión
+    request.session['carrito'] = []
     return redirect('carrito')
 
 def checkout(request):
@@ -136,10 +181,8 @@ def checkout(request):
     total = sum(item['precio'] * item['cantidad'] for item in carrito)
 
     if request.method == 'POST':
-        # Crear la orden
         orden = Orden.objects.create(usuario=request.user, total=total)
         for item in carrito:
-            # Ya que solo usamos la API, el producto local será None
             DetalleOrden.objects.create(
                 orden=orden,
                 producto=None,
@@ -147,10 +190,8 @@ def checkout(request):
                 subtotal=item['precio'] * item['cantidad']
             )
 
-        # Vaciar el carrito después de la compra
         request.session['carrito'] = []
 
-        # Enviar correo de confirmación al usuario
         send_mail(
             'Confirmación de Compra - Horus',
             f'Tu orden #{orden.id} ha sido confirmada. Total: ${total}.',
@@ -165,6 +206,5 @@ def checkout(request):
 
 @login_required
 def historial_pedidos(request):
-    # Obtener todos los pedidos del usuario actual
     pedidos = Orden.objects.filter(usuario=request.user).order_by('-fecha')
     return render(request, 'historial.html', {'pedidos': pedidos})

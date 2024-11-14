@@ -36,6 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',  # Necesario para allauth
+
+    # Aplicaciones del proyecto
     'tienda',
 
     # Aplicaciones de Allauth para autenticación extendida
@@ -97,6 +100,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 8,
+        },
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -138,6 +144,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Email configuration for sending registration confirmation
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -151,14 +158,18 @@ SITE_ID = 1  # Requerido para Allauth
 # Configuraciones de Login y Logout con Allauth
 LOGIN_REDIRECT_URL = '/catalogo/'  # Redirigir al catálogo después de iniciar sesión
 LOGOUT_REDIRECT_URL = '/'  # Redirigir a la página de inicio después de cerrar sesión
+LOGIN_URL = '/login/'  # URL personalizada para el inicio de sesión
 
 # Configuración de Django Allauth
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'  # Permitir login con nombre de usuario o correo electrónico
+ACCOUNT_USERNAME_REQUIRED = True  # Nombre de usuario es requerido
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # Requerir verificación de correo electrónico
+ACCOUNT_EMAIL_VERIFICATION = 'optional'  # Verificación de correo opcional (cambiar a 'mandatory' para producción)
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
 ACCOUNT_LOGOUT_ON_GET = True  # Cierre de sesión solo con la solicitud GET
+ACCOUNT_SESSION_REMEMBER = True  # Recordar sesiones para más comodidad
+ACCOUNT_USERNAME_BLACKLIST = ['admin', 'root']  # Restricción de nombres de usuario
 
 # Plantillas de formularios personalizadas con 'django-allauth'
 ACCOUNT_FORMS = {
@@ -167,15 +178,25 @@ ACCOUNT_FORMS = {
     'reset_password': 'tienda.forms.CustomResetPasswordForm',  # Formulario de restablecimiento de contraseña personalizado
 }
 
-# Configuración adicional para limitar intentos de login (seguridad)
-ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5  # Limitar intentos de login a 5
-ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 300  # Tiempo de espera para nuevos intentos (en segundos)
+# Configuración adicional para limitar intentos de login (seguridad) usando la nueva configuración de tasas
+ACCOUNT_RATE_LIMITS = {
+    'login_failed': '5/300s',  # Limitar a 5 intentos fallidos en 300 segundos (5 minutos)
+}
 
 # Configuración del backend de autenticación para usar tanto username como email
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
+    'django.contrib.auth.backends.ModelBackend',  # Requerido para acceso de administración de Django
+    'allauth.account.auth_backends.AuthenticationBackend',  # Requerido para el manejo de usuarios de allauth
 )
+
 
 # Redirigir a nuestra propia vista personalizada para iniciar sesión y registro
 LOGIN_URL = '/login/'  # URL personalizada para el inicio de sesión
+
+# Uso del framework de mensajes para feedback del usuario
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+# Configuración de prefijos y remitentes de correo electrónico para allauth
+ACCOUNT_EMAIL_SUBJECT_PREFIX = '[Horuz Autopartes]'
+DEFAULT_FROM_EMAIL = 'noreply@horuz.me'
+

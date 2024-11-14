@@ -1,65 +1,63 @@
+# forms.py (Ajustes menores para mejorar mensajes de error)
+
 from django import forms
 from django.contrib.auth.models import User
 from .models import PerfilUsuario, Producto
 from allauth.account.forms import LoginForm, SignupForm
+from django.utils.translation import gettext_lazy as _
 
-# Formulario para manejar la creación y edición de productos
-class ProductoForm(forms.ModelForm):
-    class Meta:
-        model = Producto
-        fields = ['nombre', 'descripcion', 'precio', 'imagen']
-
-# Formulario de registro personalizado para usuarios estándar
-class RegistroForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput)
-    rol = forms.ChoiceField(choices=PerfilUsuario.ROLES)
-
-    class Meta:
-        model = User
-        fields = ['username', 'password']
-
-# Formulario para gestionar el perfil de usuario (roles)
-class PerfilForm(forms.ModelForm):
-    class Meta:
-        model = PerfilUsuario
-        fields = ['rol']
-
-# Formulario personalizado de inicio de sesión utilizando Allauth
 class CustomLoginForm(LoginForm):
     def __init__(self, *args, **kwargs):
-        super(CustomLoginForm, self).__init__(*args, **kwargs)
-        self.fields['login'].widget.attrs.update({
-            'placeholder': 'Correo electrónico o nombre de usuario',
-            'class': 'input-box'
+        super().__init__(*args, **kwargs)
+        self.fields['login'].widget = forms.TextInput(attrs={
+            'placeholder': 'Correo electrónico o nombre de usuario',  # Permitir ambos
+            'class': 'form-control'
         })
-        self.fields['password'].widget.attrs.update({
+        self.fields['password'].widget = forms.PasswordInput(attrs={
             'placeholder': 'Contraseña',
-            'class': 'input-box'
+            'class': 'form-control'
         })
+        
+    def login(self, *args, **kwargs):
+        try:
+            return super(CustomLoginForm, self).login(*args, **kwargs)
+        except forms.ValidationError as e:
+            self.add_error(None, e)
+            return None
 
-# Formulario personalizado de registro utilizando Allauth
 class CustomSignupForm(SignupForm):
     def __init__(self, *args, **kwargs):
         super(CustomSignupForm, self).__init__(*args, **kwargs)
         self.fields['username'].widget.attrs.update({
-            'placeholder': 'Nombre de usuario',
-            'class': 'input-box'
+            'placeholder': _('Nombre de usuario'),
+            'class': 'input-box',
         })
         self.fields['email'].widget.attrs.update({
-            'placeholder': 'Correo electrónico',
-            'class': 'input-box'
+            'placeholder': _('Correo electrónico'),
+            'class': 'input-box',
         })
         self.fields['password1'].widget.attrs.update({
-            'placeholder': 'Contraseña',
-            'class': 'input-box'
+            'placeholder': _('Contraseña'),
+            'class': 'input-box',
         })
         self.fields['password2'].widget.attrs.update({
-            'placeholder': 'Confirmar contraseña',
-            'class': 'input-box'
+            'placeholder': _('Confirmar contraseña'),
+            'class': 'input-box',
         })
+
+    def clean_username(self):
+        username = self.cleaned_data.get("username")
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError(_("Este nombre de usuario ya está en uso. Por favor, elige otro."))
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError(_("Este correo electrónico ya está registrado."))
+        return email
 
     def save(self, request):
         user = super(CustomSignupForm, self).save(request)
-        # Aquí puedes agregar lógica adicional si necesitas, por ejemplo, crear un PerfilUsuario.
-        PerfilUsuario.objects.create(user=user, rol='comprador')  # Rol predeterminado: comprador.
+        PerfilUsuario.objects.create(user=user, rol='comprador')
         return user
