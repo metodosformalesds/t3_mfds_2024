@@ -45,8 +45,8 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
-    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.google',  # Proveedor Google para registro y login social
+    'allauth.socialaccount.providers.facebook',  # Proveedor Facebook para registro y login social
 ]
 
 MIDDLEWARE = [
@@ -79,7 +79,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Horus.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -153,12 +152,13 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'default-email@example.com')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')  # Usa variable de entorno para mayor seguridad
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+# Django Sites framework
 SITE_ID = 1  # Requerido para Allauth
 
 # Configuraciones de Login y Logout con Allauth
 LOGIN_REDIRECT_URL = '/catalogo/'  # Redirigir al catálogo después de iniciar sesión
 LOGOUT_REDIRECT_URL = '/'  # Redirigir a la página de inicio después de cerrar sesión
-LOGIN_URL = '/login/'  # URL personalizada para el inicio de sesión
+LOGIN_URL = '/user/login/'  # URL personalizada para el inicio de sesión
 
 # Configuración de Django Allauth
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'  # Permitir login con nombre de usuario o correo electrónico
@@ -189,10 +189,6 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',  # Requerido para el manejo de usuarios de allauth
 )
 
-
-# Redirigir a nuestra propia vista personalizada para iniciar sesión y registro
-LOGIN_URL = '/login/'  # URL personalizada para el inicio de sesión
-
 # Uso del framework de mensajes para feedback del usuario
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
@@ -200,3 +196,29 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 ACCOUNT_EMAIL_SUBJECT_PREFIX = '[Horuz Autopartes]'
 DEFAULT_FROM_EMAIL = 'noreply@horuz.me'
 
+# Configuración de proveedores sociales (ejemplo con Google y Facebook)
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+        'OAUTH_PKCE_ENABLED': True,  # Habilitar OAuth PKCE para mayor seguridad
+    },
+    'facebook': {
+        'METHOD': 'oauth2',
+        'SCOPE': ['email', 'public_profile'],
+        'FIELDS': [
+            'id',
+            'email',
+            'name',
+            'first_name',
+            'last_name',
+            'picture',
+        ],
+        'VERIFIED_EMAIL': False,
+    },
+}

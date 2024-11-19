@@ -533,6 +533,16 @@ form a {
     transition: transform 1s;
 }
 
+#IndicatorYonkero {
+    width: 100px;
+    border: none;
+    background: #ff523b;
+    height: 3px;
+    margin-top: 8px;
+    transform: translateX(0px);
+    transition: transform 1s;
+}
+
 /* Media query for menu */
 @media only screen and (max-width: 800px){
 

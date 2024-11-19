@@ -1,5 +1,5 @@
 <!-- account.html -->
-{% load static %}
+{% load static socialaccount %}
 <!DOCTYPE html>
 <html lang="es">
 
@@ -24,16 +24,16 @@
                     <li><a href="{% url 'catalogo' %}">Productos</a></li>
                     <li>
                         {% if user.is_authenticated %}
-                            <div class="dropdown">
-                                <a class="dropdown-toggle" href="#">
-                                    Hola, {{ user.username }}
-                                </a>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="{% url 'account_logout' %}">Cerrar sesión</a>
-                                </div>
+                        <div class="dropdown">
+                            <a class="dropdown-toggle" href="#">
+                                Hola, {{ user.username }}
+                            </a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="{% url 'logout' %}">Cerrar sesión</a>
                             </div>
+                        </div>
                         {% else %}
-                            <a href="#account-section">Cuenta</a>
+                        <a href="#account-section">Cuenta</a>
                         {% endif %}
                     </li>
                 </ul>
@@ -46,48 +46,52 @@
     <!-- Página de Cuenta -->
     <div id="account-section" class="account-page">
         <div class="container">
-            <div class="row">
-                <div class="col-2">
+            <div class="row" style="display: flex; align-items: center; justify-content: space-between;">
+
+                <!-- Contenedor para Cliente -->
+                <div class="col-2 role-container" style="text-align: center; padding: 20px;">
                     <div class="form-container">
+                        <h2>¿Eres Cliente de Horuz?</h2>
                         <div class="form-btn">
-                            <span onclick="showLoginForm()" {% if active_form == 'login' %}class="active"{% endif %}>Iniciar Sesión</span>
-                            <span onclick="showRegisterForm()" {% if active_form == 'signup' %}class="active"{% endif %}>Registrarse</span>
-                            <hr id="Indicator">
+                            <span onclick="showClientLogin()">Iniciar Sesión</span>
+                            <span onclick="showClientRegister()">Registrarse</span>
+                            <hr id="Indicator" style="transition: all 0.5s ease;">
                         </div>
 
-                        <!-- Mensajes de error y éxito -->
-                        <div class="messages">
-                            {% for message in messages %}
-                                <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">
-                                    {{ message }}
-                                </div>
-                            {% endfor %}
+                        <div id="client-login" class="button-group" style="display: block;">
+                            <a href="{% url 'user_login' %}" class="btn" style="margin: 10px;">Iniciar Sesión</a>
+                            <a href="{% provider_login_url 'google' %}" class="btn btn-google" style="margin: 10px;">Iniciar Sesión con Google</a>
                         </div>
 
-                            <!-- Formulario de Login -->
-                            <form id="LoginForm" method="post" action="" {% if active_form != 'login' %}style="display:none;"{% endif %}>
-                                {% csrf_token %}
-                                <div class="form-group">
-                                    <label for="id_login">Correo electrónico o nombre de usuario:</label>
-                                    <input type="text" name="login" id="id_login" placeholder="Correo electrónico o nombre de usuario" value="{{ login_form.login.value }}" class="form-control">
-                                </div>
-                                {{ login_form.password }}
-                                <input type="hidden" name="login" value="true">
-                                <button type="submit" name="login" class="btn">Iniciar Sesión</button>
-                                <a href="{% url 'account_reset_password' %}">¿Olvidaste tu Contraseña?</a>
-                            </form>
-                        <!-- Formulario de Registro -->
-                        <form id="RegForm" method="post" action="" {% if active_form != 'signup' %}style="display:none;"{% endif %}>
-                            {% csrf_token %}
-                            {{ signup_form.as_p }}
-                            <input type="hidden" name="signup" value="true">
-                            <button type="submit" name="signup" class="btn">Registrarse</button>
-                        </form>
+                        <div id="client-register" class="button-group" style="display: none;">
+                            <a href="{% url 'user_signup' %}" class="btn" style="margin: 10px;">Registrarse</a>
+                            <a href="{% provider_login_url 'google' %}" class="btn btn-google" style="margin: 10px;">Registrarse con Google</a>
+                        </div>
                     </div>
                 </div>
-                <div class="col-2">
-                    <img src="{% static 'images/image1.png' %}" width="100%">
+
+                <!-- Contenedor para Yonkero -->
+                <div class="col-2 role-container" style="text-align: center; padding: 20px;">
+                    <div class="form-container">
+                        <h2>¿Eres Un Yonkero?</h2>
+                        <div class="form-btn">
+                            <span onclick="showYonkeroLogin()">Iniciar Sesión</span>
+                            <span onclick="showYonkeroRegister()">Registrarse</span>
+                            <hr id="IndicatorYonkero" style="transition: all 0.5s ease;">
+                        </div>
+
+                        <div id="yonkero-login" class="button-group" style="display: block;">
+                            <a href="{% url 'yonkero_login' %}" class="btn" style="margin: 10px;">Iniciar Sesión</a>
+                            <a href="{% provider_login_url 'google' %}" class="btn btn-google" style="margin: 10px;">Iniciar Sesión con Google</a>
+                        </div>
+
+                        <div id="yonkero-register" class="button-group" style="display: none;">
+                            <a href="{% url 'yonkero_signup' %}" class="btn" style="margin: 10px;">Registrarse</a>
+                            <a href="{% provider_login_url 'google' %}" class="btn btn-google" style="margin: 10px;">Registrarse con Google</a>
+                        </div>
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -106,8 +110,7 @@
                 </div>
                 <div class="footer-col-2">
                     <img src="{% static 'images/logo-white.png' %}">
-                    <p>Nuestro propósito es ofrecer autopartes de calidad a todos los amantes de los autos, asegurando
-                        un viaje seguro y confortable.</p>
+                    <p>Nuestro propósito es ofrecer autopartes de calidad a todos los amantes de los autos, asegurando un viaje seguro y confortable.</p>
                 </div>
                 <div class="footer-col-3">
                     <h3>Enlaces Útiles</h3>
@@ -137,8 +140,6 @@
     <script>
         var MenuItems = document.getElementById("MenuItems");
         MenuItems.style.maxHeight = "0px";
-            // Definir variable en JavaScript con el valor de `active_form` de Django
-        var activeForm = "{{ active_form }}";
 
         function menutoggle() {
             if (MenuItems.style.maxHeight == "0px") {
@@ -148,27 +149,30 @@
             }
         }
 
-        // Mostrar los formularios de inicio de sesión y registro
-        function showLoginForm() {
-            document.getElementById("LoginForm").style.display = "block";
-            document.getElementById("RegForm").style.display = "none";
+        function showClientLogin() {
+            document.getElementById("client-login").style.display = "block";
+            document.getElementById("client-register").style.display = "none";
             document.getElementById("Indicator").style.transform = "translateX(0px)";
         }
 
-        function showRegisterForm() {
-            document.getElementById("LoginForm").style.display = "none";
-            document.getElementById("RegForm").style.display = "block";
-            document.getElementById("Indicator").style.transform = "translateX(100px)";
+        function showClientRegister() {
+            document.getElementById("client-login").style.display = "none";
+            document.getElementById("client-register").style.display = "block";
+            document.getElementById("Indicator").style.transform = "translateX(112px)";
         }
 
-        document.addEventListener("DOMContentLoaded", function () {
-        // Usar el valor de `activeForm` para determinar qué formulario mostrar
-        if (activeForm === 'signup') {
-            showRegisterForm();
-        } else {
-            showLoginForm();
+        function showYonkeroLogin() {
+            document.getElementById("yonkero-login").style.display = "block";
+            document.getElementById("yonkero-register").style.display = "none";
+            document.getElementById("IndicatorYonkero").style.transform = "translateX(0px)";
         }
-        });
+
+        function showYonkeroRegister() {
+            document.getElementById("yonkero-login").style.display = "none";
+            document.getElementById("yonkero-register").style.display = "block";
+            document.getElementById("IndicatorYonkero").style.transform = "translateX(112px)";
+        }
     </script>
 </body>
+
 </html>

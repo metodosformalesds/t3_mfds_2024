@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión | Horuz Autopartes</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="navbar">
+            <div class="logo">
+                <a href="{% url 'index' %}"><img src="{% static 'images/logo.png' %}" alt="logo" width="125px"></a>
+            </div>
+            <nav>
+                <ul id="MenuItems">
+                    <li><a href="{% url 'index' %}">Inicio</a></li>
+                    <li><a href="{% url 'catalogo' %}">Productos</a></li>
+                    <li><a href="{% url 'account' %}">Cuenta</a></li>
+                </ul>
+            </nav>
+            <a href="{% url 'carrito' %}"><img src="{% static 'images/cart.png' %}" width="30px" height="30px"></a>
+            <img src="{% static 'images/menu.png' %}" class="menu-icon" onclick="menutoggle()">
+        </div>
+    </div>
+
+    <!-- Página de Cuenta -->
+    <div class="account-page">
+        <div class="container">
+            <div class="row">
+                <!-- Formulario de Iniciar Sesión -->
+                <div class="col-2">
+                    <div class="form-container">
+                        <div class="form-btn">
+                            <span class="active">Iniciar Sesión</span>
+                            <hr id="Indicator">
+                        </div>
+                        
+                        <!-- Formulario de Iniciar Sesión -->
+                        <form id="LoginForm" action="{% url 'user_login' %}" method="post" style="display: block;">
+                            {% csrf_token %}
+                            <input type="text" name="login" placeholder="Correo Electrónico o Nombre de Usuario" required>
+                            <input type="password" name="password" placeholder="Contraseña" required>
+                            <button type="submit" class="btn">Iniciar Sesión</button>
+                            <a href="{% url 'account_reset_password' %}">¿Olvidaste tu Contraseña?</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <img src="{% static 'images/image1.png' %}" width="100%">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="footer-col-1">
+                    <h3>Descarga Nuestra App</h3>
+                    <p>Descarga la app para Android y iOS.</p>
+                    <div class="app-logo">
+                        <img src="{% static 'images/play-store.png' %}">
+                        <img src="{% static 'images/app-store.png' %}">
+                    </div>
+                </div>
+                <div class="footer-col-2">
+                    <img src="{% static 'images/logo-white.png' %}">
+                    <p>Nuestro propósito es ofrecer autopartes de calidad a todos los amantes de los autos, asegurando un viaje seguro y confortable.</p>
+                </div>
+                <div class="footer-col-3">
+                    <h3>Enlaces Útiles</h3>
+                    <ul>
+                        <li>Cupones</li>
+                        <li>Blog</li>
+                        <li>Política de Devoluciones</li>
+                        <li>Programa de Afiliados</li>
+                    </ul>
+                </div>
+                <div class="footer-col-4">
+                    <h3>Síguenos</h3>
+                    <ul>
+                        <li>Facebook</li>
+                        <li>Twitter</li>
+                        <li>Instagram</li>
+                        <li>Youtube</li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <p class="copyright">Copyright 2024 - Horuz Autopartes</p>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        var MenuItems = document.getElementById("MenuItems");
+        MenuItems.style.maxHeight = "0px";
+        
+        function menutoggle() {
+            if (MenuItems.style.maxHeight == "0px") {
+                MenuItems.style.maxHeight = "200px";
+            } else {
+                MenuItems.style.maxHeight = "0px";
+            }
+        }
+    </script>
+</body>
+
+</html>
