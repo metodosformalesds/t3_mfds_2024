@@ -124,13 +124,20 @@
         </div>
     </div>
 
-    <!-- JavaScript para manejar el cambio de imagen y agregar al carrito -->
     <script>
         // Función para obtener el ID del producto desde la URL
         function obtenerIdProductoDesdeUrl() {
             const path = window.location.pathname;
             const partes = path.split('/');
             return partes[2] || null; // Se asume que la URL tiene el formato /producto/{id}/
+        }
+    
+        // Corrige URLs con prefijo incorrecto
+        function corregirUrl(url) {
+            if (url.startsWith("http://http2")) {
+                return url.replace("http://http2", "https://http2");
+            }
+            return url;
         }
     
         // Función para cargar el producto desde el archivo productos.json
@@ -161,7 +168,7 @@
                 }
     
                 // Actualiza la página con la información del producto
-                document.getElementById('ProductImg').src = producto.imagen;
+                document.getElementById('ProductImg').src = corregirUrl(producto.imagen);
                 document.getElementById('ProductImg').alt = producto.titulo;
                 document.getElementById('ProductName').innerText = producto.titulo;
                 document.getElementById('ProductPrice').innerText = `$${producto.precio}`;
@@ -173,13 +180,20 @@
     
                 if (producto.pictures && producto.pictures.length > 0) {
                     producto.pictures.forEach((picture, index) => {
+                        const correctedUrl = corregirUrl(picture.url); // Corrige la URL de la miniatura
                         const thumbnailHTML = `
                             <div class="small-img-col">
-                                <img src="${picture.url}" width="100%" class="small-img ${index === 0 ? 'active-thumbnail' : ''}" onclick="changeMainImage('${picture.url}', this)">
+                                <img src="${correctedUrl}" 
+                                     alt="Miniatura ${index + 1}" 
+                                     class="small-img ${index === 0 ? 'active-thumbnail' : ''}" 
+                                     onclick="changeMainImage('${correctedUrl}', this)"
+                                     onerror="this.src='/static/images/placeholder.png';">
                             </div>
                         `;
                         thumbnailsContainer.insertAdjacentHTML('beforeend', thumbnailHTML);
                     });
+                } else {
+                    thumbnailsContainer.innerHTML = '<p>No hay imágenes disponibles.</p>';
                 }
     
                 // Guardar los datos del producto en el botón de "Agregar al Carrito"
@@ -196,31 +210,32 @@
     
         // Función para mostrar productos relacionados
         function mostrarProductosRelacionados(productos, productoActualId) {
-        const productosRelacionados = productos.filter(p => p.id !== productoActualId);
-        const productosRelacionadosAleatorios = obtenerProductosAleatorios(productosRelacionados, 4);
-        const relatedProductsContainer = document.getElementById('related-products');
-        relatedProductsContainer.innerHTML = '';
-
-        productosRelacionadosAleatorios.forEach(producto => {
-            const productHTML = `
-                <div class="col-4">
-                    <a href="/producto/${producto.id}/">
-                        <img src="${producto.imagen}" alt="${producto.titulo}" class="related-product-img">
-                    </a>
-                    <h4>${producto.titulo}</h4>
-                    <div class="rating">
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star-o"></i>
+            const productosRelacionados = productos.filter(p => p.id !== productoActualId);
+            const productosRelacionadosAleatorios = obtenerProductosAleatorios(productosRelacionados, 4);
+            const relatedProductsContainer = document.getElementById('related-products');
+            relatedProductsContainer.innerHTML = '';
+    
+            productosRelacionadosAleatorios.forEach(producto => {
+                const correctedUrl = corregirUrl(producto.imagen);
+                const productHTML = `
+                    <div class="col-4">
+                        <a href="/producto/${producto.id}/">
+                            <img src="${correctedUrl}" alt="${producto.titulo}" class="related-product-img" onerror="this.src='/static/images/placeholder.png';">
+                        </a>
+                        <h4>${producto.titulo}</h4>
+                        <div class="rating">
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star-o"></i>
+                        </div>
+                        <p>$${producto.precio}</p>
                     </div>
-                    <p>$${producto.precio}</p>
-                </div>
-            `;
-            relatedProductsContainer.insertAdjacentHTML('beforeend', productHTML);
-        });
-    }
+                `;
+                relatedProductsContainer.insertAdjacentHTML('beforeend', productHTML);
+            });
+        }
     
         // Función para obtener productos aleatorios
         function obtenerProductosAleatorios(productos, cantidad) {
@@ -288,7 +303,7 @@
     
         // Ejecutar la función para cargar el producto cuando la página esté lista
         document.addEventListener("DOMContentLoaded", cargarDetallesProducto);
-    </script>      
+    </script>        
 
 </body>
 

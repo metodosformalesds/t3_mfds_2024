@@ -64,23 +64,18 @@
         </div>
     </div>
 
-    <!-- Mapa de yonkes en lugar de Categorías destacadas -->
+    <!-- Mapa de yonkes -->
     <div class="small-container">
         <h2 class="title">Yonkes en tu Ciudad Afiliados a Horuz</h2>
         <div id="map"></div>
     </div>
-    
+
     <!-- Productos Destacados -->
     <div class="small-container">
         <h2 class="title">Productos Destacados</h2>
-        <div class="row" id="featured-products">
-            <!-- Los productos destacados se cargarán aquí -->
-        </div>
-
+        <div class="row" id="featured-products"></div>
         <h2 class="title">Últimos Productos</h2>
-        <div class="row" id="latest-products">
-            <!-- Los últimos productos se cargarán aquí -->
-        </div>
+        <div class="row" id="latest-products"></div>
     </div>
 
     <!-- Oferta Exclusiva -->
@@ -88,7 +83,9 @@
         <div class="small-container">
             <div class="row">
                 <div class="col-2">
-                    <img src="{% static 'images/exclusive.png' %}" class="offer-img" id="exclusive-product-image">
+                    <div class="offer-img-container">
+                        <img src="{% static 'images/exclusive.png' %}" class="offer-img" id="exclusive-product-image">
+                    </div>
                 </div>
                 <div class="col-2">
                     <p>Disponible Exclusivamente en Horuz</p>

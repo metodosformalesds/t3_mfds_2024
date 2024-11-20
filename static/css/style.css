@@ -150,39 +150,32 @@ p{
     min-width: 200px;
     margin-bottom: 50px;
     transition: transform 0.5s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    height: 350px; /* Altura uniforme para todos los contenedores */
 }
 
 .col-4 img{
-    width: 100%;
-}
-
-.title{
-    text-align: center;
-    margin: 0 auto 80px;
-    position: relative;
-    line-height: 60px;
-    color: #555;
-}
-
-.title::after{
-    content: '';
-    background: #ff523b;
-    width: 80px;
-    height: 5px;
+    width: 100%; /* Ocupa el ancho máximo del contenedor */
+    height: 200px; /* Altura fija para garantizar uniformidad */
+    object-fit: contain; /* Mantiene la proporción de la imagen sin deformarla */
+    background-color: transparent; /* Fondo transparente para imágenes */
     border-radius: 5px;
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Sombra sutil */
 }
 
 h4{
     color: #555;
     font-weight: normal;
+    font-size: 16px;
+    text-align: center;
 }
 
 .col-4 p{
     font-size: 14px;
+    margin-top: auto; /* Alinea el precio al final del contenedor */
 }
 
 .rating .fa{
@@ -193,90 +186,24 @@ h4{
     transform: translateY(-5px);
 }
 
-/* Estilo uniforme para las imágenes de productos */
-.product-img {
-    width: 100%;           /* Ocupa todo el ancho del contenedor */
-    height: 200px;         /* Altura fija para garantizar uniformidad */
-    object-fit: contain;     /* Recorta la imagen para que se ajuste al contenedor */
-    border-radius: 5px;    /* Bordes redondeados opcionales */
-    transition: transform 0.3s ease; /* Transición suave en hover */
-}
-
-/* Efecto hover para las imágenes */
-.product-img:hover {
-    transform: scale(1.05); /* Amplía ligeramente al pasar el cursor */
-}
-
-/* Contenedor de miniaturas */
+/* Miniaturas */
 .small-img-row {
     display: flex;
     justify-content: flex-start;
-    gap: 10px; /* Espaciado entre miniaturas */
+    gap: 10px;
     margin-top: 20px;
 }
 
-/* Miniaturas */
 .small-img-col {
-    flex: 0 0 auto;
+    display: inline-block;
     cursor: pointer;
-    display: flex; /* Asegura un diseño más uniforme */
-    align-items: center; /* Centra la imagen verticalmente */
-    justify-content: center; /* Centra la imagen horizontalmente */
+    text-align: center;
 }
 
 .small-img {
-    width: 60px; /* Ajusta el tamaño de las miniaturas */
-    height: 60px; /* Mantiene proporciones uniformes */
-    object-fit: contain; /* Asegura que la imagen se muestre completa */
-    border: 2px solid transparent; /* Por defecto, sin borde visible */
-    border-radius: 5px;
-    transition: transform 0.2s ease, border-color 0.2s ease; /* Transiciones suaves */
-    background-color: #f9f9f9; /* Fondo para imágenes con transparencia */
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Sutil sombra para destacar */
-}
-
-.small-img:hover {
-    transform: scale(1.1); /* Efecto hover */
-    border-color: #ff523b; /* Resalta la miniatura seleccionada */
-}
-
-.small-img.active-thumbnail {
-    border: 2px solid #ff523b; /* Resaltar la miniatura activa */
-    opacity: 0.9; /* Indicador visual adicional */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
-}
-
-/* Contenedor de la imagen principal */
-#ProductImg {
-    width: 95%; /* Ocupa todo el ancho disponible */
-    height: 400px; /* Tamaño fijo para la altura */
-    object-fit: contain; /* Muestra la imagen completa dentro del contenedor */
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #f9f9f9; /* Fondo para imágenes con transparencia */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para realzar */
-}
-
-/* Contenedor de miniaturas */
-.small-img-row {
-    display: flex;
-    justify-content: flex-start;
-    gap: 10px; /* Espaciado uniforme entre miniaturas */
-    margin-top: 15px;
-    flex-wrap: wrap; /* Ajuste dinámico para pantallas pequeñas */
-}
-
-/* Miniaturas */
-.small-img-col {
-    display: inline-block; /* Asegúrate de que las miniaturas se alineen correctamente */
-    margin: 5px; /* Espaciado entre miniaturas */
-    cursor: pointer;
-}
-
-.small-img {
-    width: 60px; /* Ajusta el tamaño */
-    height: 60px; /* Altura uniforme */
-    object-fit: contain; /* Mantén las proporciones */
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
     border: 1px solid #ddd;
     border-radius: 5px;
     transition: transform 0.2s ease;
@@ -289,42 +216,63 @@ h4{
 
 .small-img.active-thumbnail {
     border: 2px solid #ff523b;
-    opacity: 0.8;
+    opacity: 0.9;
 }
 
 .related-product-img {
-    width: 100%; /* Ocupa todo el ancho del contenedor */
-    height: 200px; /* Define una altura fija para uniformidad */
-    object-fit: contain; /* Muestra la imagen completa dentro del contenedor sin deformarla */
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
 }
 
-/* Ajustes adicionales para pantallas pequeñas */
+/* Responsividad */
 @media only screen and (max-width: 768px) {
-    .small-img {
-        width: 50px; /* Tamaño reducido para pantallas pequeñas */
-        height: 50px;
+    .col-4 {
+        flex-basis: 50%;
+        height: auto;
     }
-    #ProductImg {
-        height: 300px; /* Reduce la altura en dispositivos más pequeños */
+    .col-4 img {
+        max-height: 150px;
     }
 }
 
+@media only screen and (max-width: 480px) {
+    .col-4 {
+        flex-basis: 100%;
+    }
+    .col-4 img {
+        max-height: 120px;
+    }
+}
 
 /* Sección de oferta */
 .offer {
     background: radial-gradient(#fff, #ffd6d6);
     margin-top: 80px;
     padding: 30px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
+/* Contenedor para la imagen */
+.col-2 .offer-img-container {
+    width: 100%;          /* Ocupa el ancho disponible */
+    max-width: 400px;     /* Ajusta el tamaño máximo para uniformidad */
+    height: 500px;        /* Altura fija */
+    display: flex;
+    align-items: center;  /* Centra verticalmente la imagen */
+    justify-content: center; /* Centra horizontalmente la imagen */
+    overflow: hidden;     /* Esconde cualquier desbordamiento */
+    background: transparent; /* Fondo transparente */
+}
+
+/* Imagen dentro del contenedor */
 .col-2 .offer-img {
-    width: 100%;
-    height: auto;
-    max-height: 100%;
-    object-fit: cover;
-    padding: 5%;
-    border-radius: 8px;
-    transition: transform 0.3s ease;
+    max-width: 100%;      /* La imagen no excede el ancho del contenedor */
+    max-height: 100%;     /* La imagen no excede la altura del contenedor */
+    object-fit: contain;  /* Ajusta la imagen para caber dentro del contenedor */
+    transition: transform 0.3s ease; /* Transición suave en hover */
 }
 
 .col-2 .offer-img:hover {
@@ -333,6 +281,24 @@ h4{
 
 small {
     color: #555;
+}
+
+/* Ajustes responsivos para pantallas pequeñas */
+@media only screen and (max-width: 768px) {
+    .offer {
+        flex-direction: column; /* Cambia el diseño a vertical */
+        text-align: center;
+    }
+
+    .col-2 .offer-img {
+        max-width: 300px; /* Tamaño máximo reducido para pantallas pequeñas */
+        margin: 0 auto; /* Centra la imagen */
+    }
+
+    .offer .col-2 {
+        text-align: center;
+        margin: 0;
+    }
 }
 
 /* Testimonial */
