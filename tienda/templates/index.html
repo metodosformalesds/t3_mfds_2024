@@ -93,21 +93,19 @@
                 <div class="col-2">
                     <p>Disponible Exclusivamente en Horuz</p>
                     <h1 id="exclusive-product-title">Producto Exclusivo</h1>
-                    <!-- Actualización del enlace para redirigir al detalle del producto -->
                     <a href="#" class="btn" id="exclusive-product-link">Comprar Ahora &#8594;</a>
                 </div>
             </div>
         </div>
     </div>
 
-       <!-- Testimonios -->
-       <div class="testimonial">
+    <!-- Testimonios -->
+    <div class="testimonial">
         <div class="small-container">
             <div class="row">
                 <div class="col-3">
                     <i class="fa fa-quote-left"></i>
-                    <p>Horuz tiene todo lo que necesito para mantener mi auto en perfecto estado. Excelente calidad y
-                        envíos rápidos.</p>
+                    <p>Horuz tiene todo lo que necesito para mantener mi auto en perfecto estado. Excelente calidad y envíos rápidos.</p>
                     <div class="rating">
                         <i class="fa fa-star"></i>
                         <i class="fa fa-star"></i>
@@ -120,8 +118,7 @@
                 </div>
                 <div class="col-3">
                     <i class="fa fa-quote-left"></i>
-                    <p>Muy satisfecho con el servicio de Horuz. Los repuestos llegaron a tiempo y encajaron perfectamente
-                        en mi vehículo.</p>
+                    <p>Muy satisfecho con el servicio de Horuz. Los repuestos llegaron a tiempo y encajaron perfectamente en mi vehículo.</p>
                     <div class="rating">
                         <i class="fa fa-star"></i>
                         <i class="fa fa-star"></i>
@@ -134,8 +131,7 @@
                 </div>
                 <div class="col-3">
                     <i class="fa fa-quote-left"></i>
-                    <p>Gran variedad de autopartes y precios competitivos. Horuz se ha convertido en mi sitio de confianza
-                        para cualquier repuesto.</p>
+                    <p>Gran variedad de autopartes y precios competitivos. Horuz se ha convertido en mi sitio de confianza para cualquier repuesto.</p>
                     <div class="rating">
                         <i class="fa fa-star"></i>
                         <i class="fa fa-star"></i>
@@ -178,8 +174,7 @@
                 </div>
                 <div class="footer-col-2">
                     <img src="{% static 'images/logo-white.png' %}">
-                    <p>Nuestro propósito es ofrecer autopartes de calidad a todos los amantes de los autos, asegurando
-                        un viaje seguro y confortable.</p>
+                    <p>Nuestro propósito es ofrecer autopartes de calidad a todos los amantes de los autos, asegurando un viaje seguro y confortable.</p>
                 </div>
                 <div class="footer-col-3">
                     <h3>Enlaces Útiles</h3>
@@ -210,9 +205,9 @@
         MenuItems.style.maxHeight = "0px";
         function menutoggle() {
             if (MenuItems.style.maxHeight == "0px") {
-                MenuItems.style.maxHeight = "200px"
+                MenuItems.style.maxHeight = "200px";
             } else {
-                MenuItems.style.maxHeight = "0px"
+                MenuItems.style.maxHeight = "0px";
             }
         }
     
@@ -228,9 +223,9 @@
             const query = `
                 [out:json];
                 node
-                  node["name"~"Yonke|Car Parts",i](around:20000,31.687285,-106.424703);
-                  node["amenity"="recycling"]["recycling_type"="scrapyard"](around:20000,31.687285,-106.424703);
-                  (around:10000,31.687285, -106.424703);
+                    ["name"~"Yonke|Car Parts",i](around:20000,31.687285,-106.424703);
+                node
+                    ["amenity"="recycling"]["recycling_type"="scrapyard"](around:20000,31.687285,-106.424703);
                 out body;
             `;
             const url = 'https://overpass-api.de/api/interpreter';
@@ -259,30 +254,29 @@
         // Funciones para cargar y mostrar productos desde productos.json
         async function cargarProductosDesdeArchivo() {
             try {
-                // Cambia la ruta a donde realmente está disponible el archivo productos.json
                 const response = await fetch('/static/js/productos.json'); 
                 if (!response.ok) {
                     throw new Error('No se pudo cargar el archivo productos.json');
                 }
                 const productos = await response.json();
-
+    
                 const productosDestacados = obtenerProductosAleatorios(productos, 4);
                 const ultimosProductos = obtenerProductosAleatorios(productos, 4);
-
+    
                 insertarProductosEnSeccion('featured-products', productosDestacados);
                 insertarProductosEnSeccion('latest-products', ultimosProductos);
-
+    
                 const productoExclusivo = obtenerProductoAleatorio(productos);
                 mostrarProductoExclusivo(productoExclusivo);
             } catch (error) {
                 console.error('Error al cargar los productos desde productos.json:', error);
             }
         }
-
+    
         function obtenerProductosAleatorios(productos, cantidad) {
             const productosAleatorios = [];
             const productosUsados = new Set();
-
+    
             while (productosAleatorios.length < cantidad && productosAleatorios.length < productos.length) {
                 const indiceAleatorio = Math.floor(Math.random() * productos.length);
                 if (!productosUsados.has(indiceAleatorio)) {
@@ -292,12 +286,12 @@
             }
             return productosAleatorios;
         }
-
+    
         function obtenerProductoAleatorio(productos) {
             const indiceAleatorio = Math.floor(Math.random() * productos.length);
             return productos[indiceAleatorio];
         }
-
+    
         function insertarProductosEnSeccion(idSeccion, productos) {
             const contenedor = document.getElementById(idSeccion);
             contenedor.innerHTML = '';
@@ -305,7 +299,9 @@
                 const imagen = producto.pictures && producto.pictures.length > 0 ? producto.pictures[0].url : producto.imagen;
                 const productHTML = `
                     <div class="col-4">
-                        <a href="/producto/${producto.id}/"><img src="${imagen}" alt="${producto.titulo}"></a>
+                        <a href="/producto/${producto.id}/">
+                            <img src="${imagen}" alt="${producto.titulo}" class="product-img">
+                        </a>
                         <h4>${producto.titulo}</h4>
                         <div class="rating">
                             <i class="fa fa-star"></i>
@@ -320,17 +316,17 @@
                 contenedor.insertAdjacentHTML('beforeend', productHTML);
             });
         }
-
+    
         function mostrarProductoExclusivo(producto) {
             const imagen = producto.pictures && producto.pictures.length > 0 ? producto.pictures[0].url : producto.imagen;
             document.getElementById('exclusive-product-image').src = imagen;
             document.getElementById('exclusive-product-title').innerText = producto.titulo;
-            document.getElementById('exclusive-product-link').href = `/producto/${producto.id}/`; // Actualización para redirigir al detalle del producto
+            document.getElementById('exclusive-product-link').href = `/producto/${producto.id}/`;
         }
-
+    
         // Cargar productos al cargar la página
         cargarProductosDesdeArchivo();
-    </script>
+    </script>    
 </body>
 
 </html>

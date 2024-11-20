@@ -45,7 +45,7 @@ function mostrarProductosPorPagina(productosFiltrados, page) {
             const productHTML = `
                 <div class="col-4">
                     <a href="/producto/${producto.id}/">
-                        <img src="${producto.imagen}" alt="${producto.titulo}">
+                        <img src="${producto.imagen}" alt="${producto.titulo}" class="product-img">
                     </a>
                     <h4>${producto.titulo}</h4>
                     <div class="rating">
