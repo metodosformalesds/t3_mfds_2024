@@ -13,6 +13,9 @@ urlpatterns = [
     path('checkout/', views.checkout, name='checkout'),
     path('historial/', views.historial_pedidos, name='historial'),
 
+    # Nueva ruta para detalles del yonke
+    path('yonke/<str:place_id>/', views.detalle_yonke, name='detalle_yonke'),
+
     # Account and authentication paths
     path('accounts/', views.account_view, name='account'),  # Vista personalizada de cuentas para escoger cliente o yonkero
     path('logout/', auth_views.LogoutView.as_view(next_page='index'), name='logout'),
@@ -20,7 +23,7 @@ urlpatterns = [
     # Django Allauth urls para autenticación social y administración de cuentas
     path('social/', include('allauth.urls')),  # Nota: Cambié el prefijo para evitar conflicto con 'accounts/'
 
-    # Custom login and signup paths for different user roles
+    # Custom login and signup paths for diferentes tipos de usuario
     path('user/login/', views.user_login, name='user_login'),  # Página de login para usuarios normales
     path('user/signup/', views.user_signup, name='user_signup'),  # Página de registro para usuarios normales
     path('yonkero/login/', views.yonkero_login, name='yonkero_login'),  # Página de login para yonkeros

@@ -1,0 +1,225 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Yonke | Horuz Autopartes</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .image-container {
+            width: 90%;
+            max-width: 800px;
+            height: 450px;
+            overflow: hidden;
+            margin: 0 auto;
+            border-radius: 25px;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .col-2 {
+            margin-top: 30px;
+        }
+
+        .map-container {
+            width: 100%;
+            height: 400px;
+            margin-top: 30px;
+            margin-bottom: 40px;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid #ccc;
+        }
+
+        .product-list {
+            margin-top: 30px;
+        }
+
+        .product-list h3 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .product-item {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .product-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            margin-right: 15px;
+            border-radius: 5px;
+        }
+
+        .no-products {
+            font-size: 1.2rem;
+            color: #ff523b;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="navbar">
+            <div class="logo">
+                <a href="{% url 'index' %}"><img src="{% static 'images/logo.png' %}" alt="logo" width="125px"></a>
+            </div>
+            <nav>
+                <ul id="MenuItems">
+                    <li><a href="{% url 'index' %}">Inicio</a></li>
+                    <li><a href="{% url 'catalogo' %}">Productos</a></li>
+                    <li><a href="{% url 'account' %}">Cuenta</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Detalles del Yonke -->
+    <div class="small-container single-product">
+        <div class="row">
+            <div class="col-2">
+                <div class="image-container">
+                    <img src="{{ yonke.imagen }}" alt="{{ yonke.nombre }}">
+                </div>
+            </div>
+            <div class="col-2">
+                <p>Inicio / Yonkes</p>
+                <h1 id="YonkeName">{{ yonke.nombre }}</h1>
+                <h4 id="YonkeDireccion">{{ yonke.direccion }}</h4>
+            </div>
+        </div>
+    </div>
+
+    <!-- Productos relacionados -->
+    <div class="small-container product-list">
+        <h2 class="title">Productos Relacionados</h2>
+        {% if productos %}
+            {% for producto in productos %}
+                <div class="product-item">
+                    <img src="{{ producto.imagen }}" alt="{{ producto.nombre }}">
+                    <div>
+                        <h4>{{ producto.nombre }}</h4>
+                        <p>Precio: ${{ producto.precio }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-products">No hay productos relacionados con este Yonke.</p>
+        {% endif %}
+    </div>
+
+    <!-- Mapa -->
+    <div class="small-container">
+        <h2 class="title">Ubicación</h2>
+        <div id="map" class="map-container"></div>
+        <div id="yonke-data" 
+             data-nombre="{{ yonke.nombre|escapejs }}" 
+             data-direccion="{{ yonke.direccion|escapejs }}">
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="footer-col-1">
+                    <h3>Descarga Nuestra App</h3>
+                    <p>Descarga la app para Android y iOS.</p>
+                    <div class="app-logo">
+                        <img src="{% static 'images/play-store.png' %}">
+                        <img src="{% static 'images/app-store.png' %}">
+                    </div>
+                </div>
+                <div class="footer-col-2">
+                    <img src="{% static 'images/logo-white.png' %}">
+                    <p>Nuestro propósito es ofrecer autopartes de calidad a todos los amantes de los autos, asegurando un viaje seguro y confortable.</p>
+                </div>
+                <div class="footer-col-3">
+                    <h3>Enlaces Útiles</h3>
+                    <ul>
+                        <li>Cupones</li>
+                        <li>Blog</li>
+                        <li>Política de Devoluciones</li>
+                        <li>Programa de Afiliados</li>
+                    </ul>
+                </div>
+                <div class="footer-col-4">
+                    <h3>Síguenos</h3>
+                    <ul>
+                        <li>Facebook</li>
+                        <li>Twitter</li>
+                        <li>Instagram</li>
+                        <li>Youtube</li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <p class="copyright">Copyright 2024 - Horuz Autopartes</p>
+        </div>
+    </div>
+
+    <script>
+        async function initMap() {
+            const yonkeData = document.getElementById("yonke-data").dataset;
+            const address = yonkeData.direccion;
+
+            if (!address) {
+                alert("La dirección del Yonke no está disponible.");
+                return;
+            }
+
+            const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyCsvTfj2qqQYCJF-csXiW08nigzCnVWo1k`;
+
+            try {
+                const response = await fetch(geocodeUrl);
+                const data = await response.json();
+
+                if (data.status !== "OK" || !data.results[0]) {
+                    console.error("Error al obtener coordenadas de la dirección.", data);
+                    return;
+                }
+
+                const location = data.results[0].geometry.location;
+
+                const map = new google.maps.Map(document.getElementById("map"), {
+                    center: location,
+                    zoom: 15,
+                });
+
+                new google.maps.Marker({
+                    position: location,
+                    map: map,
+                    title: yonkeData.nombre,
+                });
+            } catch (error) {
+                console.error("Error al cargar el mapa:", error);
+            }
+        }
+
+        window.initMap = initMap;
+    </script>
+
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCsvTfj2qqQYCJF-csXiW08nigzCnVWo1k&callback=initMap"></script>
+</body>
+
+</html>

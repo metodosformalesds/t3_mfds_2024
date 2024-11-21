@@ -10,8 +10,6 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <style>
         #map {
             height: 400px;
@@ -19,6 +17,9 @@
             margin-top: 20px;
         }
     </style>
+    <script async
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCsvTfj2qqQYCJF-csXiW08nigzCnVWo1k&libraries=places&callback=initMap">
+    </script>
 </head>
 
 <body>
@@ -200,6 +201,7 @@
     <script>
         var MenuItems = document.getElementById("MenuItems");
         MenuItems.style.maxHeight = "0px";
+    
         function menutoggle() {
             if (MenuItems.style.maxHeight == "0px") {
                 MenuItems.style.maxHeight = "200px";
@@ -208,45 +210,88 @@
             }
         }
     
-        // Inicializar el mapa de Leaflet
-        var map = L.map('map').setView([31.687285, -106.424703], 13);
-    
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-    
-        // Función para obtener y mostrar yonkes en el mapa
-        async function cargarYonkes() {
-            const query = `
-                [out:json];
-                node
-                    ["name"~"Yonke|Car Parts",i](around:20000,31.687285,-106.424703);
-                node
-                    ["amenity"="recycling"]["recycling_type"="scrapyard"](around:20000,31.687285,-106.424703);
-                out body;
-            `;
-            const url = 'https://overpass-api.de/api/interpreter';
-    
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    body: query,
-                    headers: { 'Content-Type': 'text/plain' }
-                });
-                const data = await response.json();
-                const yonkes = data.elements;
-    
-                yonkes.forEach(y => {
-                    L.marker([y.lat, y.lon]).addTo(map)
-                        .bindPopup(`<b>${y.tags.name || 'Yonke sin nombre'}</b><br>${y.tags.description || 'No hay descripción disponible.'}`);
-                });
-            } catch (error) {
-                console.error('Error al cargar los yonkes:', error);
+                let map;
+
+        // Inicializar el mapa de Google Maps
+        function initMap() {
+            // Crear el mapa con un centro predeterminado
+            const defaultLocation = { lat: 31.6904, lng: -106.4247 }; // Ciudad Juárez como predeterminado
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: defaultLocation,
+                zoom: 13,
+            });
+
+            // Intentar obtener la ubicación del usuario
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                        };
+
+                        // Centrar el mapa en la ubicación del usuario
+                        map.setCenter(userLocation);
+
+                        // Buscar Yonkes cercanos a la ubicación del usuario
+                        buscarYonkesCercanos(userLocation);
+                    },
+                    () => {
+                        console.error("No se pudo obtener la ubicación del usuario. Usando ubicación predeterminada.");
+                        buscarYonkesCercanos(defaultLocation); // Si falla, buscar cerca de la ubicación predeterminada
+                    }
+                );
+            } else {
+                console.error("Geolocalización no soportada por el navegador.");
+                buscarYonkesCercanos(defaultLocation); // Si no hay soporte, usar ubicación predeterminada
             }
         }
-    
-        // Cargar yonkes en el mapa al cargar la página
-        cargarYonkes();
+
+        // Buscar Yonkes cercanos utilizando Google Places API
+        function buscarYonkesCercanos(location) {
+            const service = new google.maps.places.PlacesService(map);
+
+            const request = {
+                location: location,
+                radius: 20000, // Radio en metros
+                keyword: "yonke", // Palabra clave para buscar yonkes
+            };
+
+            service.nearbySearch(request, (results, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    results.forEach((place) => {
+                        // Crear un marcador para cada resultado
+                        const marker = new google.maps.Marker({
+                            position: place.geometry.location,
+                            map: map,
+                            title: place.name,
+                        });
+
+                        // Crear un infoWindow dinámico para mostrar los detalles del Yonke
+                        const infoContent = `
+                            <div style="width: 250px;">
+                                <h4>${place.name}</h4>
+                                <p>${place.vicinity}</p>
+                                <a href="/yonke/${place.place_id}/" style="color: #ff523b; font-weight: bold;">
+                                    Ver Detalles
+                                </a>
+                            </div>
+                        `;
+
+                        const infoWindow = new google.maps.InfoWindow({
+                            content: infoContent,
+                        });
+
+                        // Mostrar infoWindow al hacer clic en el marcador
+                        marker.addListener("click", () => {
+                            infoWindow.open(map, marker);
+                        });
+                    });
+                } else {
+                    console.error("Error al buscar Yonkes cercanos:", status);
+                }
+            });
+        }
     
         // Funciones para cargar y mostrar productos desde productos.json
         async function cargarProductosDesdeArchivo() {
@@ -323,7 +368,7 @@
     
         // Cargar productos al cargar la página
         cargarProductosDesdeArchivo();
-    </script>    
+    </script>        
 </body>
 
 </html>

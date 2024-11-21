@@ -196,6 +196,8 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 ACCOUNT_EMAIL_SUBJECT_PREFIX = '[Horuz Autopartes]'
 DEFAULT_FROM_EMAIL = 'noreply@horuz.me'
 
+GOOGLE_MAPS_API_KEY = "AIzaSyCsvTfj2qqQYCJF-csXiW08nigzCnVWo1k"
+
 # Configuración de proveedores sociales (ejemplo con Google y Facebook)
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
