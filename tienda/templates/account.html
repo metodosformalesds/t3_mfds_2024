@@ -49,7 +49,7 @@
             <div class="row" style="display: flex; align-items: center; justify-content: space-between;">
 
                 <!-- Contenedor para Cliente -->
-                <div class="col-2 role-container" style="text-align: center; padding: 20px;">
+                <div class="col-2 role-container">
                     <div class="form-container">
                         <h2>¿Eres Cliente de Horuz?</h2>
                         <div class="form-btn">
@@ -59,19 +59,19 @@
                         </div>
 
                         <div id="client-login" class="button-group" style="display: block;">
-                            <a href="{% url 'user_login' %}" class="btn" style="margin: 10px;">Iniciar Sesión</a>
-                            <a href="{% provider_login_url 'google' %}" class="btn btn-google" style="margin: 10px;">Iniciar Sesión con Google</a>
+                            <a href="{% url 'user_login' %}" class="btn">Iniciar Sesión</a>
+                            <a href="{% provider_login_url 'google' %}" class="btn btn-google">Iniciar Sesión con Google</a>
                         </div>
 
                         <div id="client-register" class="button-group" style="display: none;">
-                            <a href="{% url 'user_signup' %}" class="btn" style="margin: 10px;">Registrarse</a>
-                            <a href="{% provider_login_url 'google' %}" class="btn btn-google" style="margin: 10px;">Registrarse con Google</a>
+                            <a href="{% url 'user_signup' %}" class="btn">Registrarse</a>
+                            <a href="{% provider_login_url 'google' %}" class="btn btn-google">Registrarse con Google</a>
                         </div>
                     </div>
                 </div>
 
                 <!-- Contenedor para Yonkero -->
-                <div class="col-2 role-container" style="text-align: center; padding: 20px;">
+                <div class="col-2 role-container">
                     <div class="form-container">
                         <h2>¿Eres Un Yonkero?</h2>
                         <div class="form-btn">
@@ -81,13 +81,13 @@
                         </div>
 
                         <div id="yonkero-login" class="button-group" style="display: block;">
-                            <a href="{% url 'yonkero_login' %}" class="btn" style="margin: 10px;">Iniciar Sesión</a>
-                            <a href="{% provider_login_url 'google' %}" class="btn btn-google" style="margin: 10px;">Iniciar Sesión con Google</a>
+                            <a href="{% url 'yonkero_login' %}" class="btn">Iniciar Sesión</a>
+                            <a href="{% provider_login_url 'google' %}" class="btn btn-google">Iniciar Sesión con Google</a>
                         </div>
 
                         <div id="yonkero-register" class="button-group" style="display: none;">
-                            <a href="{% url 'yonkero_signup' %}" class="btn" style="margin: 10px;">Registrarse</a>
-                            <a href="{% provider_login_url 'google' %}" class="btn btn-google" style="margin: 10px;">Registrarse con Google</a>
+                            <a href="{% url 'yonkero_signup' %}" class="btn">Registrarse</a>
+                            <a href="{% provider_login_url 'google' %}" class="btn btn-google">Registrarse con Google</a>
                         </div>
                     </div>
                 </div>
@@ -158,7 +158,7 @@
         function showClientRegister() {
             document.getElementById("client-login").style.display = "none";
             document.getElementById("client-register").style.display = "block";
-            document.getElementById("Indicator").style.transform = "translateX(112px)";
+            document.getElementById("Indicator").style.transform = "translateX(140px)";
         }
 
         function showYonkeroLogin() {
@@ -170,7 +170,7 @@
         function showYonkeroRegister() {
             document.getElementById("yonkero-login").style.display = "none";
             document.getElementById("yonkero-register").style.display = "block";
-            document.getElementById("IndicatorYonkero").style.transform = "translateX(112px)";
+            document.getElementById("IndicatorYonkero").style.transform = "translateX(140px)";
         }
     </script>
 </body>

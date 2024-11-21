@@ -544,3 +544,115 @@ select:focus {
         display: none;
     }
 }
+
+/* Estilos específicos para la página de cuentas */
+.account-page {
+    padding: 0; /* Elimina el relleno adicional */
+    background: radial-gradient(#fff, #ffd6d6); /* Fondo atractivo */
+    min-height: calc(100vh - 120px); /* Asegura que ocupe toda la ventana menos header y footer */
+    display: flex;
+    align-items: center; /* Centrado vertical */
+    justify-content: center; /* Centrado horizontal */
+}
+
+.account-page .row {
+    display: flex;
+    gap: 20px; /* Espaciado entre los contenedores */
+    flex-wrap: nowrap; /* Evita el apilamiento en pantallas grandes */
+}
+
+/* Contenedores de roles: Cliente y Yonkero */
+.account-page .role-container {
+    text-align: center;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 30px 20px;
+    max-width: 400px;
+    flex: 1; /* Permite que los contenedores ocupen el espacio disponible */
+    transition: transform 0.3s ease;
+}
+
+.account-page .role-container:hover {
+    transform: translateY(-10px); /* Efecto de elevación */
+}
+
+/* Indicadores de pestañas (Iniciar Sesión / Registrarse) */
+.account-page .form-btn {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.account-page .form-btn span {
+    font-weight: bold;
+    cursor: pointer;
+    padding: 10px 20px;
+    color: #555;
+    transition: color 0.3s ease;
+}
+
+.account-page .form-btn span:hover {
+    color: #ff523b; /* Texto en naranja */
+}
+
+.account-page #Indicator,
+.account-page #IndicatorYonkero {
+    position: absolute;
+    height: 5px;
+    width: 100px;
+    background: #ff523b;
+    bottom: -5px; /* Posicionado debajo del texto */
+    left: 25px;
+    transition: transform 0.3s ease;
+}
+
+/* Botones de acción */
+.account-page .btn {
+    display: inline-block;
+    background: #ff523b;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s ease;
+}
+
+.account-page .btn:hover {
+    background: #e14a29;
+}
+
+/* Botón específico para Google */
+.account-page .btn-google {
+    background: white;
+    color: #ff523b; /* Texto inicial en naranja */
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.account-page .btn-google:hover {
+    background: #ff523b;
+    color: white; /* Texto blanco al hacer hover */
+    border-color: #ff523b;
+}
+
+/* Ajustes responsivos específicos */
+@media only screen and (max-width: 768px) {
+    .account-page .row {
+        flex-wrap: wrap; /* Permite que los contenedores se apilen en pantallas pequeñas */
+        justify-content: center; /* Asegura que estén centrados al apilarse */
+    }
+
+    .account-page .role-container {
+        width: 90%;
+        margin-bottom: 20px;
+    }
+}

@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Cuenta | Horuz Autopartes</title>
+    <title>Registro de Usuario | Horuz Autopartes</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -32,24 +32,27 @@
     <!-- Página de Registro -->
     <div class="account-page">
         <div class="container">
-            <div class="row">
+            <div class="row" style="display: flex; align-items: center; justify-content: space-around;">
                 <!-- Formulario de Registro -->
-                <div class="col-2">
+                <div class="role-container" style="width: 400px; max-height: 600px; overflow-y: auto; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
                     <div class="form-container">
-                        <div class="form-btn">
-                            <span>Registrarse</span>
-                            <hr id="Indicator">
+                        <h2 style="font-size: 24px; margin-bottom: 20px;">Usuario</h2>
+                        <div class="form-btn" style="margin-bottom: 20px; position: relative;">
+                            <span style="font-weight: bold; font-size: 18px; color: #555;">Registro</span>
+                            <hr id="Indicator" style="position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 120px; height: 5px; background-color: #ff523b; border: none;">
                         </div>
                         <!-- Formulario de Registro -->
-                        <form id="RegForm" method="POST" action="{% url 'user_signup' %}">
+                        <form id="RegForm" method="POST" action="{% url 'user_signup' %}" style="display: flex; flex-direction: column; gap: 15px;">
                             {% csrf_token %}
-                            <input type="text" name="first_name" placeholder="Nombre" required>
-                            <input type="text" name="last_name" placeholder="Apellido" required>
-                            <input type="email" name="email" placeholder="Correo Electrónico" required>
-                            <input type="date" name="birth_date" placeholder="Fecha de Nacimiento" required>
-                            <input type="tel" name="phone_number" placeholder="Número Telefónico" required>
-                            <input type="password" name="password" placeholder="Contraseña" required>
-                            <button type="submit" class="btn">Registrarse</button>
+                            <input type="text" name="first_name" placeholder="Nombre" required style="padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #ddd;">
+                            <input type="text" name="last_name" placeholder="Apellido" required style="padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #ddd;">
+                            <input type="email" name="email" placeholder="Correo Electrónico" required style="padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #ddd;">
+                            <input type="date" name="birth_date" required style="padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #ddd;">
+                            <input type="tel" name="phone_number" placeholder="Número Telefónico" required style="padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #ddd;">
+                            <input type="password" name="password" placeholder="Contraseña" required style="padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #ddd;">
+                            <button type="submit" class="btn" style="background-color: #ff523b; padding: 12px; font-size: 16px; border: none; border-radius: 8px; cursor: pointer; color: white; font-weight: bold; transition: background 0.3s;">
+                                Registrarse
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -113,22 +116,6 @@
             } else {
                 MenuItems.style.maxHeight = "0px";
             }
-        }
-
-        var LoginForm = document.getElementById("LoginForm");
-        var RegForm = document.getElementById("RegForm");
-        var Indicator = document.getElementById("Indicator");
-
-        function register() {
-            RegForm.style.transform = "translateX(0px)";
-            LoginForm.style.transform = "translateX(0px)";
-            Indicator.style.transform = "translateX(100px)";
-        }
-
-        function login() {
-            RegForm.style.transform = "translateX(300px)";
-            LoginForm.style.transform = "translateX(300px)";
-            Indicator.style.transform = "translateX(0px)";
         }
     </script>
 </body>
