@@ -198,9 +198,16 @@ DEFAULT_FROM_EMAIL = 'noreply@horuz.me'
 
 GOOGLE_MAPS_API_KEY = "AIzaSyCsvTfj2qqQYCJF-csXiW08nigzCnVWo1k"
 
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
 # Configuración de proveedores sociales (ejemplo con Google y Facebook)
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
+        'APP': {
+            'client_id': '326403212883-8p3cvtuukqonte4bga0l6eecm8p32stk.apps.googleusercontent.com',  # ID de cliente
+            'secret': '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',  # secreto de cliente
+            'key': ''
+        },
         'SCOPE': [
             'profile',
             'email',
@@ -224,3 +231,8 @@ SOCIALACCOUNT_PROVIDERS = {
         'VERIFIED_EMAIL': False,
     },
 }
+
+# Seguridad
+CSRF_TRUSTED_ORIGINS = ['https://horuz.me',
+                        'http://127.0.0.1',
+                        'http://localhost']
