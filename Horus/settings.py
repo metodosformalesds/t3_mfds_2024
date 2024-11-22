@@ -47,6 +47,10 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',  # Proveedor Google para registro y login social
     'allauth.socialaccount.providers.facebook',  # Proveedor Facebook para registro y login social
+
+    # Aplicaciones para pagos
+    'paypalrestsdk',
+    'stripe',
 ]
 
 MIDDLEWARE = [
@@ -236,3 +240,12 @@ SOCIALACCOUNT_PROVIDERS = {
 CSRF_TRUSTED_ORIGINS = ['https://horuz.me',
                         'http://127.0.0.1',
                         'http://localhost']
+
+# Configuración de Stripe
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', 'sk_test_51QNo1vBh81Rn7ilnrgBM3EvWFZBG8TqtqKskONuje0aTesY4KdkOcYH3DFI1c8X5ZiDERPTADLoF2fdQA09qwWDH008KTKPuhv')
+STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY', 'pk_test_51QNo1vBh81Rn7ilnygBAMZh1W1j8EGIiMCDzblilvYIN99gZImZwxN9v7npOtWnRnaztasHKU4SIOvVAFni72AUo00Axr36Nev')
+
+# Configuración de PayPal
+PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID', 'AYtoVDs22opz5331x392eilv6VK2WbRpPTtUgGik9W8u930HSfSDwbRkKaYfwsZA35GjsZx2ECD9oHJG')
+PAYPAL_CLIENT_SECRET = os.getenv('PAYPAL_CLIENT_SECRET', 'EOYHve48g1W7pw8XNlN3WhHvdRch61fDZ7JcmtSxvEMuBziF3nxIMGOcJOZTYbQ1L6wRYZOJdKBrmlQ_')
+PAYPAL_MODE = os.getenv('PAYPAL_MODE', 'sandbox')  # Cambia a 'live' en producción

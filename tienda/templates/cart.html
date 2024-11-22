@@ -38,14 +38,14 @@
                         {% endif %}
                     </li>
                 </ul>
-            </nav>            
+            </nav>
             <a href="{% url 'carrito' %}"><img src="{% static 'images/cart.png' %}" width="30px" height="30px"></a>
             <img src="{% static 'images/menu.png' %}" class="menu-icon" onclick="menutoggle()">
         </div>
     </div>
 
     <!-- Carrito de Compras -->
-    <div class="small-container cart-page">
+    <div id="cart-page" class="small-container cart-page">
         <table>
             <thead>
                 <tr>
@@ -55,7 +55,6 @@
                 </tr>
             </thead>
             <tbody id="cart-table-body">
-                <!-- Aquí se generarán los productos del carrito desde el JavaScript -->
             </tbody>
         </table>
 
@@ -74,6 +73,22 @@
                     <td>$0.00</td>
                 </tr>
             </table>
+        </div>
+
+        <!-- Botones de Pago -->
+        <div class="payment-buttons">
+            <!-- Botón de Pago con Stripe -->
+            <form id="stripe-payment-form">
+                {% csrf_token %}
+                <input type="hidden" name="amount" id="amount" value="0">
+                <button type="button" class="btn btn-stripe">Pagar con Tarjeta (Stripe)</button>
+            </form>
+
+            <!-- Botón de Pago con PayPal -->
+            <form action="{% url 'paypal_checkout' %}" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-paypal">Pagar con PayPal</button>
+            </form>
         </div>
     </div>
 
@@ -118,52 +133,47 @@
         </div>
     </div>
 
-    <!-- JavaScript para cargar productos desde localStorage -->
+    <script src="https://js.stripe.com/v3/"></script>
     <script>
-        // Cargar productos del carrito desde localStorage y mostrarlos en la tabla
         function loadCart() {
-            console.log("Cargando el carrito...");
             const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
             const cartTableBody = document.getElementById("cart-table-body");
-
-            // Limpiar contenido existente de la tabla
             cartTableBody.innerHTML = '';
-
             let total = 0;
-
-            // Generar HTML para cada producto en el carrito
+    
             carrito.forEach((producto, index) => {
-                // Convertir precio a número para evitar errores al usar toFixed
                 const precio = parseFloat(producto.precio);
                 const subtotal = precio * producto.cantidad;
                 total += subtotal;
-
+    
                 const productRow = `
-                    <tr>
+                    <tr class="cart-item">
                         <td>
                             <div class="cart-info">
-                                <img src="${producto.imagen}" alt="${producto.titulo}">
-                                <div>
-                                    <p>${producto.titulo}</p>
-                                    <small>Precio: $${precio.toFixed(2)}</small>
-                                    <br>
-                                    <a href="#" onclick="removeFromCart(${index})">Eliminar</a>
+                                <img src="${producto.imagen}" alt="${producto.titulo}" class="product-image">
+                                <div class="product-details">
+                                    <p class="product-title">${producto.titulo}</p>
+                                    <p class="product-price">Precio: $${precio.toFixed(2)}</p>
                                 </div>
                             </div>
                         </td>
                         <td>
-                            <input type="number" value="${producto.cantidad}" min="1" onchange="updateQuantity(${index}, this.value)">
+                            <input type="number" value="${producto.cantidad}" min="1" 
+                                   onchange="updateQuantity(${index}, this.value)">
                         </td>
-                        <td>$${subtotal.toFixed(2)}</td>
+                        <td>
+                            <p class="product-subtotal">$${subtotal.toFixed(2)}</p>
+                            <a href="#" class="remove-item" onclick="removeFromCart(${index})">Eliminar</a>
+                        </td>
                     </tr>
                 `;
-
+    
                 cartTableBody.insertAdjacentHTML('beforeend', productRow);
             });
-
-            // Mostrar el subtotal y total en la sección de precios
-            const tax = total * 0.1; // Asumimos un impuesto del 10%
+    
+            const tax = total * 0.1; // Impuesto del 10%
             const grandTotal = total + tax;
+    
             document.getElementById("price-table").innerHTML = `
                 <tr>
                     <td>Subtotal</td>
@@ -178,28 +188,98 @@
                     <td>$${grandTotal.toFixed(2)}</td>
                 </tr>
             `;
+    
+            // Actualizar el monto en centavos para Stripe y PayPal
+            const amountInput = document.getElementById("amount");
+            if (amountInput) {
+                amountInput.value = Math.round(grandTotal * 100); // Convertir a centavos
+            }
         }
-
-        // Función para eliminar un producto del carrito
+    
         function removeFromCart(index) {
             let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-            carrito.splice(index, 1); // Eliminar producto del carrito por su índice
-            localStorage.setItem("carrito", JSON.stringify(carrito)); // Guardar cambios
-            loadCart(); // Recargar la vista del carrito
+            carrito.splice(index, 1); // Eliminar producto por índice
+            localStorage.setItem("carrito", JSON.stringify(carrito));
+            loadCart(); // Recargar el carrito
         }
-
-        // Función para actualizar la cantidad de un producto en el carrito
+    
         function updateQuantity(index, newQuantity) {
             let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-            carrito[index].cantidad = parseInt(newQuantity); // Actualizar cantidad del producto
-            localStorage.setItem("carrito", JSON.stringify(carrito)); // Guardar cambios
-            loadCart(); // Recargar la vista del carrito
+            carrito[index].cantidad = parseInt(newQuantity); // Actualizar la cantidad
+            localStorage.setItem("carrito", JSON.stringify(carrito));
+            loadCart(); // Recargar el carrito
         }
-
-        // Cargar el carrito al cargar la página
+    
+        // Manejar la redirección de Stripe al crear la sesión de pago
+        document.querySelector('.btn-stripe').addEventListener('click', function () {
+            const total = parseFloat(
+                document.querySelector('#price-table tr:last-child td:last-child')
+                    .textContent.replace('$', '')
+            );
+            const totalInCents = Math.round(total * 100); // Convertir a centavos
+    
+            fetch('/stripe/checkout/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value // CSRF Token
+                },
+                body: JSON.stringify({ amount: totalInCents }), // Enviar el monto total
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error); // Mostrar error si ocurre
+                    } else {
+                        const stripe = Stripe('pk_test_51QNo1vBh81Rn7ilnygBAMZh1W1j8EGIiMCDzblilvYIN99gZImZwxN9v7npOtWnRnaztasHKU4SIOvVAFni72AUo00Axr36Nev');
+                        stripe.redirectToCheckout({ sessionId: data.id }) // Redirigir a Stripe
+                            .then(function (result) {
+                                if (result.error) {
+                                    alert(result.error.message); // Manejar errores de redirección
+                                }
+                            });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error); // Log de errores en la consola
+                    alert('Hubo un problema con el pago. Intenta de nuevo.');
+                });
+        });
+    
+        // Manejar la redirección de PayPal al crear la transacción
+        document.querySelector('.btn-paypal').addEventListener('click', function (e) {
+            e.preventDefault();
+            const total = parseFloat(
+                document.querySelector('#price-table tr:last-child td:last-child')
+                    .textContent.replace('$', '')
+            );
+    
+            fetch('/paypal/checkout/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                },
+                body: new URLSearchParams({ amount: total.toFixed(2) }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.approval_url) {
+                        window.location.href = data.approval_url; // Redirigir a PayPal
+                    } else {
+                        alert('Error con PayPal: ' + (data.error || 'Desconocido'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Hubo un problema al procesar el pago con PayPal.');
+                });
+        });
+    
+        // Cargar el carrito al inicializar la página
         document.addEventListener('DOMContentLoaded', loadCart);
-    </script>
-
+    </script>    
+    
 </body>
 
 </html>

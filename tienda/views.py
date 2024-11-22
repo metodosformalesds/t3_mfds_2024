@@ -11,6 +11,23 @@ from django.db import IntegrityError
 import json
 import os
 import requests
+import stripe
+from io import BytesIO
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import paypalrestsdk
+
+# Configuración de Stripe con tu clave secreta
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+# Configuración de PayPal
+paypalrestsdk.configure({
+    "mode": "sandbox",  # Cambiar a 'live' en producción
+    "client_id": settings.PAYPAL_CLIENT_ID,
+    "client_secret": settings.PAYPAL_CLIENT_SECRET,
+})
 
 def index(request):
     categorias = Categoria.objects.all()
@@ -206,6 +223,7 @@ def detalle_yonke(request, place_id):
 
     return render(request, "yonke_details.html", {"yonke": yonke_data})
 
+
 def carrito(request):
     carrito = request.session.get('carrito', [])
     carrito_vacio = len(carrito) == 0
@@ -256,6 +274,100 @@ def vaciar_carrito(request):
     request.session['carrito'] = []
     return redirect('carrito')
 
+@csrf_exempt
+def stripe_checkout(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            amount = data.get('amount', 0)
+
+            amount_in_cents = int(float(amount))
+
+            if amount_in_cents > 99999999:
+                return JsonResponse({'error': 'El monto total excede el límite permitido por Stripe.'}, status=400)
+
+            session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items=[{
+                    'price_data': {
+                        'currency': 'usd',
+                        'product_data': {
+                            'name': 'Carrito de Compras',
+                        },
+                        'unit_amount': amount_in_cents,
+                    },
+                    'quantity': 1,
+                }],
+                mode='payment',
+                success_url=request.build_absolute_uri('/stripe/success/'),
+                cancel_url=request.build_absolute_uri('/carrito/'),
+            )
+            return JsonResponse({'id': session.id})
+
+        except stripe.error.StripeError as e:
+            return JsonResponse({'error': f'Error de Stripe: {e.user_message}'}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': f'Error del servidor: {str(e)}'}, status=400)
+
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+
+@csrf_exempt
+def paypal_checkout(request):
+    if request.method == 'POST':
+        try:
+            total = float(request.POST.get('amount', 0))
+            if total <= 0:
+                return JsonResponse({'error': 'El monto debe ser mayor a 0'}, status=400)
+
+            payment = paypalrestsdk.Payment({
+                "intent": "sale",
+                "payer": {
+                    "payment_method": "paypal",
+                },
+                "redirect_urls": {
+                    "return_url": request.build_absolute_uri('/paypal/success/'),
+                    "cancel_url": request.build_absolute_uri('/carrito/'),
+                },
+                "transactions": [{
+                    "amount": {
+                        "total": f"{total:.2f}",
+                        "currency": "USD",
+                    },
+                    "description": "Compra en Horuz Autopartes",
+                }],
+            })
+
+            if payment.create():
+                for link in payment.links:
+                    if link.rel == "approval_url":
+                        approval_url = link.href
+                        return JsonResponse({"approval_url": approval_url})
+                return JsonResponse({"error": "No se encontró el enlace de aprobación"}, status=500)
+            else:
+                return JsonResponse({"error": payment.error}, status=400)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+    return JsonResponse({"error": "Método no permitido"}, status=405)
+
+
+def stripe_success(request):
+    return render(request, 'payment/success.html', {"message": "Pago completado exitosamente con Stripe"})
+
+
+def stripe_cancel(request):
+    return redirect('carrito')  # Cambia 'carrito' al nombre de tu URL de carrito
+
+
+def paypal_success(request):
+    return render(request, 'payment/success.html', {"message": "Pago completado exitosamente con PayPal"})
+
+
+def paypal_cancel(request):
+    return redirect('carrito')  # Cambia 'carrito' al nombre de tu URL de carrito
+
 def checkout(request):
     carrito = request.session.get('carrito', [])
     if not carrito:
@@ -283,9 +395,31 @@ def checkout(request):
             fail_silently=False,
         )
 
-        return redirect('catalogo')
+        response = generate_invoice_pdf(orden)
+
+        return response
 
     return render(request, 'checkout.html', {'productos': carrito, 'total': total})
+
+def generate_invoice_pdf(orden):
+    buffer = BytesIO()
+    pdf = canvas.Canvas(buffer)
+
+    pdf.drawString(100, 800, f"Factura - Orden #{orden.id}")
+    pdf.drawString(100, 780, f"Fecha: {orden.fecha}")
+    pdf.drawString(100, 760, f"Total: ${orden.total}")
+
+    y_position = 740
+    for item in orden.detalleorden_set.all():
+        pdf.drawString(100, y_position, f"Producto: {item.producto} | Cantidad: {item.cantidad} | Subtotal: ${item.subtotal}")
+        y_position -= 20
+
+    pdf.showPage()
+    pdf.save()
+
+    buffer.seek(0)
+
+    return FileResponse(buffer, as_attachment=True, filename=f"factura_{orden.id}.pdf")
 
 @login_required
 def historial_pedidos(request):
