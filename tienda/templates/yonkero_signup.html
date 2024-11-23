@@ -41,19 +41,33 @@
                             <span style="font-weight: bold; font-size: 18px; color: #555;">Registro</span>
                             <hr id="Indicator" style="position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 120px; height: 5px; background-color: #ff523b; border: none;">
                         </div>
+                        <!-- Mensajes de error -->
+                        {% if messages %}
+                        <div class="messages">
+                            {% for message in messages %}
+                            <p class="message {{ message.tags }}">{{ message }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
                         <!-- Formulario de Registro para Yonkero -->
                         <form id="RegForm" method="POST" action="{% url 'yonkero_signup' %}" style="display: flex; flex-direction: column; gap: 15px;">
                             {% csrf_token %}
-                            <input type="text" name="first_name" placeholder="Nombre" required style="padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #ddd;">
-                            <input type="text" name="last_name" placeholder="Apellido" required style="padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #ddd;">
-                            <input type="email" name="email" placeholder="Correo Electrónico" required style="padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #ddd;">
-                            <input type="date" name="birth_date" required style="padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #ddd;">
-                            <input type="tel" name="phone_number" placeholder="Número Telefónico" required style="padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #ddd;">
-                            <input type="text" name="ine" placeholder="INE" required style="padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #ddd;">
-                            <input type="text" name="curp" placeholder="CURP" required style="padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #ddd;">
-                            <input type="password" name="password" placeholder="Contraseña" required style="padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #ddd;">
-                            <input type="text" name="junkyard_name" placeholder="Nombre del Yonke" required style="padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #ddd;">
-                            <input type="text" name="junkyard_address" placeholder="Dirección del Yonke" required style="padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #ddd;">
+                            <input type="text" name="username" placeholder="Nombre de Usuario" value="{{ signup_form.username.value }}" required style="padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #ddd;">
+                            {{ signup_form.username.errors }}
+                            <input type="password" name="password1" placeholder="Contraseña" required style="padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #ddd;">
+                            {{ signup_form.password1.errors }}
+                            <input type="password" name="password2" placeholder="Confirmar Contraseña" required style="padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #ddd;">
+                            {{ signup_form.password2.errors }}
+                            <input type="text" name="first_name" placeholder="Nombre" value="{{ signup_form.first_name.value }}" required style="padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #ddd;">
+                            {{ signup_form.first_name.errors }}
+                            <input type="text" name="last_name" placeholder="Apellido" value="{{ signup_form.last_name.value }}" required style="padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #ddd;">
+                            {{ signup_form.last_name.errors }}
+                            <input type="email" name="email" placeholder="Correo Electrónico" value="{{ signup_form.email.value }}" required style="padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #ddd;">
+                            {{ signup_form.email.errors }}
+                            <input type="text" name="junkyard_name" placeholder="Nombre del Yonke" value="{{ signup_form.junkyard_name.value }}" required style="padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #ddd;">
+                            {{ signup_form.junkyard_name.errors }}
+                            <input type="text" name="junkyard_address" placeholder="Dirección del Yonke" value="{{ signup_form.junkyard_address.value }}" required style="padding: 12px; font-size: 14px; border-radius: 8px; border: 1px solid #ddd;">
+                            {{ signup_form.junkyard_address.errors }}
                             <button type="submit" class="btn" style="background-color: #ff523b; padding: 12px; font-size: 16px; border: none; border-radius: 8px; cursor: pointer; color: white; font-weight: bold; transition: background 0.3s;">
                                 Registrarse
                             </button>

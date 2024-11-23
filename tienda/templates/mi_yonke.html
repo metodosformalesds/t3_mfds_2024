@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h1>Mi Yonke</h1>
+
+    {% if yonke %}
+        <h2>{{ yonke.nombre }}</h2>
+        <p><strong>Dirección:</strong> {{ yonke.direccion }}</p>
+        <p><strong>Teléfono:</strong> {{ yonke.telefono }}</p>
+        <div id="map" style="height: 400px;"></div>
+    {% else %}
+        <p>No se ha configurado la información del Yonke.</p>
+    {% endif %}
+
+    <h2>Mis Productos</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Precio</th>
+                <th>Stock</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in productos %}
+            <tr>
+                <td>{{ producto.nombre }}</td>
+                <td>{{ producto.precio }}</td>
+                <td>{{ producto.stock }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function initMap() {
+        // Address of the Yonke from the Django context
+        var address = "{{ yonke.direccion|escapejs }}";
+
+        var geocoder = new google.maps.Geocoder();
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 15,
+            center: { lat: 0, lng: 0 } // Placeholder center until geocoding
+        });
+
+        geocoder.geocode({ address: address }, function (results, status) {
+            if (status === 'OK') {
+                map.setCenter(results[0].geometry.location);
+
+                new google.maps.Marker({
+                    map: map,
+                    position: results[0].geometry.location
+                });
+            } else {
+                alert('No se pudo encontrar la ubicación: ' + status);
+            }
+        });
+    }
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap" async defer></script>
+{% endblock %}

@@ -3,6 +3,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from tienda import views
+from tienda.views import yonkero_signup
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -18,8 +19,15 @@ urlpatterns = [
 
     # PayPal URLs
     path('paypal/checkout/', views.paypal_checkout, name='paypal_checkout'),
-    path('paypal/success/', views.paypal_success, name='paypal_success'),
+     path('paypal/success/', views.paypal_success, name='paypal_success'),
     path('paypal/cancel/', views.paypal_cancel, name='paypal_cancel'),
+
+    path('historial-compras/', views.historial_compras, name='historial_compras'),
+    path('descargar-recibo/<int:orden_id>/', views.descargar_recibo, name='descargar_recibo'),
+
+    path('mi-yonke/', views.mi_yonke, name='mi_yonke'),
+
+    path('yonkero/signup/', yonkero_signup, name='yonkero_signup'),
 ]
 
 # Agregar configuración para archivos media

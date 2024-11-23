@@ -1,11 +1,12 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todos los Productos | Horuz Autopartes</title>
+    <title>Historial de Compras | Horuz Autopartes</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -36,39 +37,70 @@
                         <a href="{% url 'account' %}">Cuenta</a>
                         {% endif %}
                     </li>
-                </ul>    
-            </nav>                        
+                </ul>                
+            </nav>
             <a href="{% url 'carrito' %}"><img src="{% static 'images/cart.png' %}" width="30px" height="30px"></a>
             <img src="{% static 'images/menu.png' %}" class="menu-icon" onclick="menutoggle()">
         </div>
     </div>
 
-        <!-- Todos los Productos -->
-        <div class="small-container">
-            <div class="row row-2">
-                <h2>Todos los Productos</h2>
-                <select id="ordenarPrecio">
-                    <option value="default">Orden Predeterminado</option>
-                    <option value="precio-asc">Ordenar por Precio: Menor a Mayor</option>
-                    <option value="precio-desc">Ordenar por Precio: Mayor a Menor</option>
-                </select>
-            </div>
-            <!-- Contenedor dinámico para productos (JavaScript) -->
-            <div class="row" id="product-container">
-                <!-- Los productos se cargarán aquí mediante JavaScript -->
-            </div>
+    <!-- Historial de Compras -->
+    <div id="history-page" class="small-container cart-page">
+        <h1>¡Gracias por tu compra!</h1>
+        <p>{{ message }}</p>
+        <p>Hemos recibido tu pedido exitosamente. A continuación, se muestra un resumen de tu compra.</p>
 
-        <!-- Contenedor dinámico para productos (JavaScript) -->
-        <div class="row" id="product-container">
-            <!-- Los productos se cargarán aquí mediante JavaScript -->
+        {% if detalles %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unitario</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for detalle in detalles %}
+                <tr class="cart-item">
+                    <td>
+                        <div class="cart-info">
+                            {% if detalle.producto_imagen %}
+                            <img src="{{ detalle.producto_imagen }}" alt="{{ detalle.producto_nombre }}" width="100px">
+                            {% endif %}
+                            <p class="product-title">{{ detalle.producto_nombre }}</p>
+                        </div>
+                    </td>
+                    <td>{{ detalle.cantidad }}</td>
+                    <td>$ {{ detalle.producto_precio|floatformat:2 }}</td>
+                    <td>$ {{ detalle.subtotal|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="total-price">
+            <table>
+                <tr>
+                    <td>Subtotal</td>
+                    <td>$ {{ subtotal|floatformat:2 }}</td>
+                </tr>
+                <tr>
+                    <td>Impuesto (10%)</td>
+                    <td>$ {{ impuesto|floatformat:2 }}</td>
+                </tr>
+                <tr>
+                    <td>Total</td>
+                    <td>$ {{ total|floatformat:2 }}</td>
+                </tr>
+            </table>
         </div>
+        {% else %}
+        <p>No se encontraron detalles de la compra.</p>
+        {% endif %}
 
-        <div class="page-btn">
-            <span onclick="cambiarPagina(1)">1</span>
-            <span onclick="cambiarPagina(2)">2</span>
-            <span onclick="cambiarPagina(3)">3</span>
-            <span onclick="cambiarPagina(4)">4</span>
-            <span onclick="cambiarPagina(5)">&#8594;</span>
+        <div class="back-home">
+            <a href="{% url 'index' %}" class="btn">Volver al Inicio</a>
         </div>
     </div>
 
@@ -86,7 +118,8 @@
                 </div>
                 <div class="footer-col-2">
                     <img src="{% static 'images/logo-white.png' %}">
-                    <p>Nuestro propósito es ofrecer autopartes de calidad a todos los amantes de los autos, asegurando un viaje seguro y confortable.</p>
+                    <p>Nuestro propósito es ofrecer autopartes de calidad a todos los amantes de los autos, asegurando
+                        un viaje seguro y confortable.</p>
                 </div>
                 <div class="footer-col-3">
                     <h3>Enlaces Útiles</h3>
@@ -111,9 +144,6 @@
             <p class="copyright">Copyright 2024 - Horuz Autopartes</p>
         </div>
     </div>
-
-    <!-- JavaScript -->
-    <script src="{% static 'js/products.js' %}"></script> <!-- Aquí incluimos el JavaScript externo -->
 </body>
 
 </html>

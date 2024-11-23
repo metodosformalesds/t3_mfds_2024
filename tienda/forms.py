@@ -61,3 +61,69 @@ class CustomSignupForm(SignupForm):
         user = super(CustomSignupForm, self).save(request)
         PerfilUsuario.objects.create(user=user, rol='comprador')
         return user
+
+from django import forms
+from allauth.account.forms import SignupForm
+from .models import PerfilUsuario, Yonke
+
+
+class YonkeroSignupForm(SignupForm):
+    username = forms.CharField(
+        label="Nombre de Usuario",
+        max_length=30,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Nombre de Usuario',
+            'class': 'input-box',
+        }),
+        required=True,
+    )
+    password1 = forms.CharField(
+        label="Contraseña",
+        widget=forms.PasswordInput(attrs={
+            'placeholder': 'Contraseña',
+            'class': 'input-box',
+        }),
+        required=True,
+    )
+    password2 = forms.CharField(
+        label="Confirmar Contraseña",
+        widget=forms.PasswordInput(attrs={
+            'placeholder': 'Confirmar Contraseña',
+            'class': 'input-box',
+        }),
+        required=True,
+    )
+    junkyard_name = forms.CharField(
+        label="Nombre del Yonke",
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Nombre del Yonke',
+            'class': 'input-box',
+        }),
+    )
+    junkyard_address = forms.CharField(
+        label="Dirección del Yonke",
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Dirección del Yonke',
+            'class': 'input-box',
+        }),
+    )
+
+    def save(self, request):
+        # Guardar el usuario utilizando la lógica base de SignupForm
+        user = super().save(request)
+
+        # Crear un perfil de usuario con rol de 'vendedor'
+        PerfilUsuario.objects.create(usuario=user, rol='vendedor')
+
+        # Guardar información del Yonke
+        Yonke.objects.create(
+            vendedor=user,
+            nombre=self.cleaned_data['junkyard_name'],
+            direccion=self.cleaned_data['junkyard_address'],
+            latitud=0.0,  # Puedes configurar esto con geocodificación si es necesario
+            longitud=0.0
+        )
+
+        return user

@@ -18,6 +18,23 @@ from reportlab.pdfgen import canvas
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import paypalrestsdk
+from django.http import HttpResponse
+from xhtml2pdf import pisa
+from django.template.loader import render_to_string
+from .models import Producto
+from django.http import HttpRequest
+from .models import PerfilUsuario
+from .models import Yonke
+
+def get_client_ip(request):
+    if not isinstance(request, HttpRequest):
+        return None
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
 
 # Configuración de Stripe con tu clave secreta
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -111,24 +128,31 @@ def yonkero_login(request):
     context = {'login_form': login_form}
     return render(request, 'yonkero_login.html', context)
 
+from django.contrib.auth.models import User
+from django.db import IntegrityError
+from django.contrib import messages
+from .forms import YonkeroSignupForm
+
 def yonkero_signup(request):
     if request.method == 'POST':
-        signup_form = SignupForm(request.POST)
+        signup_form = YonkeroSignupForm(request.POST)
         if signup_form.is_valid():
-            try:
-                user = signup_form.save(request)
-                auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-                messages.success(request, 'Tu cuenta de Yonkero ha sido creada exitosamente.')
-                return redirect('catalogo')
-            except IntegrityError:
+            email = signup_form.cleaned_data.get('email')
+            if User.objects.filter(email=email).exists():
                 messages.error(request, 'Este correo electrónico ya está registrado. Por favor, usa otro o inicia sesión.')
+            else:
+                try:
+                    user = signup_form.save(request)
+                    messages.success(request, 'Tu cuenta de Yonkero ha sido creada exitosamente.')
+                    return redirect('catalogo')
+                except IntegrityError:
+                    messages.error(request, 'Hubo un error al procesar tu registro. Intenta nuevamente.')
         else:
             messages.error(request, 'Por favor corrige los errores en el formulario de registro.')
     else:
-        signup_form = SignupForm()
+        signup_form = YonkeroSignupForm()
 
-    context = {'signup_form': signup_form}
-    return render(request, 'yonkero_signup.html', context)
+    return render(request, 'yonkero_signup.html', {'signup_form': signup_form})
 
 @login_required
 def publicar_producto(request):
@@ -312,6 +336,65 @@ def stripe_checkout(request):
     return JsonResponse({'error': 'Método no permitido'}, status=405)
 
 
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Orden, DetalleOrden
+
+@login_required
+def stripe_success(request):
+    try:
+        # Recuperar la última orden del usuario autenticado
+        ultima_orden = Orden.objects.filter(usuario=request.user).latest('fecha')
+        detalles = DetalleOrden.objects.filter(orden=ultima_orden)
+
+        # Calcular subtotal, impuesto y total directamente desde los detalles de la orden
+        subtotal = sum(detalle.subtotal for detalle in detalles)
+        impuesto = round(subtotal * 0.1, 2)  # Calcular 10% de impuesto
+        total = round(subtotal + impuesto, 2)  # Total con impuestos incluidos
+
+        # Pasar los datos al contexto
+        context = {
+            "message": "Pago completado exitosamente con Stripe",
+            "orden": ultima_orden,
+            "detalles": detalles,
+            "subtotal": subtotal,
+            "impuesto": impuesto,
+            "total": total,
+        }
+        return render(request, 'historial_compras.html', context)
+    except Orden.DoesNotExist:
+        # Redirige al catálogo si no se encuentra una orden
+        return redirect('catalogo')
+
+@login_required
+def paypal_success(request):
+    """
+    Maneja la página de éxito después de un pago con PayPal.
+    """
+    try:
+        # Recuperar la última orden del usuario autenticado
+        ultima_orden = Orden.objects.filter(usuario=request.user).latest('fecha')
+        detalles = DetalleOrden.objects.filter(orden=ultima_orden)
+
+        # Calcular subtotal, impuesto y total directamente desde los detalles de la orden
+        subtotal = sum(detalle.subtotal for detalle in detalles)
+        impuesto = round(subtotal * 0.1, 2)  # Calcular 10% de impuesto
+        total = round(subtotal + impuesto, 2)  # Total con impuestos incluidos
+
+        # Pasar los datos al contexto
+        context = {
+            "message": "Pago completado exitosamente con Stripe",
+            "orden": ultima_orden,
+            "detalles": detalles,
+            "subtotal": subtotal,
+            "impuesto": impuesto,
+            "total": total,
+        }
+        return render(request, 'historial_compras.html', context)
+    except Orden.DoesNotExist:
+        # Redirige al catálogo si no se encuentra una orden
+        return redirect('catalogo')
+
 @csrf_exempt
 def paypal_checkout(request):
     if request.method == 'POST':
@@ -354,7 +437,7 @@ def paypal_checkout(request):
 
 
 def stripe_success(request):
-    return render(request, 'payment/success.html', {"message": "Pago completado exitosamente con Stripe"})
+    return render(request, 'historial_compras.html', {"message": "Pago completado exitosamente con Stripe"})
 
 
 def stripe_cancel(request):
@@ -362,44 +445,61 @@ def stripe_cancel(request):
 
 
 def paypal_success(request):
-    return render(request, 'payment/success.html', {"message": "Pago completado exitosamente con PayPal"})
-
+    return render(request, 'historial_compras.html', {"message": "Pago completado exitosamente con PayPal"})
 
 def paypal_cancel(request):
     return redirect('carrito')  # Cambia 'carrito' al nombre de tu URL de carrito
 
+import logging
+logger = logging.getLogger(__name__)
+
 def checkout(request):
     carrito = request.session.get('carrito', [])
     if not carrito:
+        logger.warning("El carrito está vacío. Redirigiendo al catálogo.")
         return redirect('catalogo')
 
-    total = sum(item['precio'] * item['cantidad'] for item in carrito)
+    # Calcular el total del carrito
+    try:
+        total = sum(item['precio'] * item['cantidad'] for item in carrito)
+    except KeyError as e:
+        logger.error(f"Error al calcular el total del carrito: {e}")
+        return redirect('catalogo')  # Redirige en caso de un error inesperado
 
     if request.method == 'POST':
-        orden = Orden.objects.create(usuario=request.user, total=total)
-        for item in carrito:
-            DetalleOrden.objects.create(
-                orden=orden,
-                producto=None,
-                cantidad=item['cantidad'],
-                subtotal=item['precio'] * item['cantidad']
-            )
+        try:
+            # Crear la orden
+            orden = Orden.objects.create(usuario=request.user, total=total)
+            logger.info(f"Orden creada: {orden}")
 
-        request.session['carrito'] = []
+            # Asociar productos al detalle de la orden directamente desde el carrito
+            for item in carrito:
+                DetalleOrden.objects.create(
+                    orden=orden,
+                    producto_nombre=item['titulo'],  # Nombre del producto desde JSON
+                    producto_precio=item['precio'],  # Precio del producto desde JSON
+                    producto_imagen=item.get('pictures', [{}])[0].get('url', ''),  # Primera imagen, si existe
+                    cantidad=item['cantidad'],
+                    subtotal=item['precio'] * item['cantidad']
+                )
+            logger.info(f"Detalles de la orden asociados: {orden.detalleorden_set.all()}")
 
-        send_mail(
-            'Confirmación de Compra - Horus',
-            f'Tu orden #{orden.id} ha sido confirmada. Total: ${total}.',
-            'tu-email@gmail.com',
-            [request.user.email],
-            fail_silently=False,
-        )
+            # Vaciar el carrito
+            request.session['carrito'] = []
+            logger.info("Carrito vaciado después de la compra.")
 
-        response = generate_invoice_pdf(orden)
+            return redirect('stripe_success')
 
-        return response
+        except Exception as e:
+            logger.error(f"Error al procesar la orden: {e}")
+            return redirect('catalogo')  # Redirige en caso de un error inesperado
 
-    return render(request, 'checkout.html', {'productos': carrito, 'total': total})
+    # Renderizar la página de checkout
+    context = {
+        'productos': carrito,
+        'total': total,
+    }
+    return render(request, 'checkout.html', context)
 
 def generate_invoice_pdf(orden):
     buffer = BytesIO()
@@ -424,4 +524,66 @@ def generate_invoice_pdf(orden):
 @login_required
 def historial_pedidos(request):
     pedidos = Orden.objects.filter(usuario=request.user).order_by('-fecha')
-    return render(request, 'historial.html', {'pedidos': pedidos})
+    return render(request, 'historial-compras.html', {'pedidos': pedidos})
+
+# Historial de compras
+@login_required
+def historial_compras(request):
+    compras = Orden.objects.filter(usuario=request.user).order_by('-fecha')
+    return render(request, 'historial_compras.html', {'compras': compras})
+
+# Generación de PDF
+@login_required
+def descargar_recibo(request, orden_id):
+    orden = get_object_or_404(Orden, id=orden_id, usuario=request.user)
+
+    # Plantilla para el PDF
+    template_path = 'recibo_pdf.html'
+    context = {
+        'orden': orden,
+        'detalles': orden.detalleorden_set.all(),
+    }
+
+    # Renderizar HTML a PDF
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="recibo_{orden.id}.pdf"'
+    template = render_to_string(template_path, context)
+    pisa_status = pisa.CreatePDF(template, dest=response)
+
+    if pisa_status.err:
+        return HttpResponse('Hubo un error al generar el PDF.', status=500)
+
+    return response
+
+@login_required
+def mi_yonke(request):
+    # Verificar si el usuario es "vendedor"
+    perfil = PerfilUsuario.objects.filter(usuario=request.user, rol='vendedor').first()
+    if not perfil:
+        return redirect('catalogo')  # Redirige a "catalogo" si no es vendedor
+
+    # Obtener la información del Yonke asociado al usuario
+    yonke = Yonke.objects.filter(nombre=request.user.username).first()
+
+    # Obtener los productos asociados al vendedor
+    productos = Producto.objects.filter(vendedor=request.user)
+
+    # Renderizar el contexto
+    context = {
+        'yonke': yonke,
+        'productos': productos,
+    }
+    return render(request, 'mi_yonke.html', context)
+
+def header_context(request):
+    # Si el usuario está autenticado, incluye datos personalizados
+    if request.user.is_authenticated:
+        perfil = getattr(request.user, 'perfilusuario', None)
+        return {
+            'is_authenticated': True,
+            'username': request.user.username,
+            'rol': perfil.rol if perfil else None,
+        }
+    return {'is_authenticated': False}
+
+

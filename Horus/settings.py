@@ -77,6 +77,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',  # Necesario para allauth
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'tienda.views.header_context',
             ],
         },
     },
@@ -249,3 +250,11 @@ STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY', 'pk_test_51QNo1vBh81Rn7ilnygB
 PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID', 'AYtoVDs22opz5331x392eilv6VK2WbRpPTtUgGik9W8u930HSfSDwbRkKaYfwsZA35GjsZx2ECD9oHJG')
 PAYPAL_CLIENT_SECRET = os.getenv('PAYPAL_CLIENT_SECRET', 'EOYHve48g1W7pw8XNlN3WhHvdRch61fDZ7JcmtSxvEMuBziF3nxIMGOcJOZTYbQ1L6wRYZOJdKBrmlQ_')
 PAYPAL_MODE = os.getenv('PAYPAL_MODE', 'sandbox')  # Cambia a 'live' en producción
+
+MIDDLEWARE.insert(0, 'django.middleware.security.SecurityMiddleware')
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+ACCOUNT_ADAPTER = 'tienda.adapters.MyAccountAdapter'
+
+# En caso de problemas con IP
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
